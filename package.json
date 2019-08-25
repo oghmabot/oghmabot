@@ -1,0 +1,33 @@
+{
+  "name": "oghmabot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aergnist/oghmabot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aergnist/oghmabot/issues"
+  },
+  "homepage": "https://github.com/aergnist/oghmabot#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "discord.js": "^11.4.2",
+    "discord.js-commando": "^0.10.0",
+    "enmap": "^3.1.4",
+    "enmap-mongo": "^2.0.2",
+    "jquery": "^3.3.1",
+    "mongodb": "^3.1.13",
+    "phantom": "^6.0.3",
+    "request-promise": "^4.2.4",
+    "rss-parser": "^3.6.3",
+    "textversionjs": "^1.1.3"
+  }
+}

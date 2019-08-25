@@ -25,7 +25,6 @@
     "enmap-mongo": "^2.0.2",
     "jquery": "^3.3.1",
     "mongodb": "^3.1.13",
-    "phantom": "^6.0.3",
     "request-promise": "^4.2.4",
     "rss-parser": "^3.6.3",
     "textversionjs": "^1.1.3"

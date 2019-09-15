@@ -8,7 +8,7 @@ module.exports = {
       // Once the bot is ready, it outputs a list of active servers to console
       console.log(`Logged in to servers: ${Array.from(bot.guilds.values())}`);
       //bot.settings.set('528197859854647299', bot.defaultSettings);
-      const wb = bot.settings.get('528197859854647299', "statusWebhook");
+      const wb = bot.settings.get('555159220777910273', "statusWebhook");
       if (wb && bot.mode == "live") {
           const embedOnline = new Discord.RichEmbed();
           embedOnline.setColor(0x00ff00);

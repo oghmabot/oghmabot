@@ -1,6 +1,5 @@
 # Nodejs
 node_modules/
-package-lock.json
 
 # Local configuration
 config.json

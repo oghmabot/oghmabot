@@ -3,7 +3,7 @@ const { RichEmbed } = require('discord.js');
 module.exports = {
   loggedInServersToEmbed,
   loggedInServersToString
-}
+};
 
 /**
  * Return a RichEmbed including the given servers
@@ -12,7 +12,7 @@ module.exports = {
 function loggedInServersToEmbed(servers) {
   const embed = new RichEmbed();
   embed.setColor(0x00ff00);
-  embed.setTitle("Oghmabot Online");
+  embed.setTitle('Oghmabot Online');
   embed.setDescription(loggedInServersToString(servers));
   return embed;
 }

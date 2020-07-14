@@ -3,7 +3,7 @@
  * @ignore
  */
 const config = require('./config.json');
-const { Arelith, Crafting, Dice, Lore } = require('./assets')
+const { Arelith, Crafting, Dice, Lore } = require('./assets');
 const { loggedInServersToEmbed, loggedInServersToString } = require('./util');
 
 /**
@@ -47,7 +47,7 @@ bot.assets = {
 bot.defaultSettings = {
   announcementsState: false,
   statusState: false
-}
+};
 
 // Registering various default settings as well as custom command groups
 bot.registry
@@ -71,11 +71,11 @@ bot.registry
     const { guilds } = bot;
     const wb = guilds.resolve('555159220777910273');
 
-    if (wb && bot.mode == "live") {
+    if (wb && bot.mode == 'live') {
       const embedOnline = loggedInServersToEmbed(guilds);
       const wbClient = new WebhookClient(wb.id, wb.token);
-      wbClient.name = "Oghmabot Online";
-      wbClient.send("", embedOnline);
+      wbClient.name = 'Oghmabot Online';
+      wbClient.send('', embedOnline);
     }
 
     console.log(loggedInServersToString(guilds));

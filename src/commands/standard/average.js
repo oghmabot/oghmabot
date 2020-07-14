@@ -10,7 +10,7 @@ module.exports = class Average extends Command {
       name: 'average',
       group: 'standard',
       memberName: 'average',
-      aliases: ["avg"],
+      aliases: ['avg'],
       description: 'Replies with the average result to a D&D style dice roll.',
       args: [
         {
@@ -18,8 +18,8 @@ module.exports = class Average extends Command {
           type: 'string',
           prompt: 'Specify the roll of you want the average.',
           validate: roll => {
-              if (diceRollRegExp.test(roll.replace(/\s/g,''))) return true;
-              return "That's not a valid form of dice notation.";
+            if (diceRollRegExp.test(roll.replace(/\s/g,''))) return true;
+            return 'That\'s not a valid form of dice notation.';
           }
         }
       ]
@@ -34,11 +34,11 @@ module.exports = class Average extends Command {
     var embed = new Discord.RichEmbed();
     if (msg.guild)
     {
-        embed.setColor(msg.guild.me.displayColor);
+      embed.setColor(msg.guild.me.displayColor);
     }
     else
     {
-        embed.setColor(0xffffff);
+      embed.setColor(0xffffff);
     }
     embed.setDescription(`Average roll: **${total}**`);
     //embed.setFooter("\u200b","https://i.imgur.com/8T9VJa0.png")

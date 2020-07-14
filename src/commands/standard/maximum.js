@@ -10,7 +10,7 @@ module.exports = class Maximum extends Command {
       name: 'maximum',
       group: 'standard',
       memberName: 'maximum',
-      aliases: ["max"],
+      aliases: ['max'],
       description: 'Replies with the maximum result to a D&D style dice roll.',
       args: [
         {
@@ -18,8 +18,8 @@ module.exports = class Maximum extends Command {
           type: 'string',
           prompt: 'Specify the roll of which you want the maximum.',
           validate: roll => {
-              if (diceRollRegExp.test(roll.replace(/\s/g,''))) return true;
-              return "That's not a valid form of dice notation.";
+            if (diceRollRegExp.test(roll.replace(/\s/g,''))) return true;
+            return 'That\'s not a valid form of dice notation.';
           }
         }
       ]
@@ -34,11 +34,11 @@ module.exports = class Maximum extends Command {
     var embed = new Discord.RichEmbed();
     if (msg.guild)
     {
-        embed.setColor(msg.guild.me.displayColor);
+      embed.setColor(msg.guild.me.displayColor);
     }
     else
     {
-        embed.setColor(0xffffff);
+      embed.setColor(0xffffff);
     }
     embed.setDescription(`Maximum roll: **${total}**`);
     //embed.setThumbnail("https://i.imgur.com/AnSk6th.jpg");

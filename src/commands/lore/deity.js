@@ -29,52 +29,52 @@ module.exports = class Deity extends Command {
     let deityCard = await this.pantheon.findDeity(deity.trim());
     if (Object.keys(deityCard).length == 0)
     {
-        return msg.say('Deity not found in the Arelith pantheon.');
+      return msg.say('Deity not found in the Arelith pantheon.');
     }
     else
     {
-        var wikiURL = "https://forgottenrealms.fandom.com/wiki";
-        if (deityCard.name == 'Oogooboogoo' || deityCard.name == "La'laskra")
-        {
-            wikiURL = 'http://wiki.arelith.com'
-        }
-        var embed = new Discord.RichEmbed();
-        if (msg.guild)
-        {
-            embed.setColor(msg.guild.me.displayColor);
-        }
-        else
-        {
-            embed.setColor(0xffffff);
-        }
-        embed.setTitle(deityCard.name);
-        embed.setURL(wikiURL+deityCard.url);
-        embed.setDescription("*"+deityCard.titles+"*");
-        embed.setFooter("Oghmabot","https://i.imgur.com/DBAtbUx.png");
-        embed.setTimestamp();
-        embed.addField("Alignment", deityCard.alignment);
-        embed.addField("Clergy Alignments", deityCard.clergyAlignments);
-        embed.addField("Aspects", deityCard.primaryAspect + " and " + deityCard.secondaryAspect);
-        var infoField = "";
-        infoField += (deityCard.symbol) ? "**Symbol:** " + deityCard.symbol : "";
-        infoField += (deityCard.portfolio) ?  "\n**Portfolio:** " + deityCard.portfolio : "";
-        infoField += (deityCard.worshipers) ? "\n**Worshipers:** " + deityCard.worshipers : "";
-        infoField += (deityCard.domains) ? "\n**Domains:** " + deityCard.domains : "";
-        if (infoField) {
-            embed.addField(":book:", infoField + "\n");
-        }
-        if (deityCard.thumbnail) {
-            embed.setThumbnail(deityCard.thumbnail);
-        }
-        if (deityCard.dogma) {
-            const dogmaBuffer = (deityCard.dogma.length > 1024) ? deityCard.dogma.slice(0,1021) + "..." : deityCard.dogma;
-            embed.addField("Dogma", dogmaBuffer);
-        }
+      var wikiURL = 'https://forgottenrealms.fandom.com/wiki';
+      if (deityCard.name == 'Oogooboogoo' || deityCard.name == 'La\'laskra')
+      {
+        wikiURL = 'http://wiki.arelith.com';
+      }
+      var embed = new Discord.RichEmbed();
+      if (msg.guild)
+      {
+        embed.setColor(msg.guild.me.displayColor);
+      }
+      else
+      {
+        embed.setColor(0xffffff);
+      }
+      embed.setTitle(deityCard.name);
+      embed.setURL(wikiURL+deityCard.url);
+      embed.setDescription('*'+deityCard.titles+'*');
+      embed.setFooter('Oghmabot','https://i.imgur.com/DBAtbUx.png');
+      embed.setTimestamp();
+      embed.addField('Alignment', deityCard.alignment);
+      embed.addField('Clergy Alignments', deityCard.clergyAlignments);
+      embed.addField('Aspects', deityCard.primaryAspect + ' and ' + deityCard.secondaryAspect);
+      var infoField = '';
+      infoField += (deityCard.symbol) ? '**Symbol:** ' + deityCard.symbol : '';
+      infoField += (deityCard.portfolio) ?  '\n**Portfolio:** ' + deityCard.portfolio : '';
+      infoField += (deityCard.worshipers) ? '\n**Worshipers:** ' + deityCard.worshipers : '';
+      infoField += (deityCard.domains) ? '\n**Domains:** ' + deityCard.domains : '';
+      if (infoField) {
+        embed.addField(':book:', infoField + '\n');
+      }
+      if (deityCard.thumbnail) {
+        embed.setThumbnail(deityCard.thumbnail);
+      }
+      if (deityCard.dogma) {
+        const dogmaBuffer = (deityCard.dogma.length > 1024) ? deityCard.dogma.slice(0,1021) + '...' : deityCard.dogma;
+        embed.addField('Dogma', dogmaBuffer);
+      }
 
-        return msg.embed(embed);
+      return msg.embed(embed);
     }
 
 	  //return msg.code("adoc", pantheon.findDeity(deity.trim()));
     // Insert here the stuff that actually happens when the command is called???
   }
-}
+};

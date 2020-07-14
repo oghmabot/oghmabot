@@ -5,181 +5,181 @@ const rollModifierRegExp = /([+-](?=\d|D)\d*)(D\d+)?/gi;
 
 module.exports =
 {
-    minimumRoll : minimumRoll,
+  minimumRoll : minimumRoll,
     
-    maximumRoll : maximumRoll,
+  maximumRoll : maximumRoll,
     
-    averageRoll : averageRoll,
+  averageRoll : averageRoll,
     
-    randomRoll : randomRoll
+  randomRoll : randomRoll
 	
-}
+};
 
 function minimumRoll(dice){
-    return new Promise( async (resolve,reject) => {
-        var baseRoll = dice.match(diceRollRegExp);
-        const baseMultiplier = parseInt(baseRoll[1]) || 1;
-        const baseDie = 1;
+  return new Promise( async (resolve,reject) => {
+    var baseRoll = dice.match(diceRollRegExp);
+    const baseMultiplier = parseInt(baseRoll[1]) || 1;
+    const baseDie = 1;
         
-        var totalRoll = baseMultiplier * baseDie;
+    var totalRoll = baseMultiplier * baseDie;
         
-        getMatches(baseRoll[3],rollModifierRegExp).forEach( modifiers =>
-        {
-            var sign = modifiers[1].charAt(0);
-            const baseMultiplier = parseInt(modifiers[1].slice(1)) || 1;
+    getMatches(baseRoll[3],rollModifierRegExp).forEach( modifiers =>
+    {
+      var sign = modifiers[1].charAt(0);
+      const baseMultiplier = parseInt(modifiers[1].slice(1)) || 1;
             
-            switch (sign)
-            {
-                case "+":
-                    if (modifiers[2])
-                    {
-                        totalRoll += baseMultiplier;
+      switch (sign)
+      {
+      case '+':
+        if (modifiers[2])
+        {
+          totalRoll += baseMultiplier;
                         
-                    }
-                    else
-                    {
-                        totalRoll += baseMultiplier; 
-                    }
-                    break;
-                case "-":
-                    if (modifiers[2])
-                    {
-                        totalRoll -= baseMultiplier * parseInt(modifiers[2].slice(1));
+        }
+        else
+        {
+          totalRoll += baseMultiplier; 
+        }
+        break;
+      case '-':
+        if (modifiers[2])
+        {
+          totalRoll -= baseMultiplier * parseInt(modifiers[2].slice(1));
                         
-                    }
-                    else
-                    {
-                        totalRoll -= baseMultiplier; 
-                    }
-                    break;
-            }
-        });
-        resolve (totalRoll); 
+        }
+        else
+        {
+          totalRoll -= baseMultiplier; 
+        }
+        break;
+      }
     });
+    resolve (totalRoll); 
+  });
 }
 
 function maximumRoll(dice){
-    return new Promise( async (resolve,reject) => {
-        var baseRoll = dice.match(diceRollRegExp);
-        const baseMultiplier = parseInt(baseRoll[1]) || 1;
-        const baseDie = parseInt(baseRoll[2].slice(1));
+  return new Promise( async (resolve,reject) => {
+    var baseRoll = dice.match(diceRollRegExp);
+    const baseMultiplier = parseInt(baseRoll[1]) || 1;
+    const baseDie = parseInt(baseRoll[2].slice(1));
         
-        var totalRoll = baseMultiplier * baseDie;
+    var totalRoll = baseMultiplier * baseDie;
         
-        getMatches(baseRoll[3],rollModifierRegExp).forEach( modifiers =>
-        {
-            var sign = modifiers[1].charAt(0);
-            const baseMultiplier = parseInt(modifiers[1].slice(1)) || 1;
+    getMatches(baseRoll[3],rollModifierRegExp).forEach( modifiers =>
+    {
+      var sign = modifiers[1].charAt(0);
+      const baseMultiplier = parseInt(modifiers[1].slice(1)) || 1;
             
-            switch (sign)
-            {
-                case "+":
-                    if (modifiers[2])
-                    {
-                        totalRoll += baseMultiplier * parseInt(modifiers[2].slice(1));
-                    }
-                    else
-                    {
-                        totalRoll += baseMultiplier; 
-                    }
-                    break;
-                case "-":
-                    if (modifiers[2])
-                    {
-                        totalRoll -= baseMultiplier;
-                    }
-                    else
-                    {
-                        totalRoll -= baseMultiplier; 
-                    }
-                    break;
-            }
-        });
-        resolve (totalRoll); 
-        
+      switch (sign)
+      {
+      case '+':
+        if (modifiers[2])
+        {
+          totalRoll += baseMultiplier * parseInt(modifiers[2].slice(1));
+        }
+        else
+        {
+          totalRoll += baseMultiplier; 
+        }
+        break;
+      case '-':
+        if (modifiers[2])
+        {
+          totalRoll -= baseMultiplier;
+        }
+        else
+        {
+          totalRoll -= baseMultiplier; 
+        }
+        break;
+      }
     });
+    resolve (totalRoll); 
+        
+  });
 }
 
 function averageRoll(dice){
-    return new Promise( async (resolve,reject) => {
-        const avgRoll = (await minimumRoll(dice) + await maximumRoll(dice))/2;
-        resolve(avgRoll);
-    });
+  return new Promise( async (resolve,reject) => {
+    const avgRoll = (await minimumRoll(dice) + await maximumRoll(dice))/2;
+    resolve(avgRoll);
+  });
 }
 
 function randomRoll(dice){
-    return new Promise( async (resolve,reject) => {
-        var baseRoll = dice.match(diceRollRegExp);
-        const baseDie = parseInt(baseRoll[2].slice(1));
-        var totalRoll = 0;
-        const baseMultiplier = parseInt(baseRoll[1]) || 1;
+  return new Promise( async (resolve,reject) => {
+    var baseRoll = dice.match(diceRollRegExp);
+    const baseDie = parseInt(baseRoll[2].slice(1));
+    var totalRoll = 0;
+    const baseMultiplier = parseInt(baseRoll[1]) || 1;
         
-        for (var i = 0; i < baseMultiplier; i++)
-        {
-            totalRoll += Math.floor(Math.random() * baseDie) + 1;
-        }
+    for (var i = 0; i < baseMultiplier; i++)
+    {
+      totalRoll += Math.floor(Math.random() * baseDie) + 1;
+    }
         
-        getMatches(baseRoll[3],rollModifierRegExp).forEach( modifiers =>
-        {
-            var sign = modifiers[1].charAt(0);
-            const baseMultiplier = parseInt(modifiers[1].slice(1)) || 1;
+    getMatches(baseRoll[3],rollModifierRegExp).forEach( modifiers =>
+    {
+      var sign = modifiers[1].charAt(0);
+      const baseMultiplier = parseInt(modifiers[1].slice(1)) || 1;
             
-            switch (sign)
-            {
-                case "+":
-                    if (modifiers[2])
-                    {
-                        for (var i = 0; i < baseMultiplier; i++)
-                        {
-                            totalRoll += Math.floor(Math.random() * parseInt(modifiers[2].slice(1))) + 1;
-                        }
-                    }
-                    else
-                    {
-                        totalRoll += baseMultiplier; 
-                    }
-                    break;
-                case "-":
-                    if (modifiers[2])
-                    {
-                        for (var i = 0; i < baseMultiplier; i++)
-                        {
-                            totalRoll -= Math.floor(Math.random() * parseInt(modifiers[2].slice(1))) + 1;
-                        }
-                    }
-                    else
-                    {
-                        totalRoll -= baseMultiplier; 
-                    }
-                    break;
-            }
-        });
-        resolve (totalRoll); 
-        
+      switch (sign)
+      {
+      case '+':
+        if (modifiers[2])
+        {
+          for (var i = 0; i < baseMultiplier; i++)
+          {
+            totalRoll += Math.floor(Math.random() * parseInt(modifiers[2].slice(1))) + 1;
+          }
+        }
+        else
+        {
+          totalRoll += baseMultiplier; 
+        }
+        break;
+      case '-':
+        if (modifiers[2])
+        {
+          for (var i = 0; i < baseMultiplier; i++)
+          {
+            totalRoll -= Math.floor(Math.random() * parseInt(modifiers[2].slice(1))) + 1;
+          }
+        }
+        else
+        {
+          totalRoll -= baseMultiplier; 
+        }
+        break;
+      }
     });
+    resolve (totalRoll); 
+        
+  });
 }
 
 function getMatches(str, regex) {
-    var matches = [];
-    var match;
+  var matches = [];
+  var match;
 
-    if (regex.global) {
-        regex.lastIndex = 0;
-    } else {
-        regex = new RegExp(regex.source, 'g' +
+  if (regex.global) {
+    regex.lastIndex = 0;
+  } else {
+    regex = new RegExp(regex.source, 'g' +
             (regex.ignoreCase ? 'i' : '') +
             (regex.multiline ? 'm' : '') +
             (regex.sticky ? 'y' : ''));
+  }
+
+  while (match = regex.exec(str)) {
+
+    matches.push(match);
+
+    if (regex.lastIndex === match.index) {
+      regex.lastIndex++;
     }
+  }
 
-    while (match = regex.exec(str)) {
-
-        matches.push(match);
-
-        if (regex.lastIndex === match.index) {
-            regex.lastIndex++;
-        }
-    }
-
-    return matches;
+  return matches;
 }

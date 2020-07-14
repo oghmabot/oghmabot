@@ -1,6 +1,6 @@
 'use strict';
 
-const {Command} = require('discord.js-commando');
+const { Command } = require('discord.js-commando');
 const Discord = require('discord.js');
 
 module.exports = class Updates extends Command {
@@ -27,44 +27,36 @@ module.exports = class Updates extends Command {
     this.arelith = client.assets.Arelith.Update;
   }
 
-  async run(msg, {options}) {
+  async run(msg, { options }) {
 
     const arg = options.toLowerCase().trim();
 
-    if (msg.guild && msg.member.hasPermission('MANAGE_WEBHOOKS'))
-    {
-      if (arg == 'here')
-      {
-        if(msg.guild.me.hasPermission('MANAGE_WEBHOOKS'))
-        {
+    if (msg.guild && msg.member.hasPermission('MANAGE_WEBHOOKS')) {
+      if (arg == 'here') {
+        if (msg.guild.me.hasPermission('MANAGE_WEBHOOKS')) {
           const wbs = await msg.channel.fetchWebhooks();
           const wb = await wbs.find(webhooks => webhooks.name == 'Oghmabot');
-          if (!wb)
-          {
-            const newWB =  await msg.channel.createWebhook('Oghmabot','https://i.imgur.com/DBAtbUx.png');
-            this.client.settings.set(msg.guild.id, { id: newWB.id, token: newWB.token}, 'announcementsWebhook');
+          if (!wb) {
+            const newWB = await msg.channel.createWebhook('Oghmabot', 'https://i.imgur.com/DBAtbUx.png');
+            this.client.settings.set(msg.guild.id, { id: newWB.id, token: newWB.token }, 'announcementsWebhook');
             this.client.settings.set(msg.guild.id, true, 'announcementsState');
             return msg.say('Webhook created on this channel. Announcements will be made here.');
           }
-          else
-          {
-            this.client.settings.set(msg.guild.id, { id: wb.id, token: wb.token}, 'announcementsWebhook');
+          else {
+            this.client.settings.set(msg.guild.id, { id: wb.id, token: wb.token }, 'announcementsWebhook');
             this.client.settings.set(msg.guild.id, true, 'announcementsState');
             return msg.say('Webhook relinked on this channel. Announcements will be made here.');
           }
         }
-        else
-        {
+        else {
           return msg.say('Oghmabot is lacking the proper permissions to create a webhook.');
         }
       }
-      else if (arg == 'on')
-      {
+      else if (arg == 'on') {
         this.client.settings.set(msg.guild.id, true, 'announcementsState');
         return msg.say('Announcements: **On**.');
       }
-      else if (arg == 'off')
-      {
+      else if (arg == 'off') {
         this.client.settings.set(msg.guild.id, false, 'announcementsState');
         return msg.say('Announcements: **Off**.');
       }
@@ -72,25 +64,23 @@ module.exports = class Updates extends Command {
 
     let updateCard = await this.arelith.getLastUpdate();
     var embed = new Discord.RichEmbed();
-    if (msg.guild)
-    {
+    if (msg.guild) {
       embed.setColor(msg.guild.me.displayColor);
     }
-    else
-    {
+    else {
       embed.setColor(0xffffff);
     }
     embed.setTitle('Latest Arelith Update');
     embed.setURL(updateCard.url);
-    var contentAdjusted = (updateCard.content.length > 2048) ? updateCard.content.slice(0,2045) + '...' : updateCard.content;
+    var contentAdjusted = (updateCard.content.length > 2048) ? updateCard.content.slice(0, 2045) + '...' : updateCard.content;
     embed.setDescription(contentAdjusted);
-    embed.setFooter('Oghmabot','https://i.imgur.com/DBAtbUx.png');
+    embed.setFooter('Oghmabot', 'https://i.imgur.com/DBAtbUx.png');
     embed.setTimestamp();
     embed.setThumbnail('https://i.imgur.com/QJ4lnPJ.png');
 
     return msg.embed(embed);
 
-	  //return msg.code("adoc", pantheon.findDeity(deity.trim()));
+    //return msg.code("adoc", pantheon.findDeity(deity.trim()));
     // Insert here the stuff that actually happens when the command is called???
   }
 };

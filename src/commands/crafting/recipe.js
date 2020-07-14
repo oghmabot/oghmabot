@@ -1,6 +1,6 @@
 'use strict';
 
-const {Command} = require('discord.js-commando');
+const { Command } = require('discord.js-commando');
 
 module.exports = class Recipe extends Command {
   constructor(client) {
@@ -10,7 +10,7 @@ module.exports = class Recipe extends Command {
       memberName: 'recipe',
       aliases: ['recipes'],
       description: 'Searches the crafting recipes for a specific recipe.',
-	  args: [
+      args: [
         {
           key: 'recipe',
           type: 'string',
@@ -25,10 +25,10 @@ module.exports = class Recipe extends Command {
     this.Craft = client.assets.Crafting.Lib;
   }
 
-  run(msg, {recipe} ) {
-    var recipesBuffer = this.Craft.parseRecipes(Craft.searchRecipes(recipe.trim()));
+  run(msg, { recipe }) {
+    var recipesBuffer = this.Craft.parseRecipes(this.Craft.searchRecipes(recipe.trim()));
     if (recipesBuffer.length > 2000) recipesBuffer = 'Too many results. Please narrow your search.';
-	  return msg.code('ini', recipesBuffer);
+    return msg.code('ini', recipesBuffer);
     // Insert here the stuff that actually happens when the command is called???
   }
 };

@@ -1,6 +1,6 @@
 'use strict';
 
-const {Command} = require('discord.js-commando');
+const { Command } = require('discord.js-commando');
 const Discord = require('discord.js');
 
 module.exports = class Status extends Command {
@@ -23,47 +23,39 @@ module.exports = class Status extends Command {
       // See other commands for examples of args
     });
 
-    this.arelith = client.assets.Arelith.Status; 
+    this.arelith = client.assets.Arelith.Status;
   }
 
-  async run(msg, {options}) {
+  async run(msg, { options }) {
 
     const arg = options.toLowerCase().trim();
 
-    if (msg.guild && msg.member.hasPermission('MANAGE_WEBHOOKS'))
-    {
-      if ( arg == 'here')
-      {
-        if (msg.guild.me.hasPermission('MANAGE_WEBHOOKS'))
-        {
+    if (msg.guild && msg.member.hasPermission('MANAGE_WEBHOOKS')) {
+      if (arg == 'here') {
+        if (msg.guild.me.hasPermission('MANAGE_WEBHOOKS')) {
           const wbs = await msg.channel.fetchWebhooks();
           const wb = await wbs.find(webhooks => webhooks.name == 'Oghmabot');
-          if (!wb)
-          {
-            const newWB =  await msg.channel.createWebhook('Oghmabot','https://i.imgur.com/DBAtbUx.png');
-            this.client.settings.set(msg.guild.id, { id: newWB.id, token: newWB.token}, 'statusWebhook');
+          if (!wb) {
+            const newWB = await msg.channel.createWebhook('Oghmabot', 'https://i.imgur.com/DBAtbUx.png');
+            this.client.settings.set(msg.guild.id, { id: newWB.id, token: newWB.token }, 'statusWebhook');
             this.client.settings.set(msg.guild.id, true, 'statusState');
             return msg.say('Webhook created on this channel. Server status will be updated here.');
           }
-          else
-          {
-            this.client.settings.set(msg.guild.id, { id: wb.id, token: wb.token}, 'statusWebhook');
+          else {
+            this.client.settings.set(msg.guild.id, { id: wb.id, token: wb.token }, 'statusWebhook');
             this.client.settings.set(msg.guild.id, true, 'statusState');
             return msg.say('Webhook relinked on this channel. Server status will be updated here.');
           }
         }
-        else
-        {
+        else {
           return msg.say('Oghmabot is lacking the proper permissions to create a webhook.');
         }
       }
-      else if (arg == 'on')
-      {
+      else if (arg == 'on') {
         this.client.settings.set(msg.guild.id, true, 'statusState');
         return msg.say('Server status updates: **On**.');
       }
-      else if (arg == 'off')
-      {
+      else if (arg == 'off') {
         this.client.settings.set(msg.guild.id, false, 'statusState');
         return msg.say('Server status updates: **Off**.');
       }
@@ -72,8 +64,7 @@ module.exports = class Status extends Command {
     var i, j;
     i = 1;
     j = 3;
-    switch (arg)
-    {
+    switch (arg) {
     case 'surface':
       i = j = 1;
       break;
@@ -93,9 +84,8 @@ module.exports = class Status extends Command {
     var statusCard;
     var embedArray = [];
 
-    for (i ; i <= j; i++)
-    {
-      statusCard =  await this.client.servers.get(i);
+    for (i; i <= j; i++) {
+      statusCard = await this.client.servers.get(i);
       embedArray[i] = new Discord.RichEmbed();
       embedArray[i].setColor(statusCard.color);
       embedArray[i].setTitle(statusCard.name);
@@ -109,7 +99,7 @@ module.exports = class Status extends Command {
 
     return;
 
-	  //return msg.code("adoc", pantheon.findDeity(deity.trim()));
+    //return msg.code("adoc", pantheon.findDeity(deity.trim()));
     // Insert here the stuff that actually happens when the command is called???
   }
 };

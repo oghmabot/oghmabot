@@ -14,7 +14,7 @@ module.exports =
   updateServerStatus: async function(client)
   {
     const statusCard = {};
-    return new Promise((resolve,reject) => {
+    return new Promise(() => {
       request(arelithPortalURL).then(async function(html){
         var $ = cheerio.load(html);
         var i;

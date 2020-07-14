@@ -1,6 +1,6 @@
 'use strict';
 
-const Discord = require('discord.js');
+const { RichEmbed, WebhookClient } = require('discord.js');
 
 module.exports = {
   run: function (bot) {
@@ -9,56 +9,46 @@ module.exports = {
      * @ignore
      */
     bot.on('ready', () => {
-      console.log(loggedInServersToString(bot));
+      const { guilds } = bot;
+      const wb = guilds.resolve('555159220777910273');
 
-      const wb = bot.settings.get('528197859854647299', "statusWebhook");      
       if (wb && bot.mode == "live") {
-        const embedOnline = loggedInServersToEmbed(bot);
-        const wbClient = new Discord.WebhookClient(wb.id, wb.token);
+        const embedOnline = loggedInServersToEmbed(guilds);
+        const wbClient = new WebhookClient(wb.id, wb.token);
         wbClient.name = "Oghmabot Online";
         wbClient.send("", embedOnline);
       }
+
+      console.log(loggedInServersToString(guilds));
     });
 
 
     /**
-     * Listen for messages
+     * Listen for messages and make sure the bot doesn't respond to itself
+     * @ignore
      */
     bot.on('message', msg => {
       if (msg.author.id === bot.user.id) return;
-
-      if (msg.guild) {
-        // This section may refer to guild-customized content
-      }
-    });
-
-    /**
-     * Listen for server joining
-     */
-    bot.on('guildCreate', guild => {
-      if (!bot.settings.has(guild.id)) {
-        bot.settings.set(guild.id, bot.defaultSettings);
-      }
-    });
-
-    /**
-     * Listen for server removal
-     */
-    bot.on("guildDelete", guild => {
-      // When the bot leaves or is kicked, delete settings and webhooks to prevent stale entries.
-      //bot.webhooks.delete(guild.id);
     });
   }
 }
 
-function loggedInServersToEmbed(bot) {
-  const embed = new Discord.RichEmbed();
+/**
+ * Return a RichEmbed including the given servers
+ * @param {GuildManager} servers 
+ */
+function loggedInServersToEmbed(servers) {
+  const embed = new RichEmbed();
   embed.setColor(0x00ff00);
   embed.setTitle("Oghmabot Online");
-  embed.setDescription(loggedInServersToString(bot));
+  embed.setDescription(loggedInServersToString(servers));
   return embed;
 }
 
-function loggedInServersToString(bot) {
-  return `Logged in to servers: ${Array.from(bot.guilds.values())}`;
+/**
+ * Return a string showing the given servers
+ * @param {GuildManager} servers 
+ */
+function loggedInServersToString(servers) {
+  return `Logged in to servers: ${servers.cache.map(g => g.name).join(', ')}`;
 }

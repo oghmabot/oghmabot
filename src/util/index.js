@@ -22,5 +22,5 @@ function loggedInServersToEmbed(servers) {
  * @param {GuildManager} servers 
  */
 function loggedInServersToString(servers) {
-  return `Logged in to servers: ${servers.cache.map(g => g.name).join(', ')}`;
+  return `Logged in to servers: ${servers.map(g => g.name).join(', ')}`;
 }

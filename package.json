@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "test": "test",
+    "test": "jest",
     "eslint": "eslint **/*.js"
   },
   "repository": {

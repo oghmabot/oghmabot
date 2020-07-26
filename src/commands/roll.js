@@ -27,9 +27,9 @@ module.exports = class Roll extends Command {
   }
 
   async run(msg, { roll }) {
-    const { anyRoll } = Dice;
+    const { rAnyAny } = Dice;
 
-    var total = anyRoll(roll.replace(/\s/g, ''));
+    var total = rAnyAny(roll.replace(/\s/g, ''));
     var embed = new Discord.RichEmbed();
     if (msg.guild) {
       embed.setColor(msg.guild.me.displayColor);

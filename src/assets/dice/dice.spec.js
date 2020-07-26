@@ -1,11 +1,19 @@
-const { rollSingleDie } = require('./dice');
+const { rollAny, rollSingleDie } = require('./dice');
 
-describe('die rolls', () => {
+describe('Dice', () => {
 
-  describe('anyRoll', () => {
-
+  /**
+   * ROLL ANY
+   */
+  describe('rollAny', () => {
+    it('should not throw errors on correctly formatted string', () => {
+      expect(() => rollAny('2d100')).not.toThrow();
+    });
   });
 
+  /**
+   * ROLL SINGLE DIE
+   */
   describe('rollSingleDie', () => {
     it('should return between 1 and 10', () => {
       const result = rollSingleDie(10);

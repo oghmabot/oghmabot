@@ -7,7 +7,7 @@ module.exports = {
 
 /**
  * Return a RichEmbed including the given servers
- * @param {GuildManager} servers 
+ * @param {GuildManager} servers
  */
 function loggedInServersToEmbed(servers) {
   const embed = new RichEmbed();
@@ -19,7 +19,7 @@ function loggedInServersToEmbed(servers) {
 
 /**
  * Return a string showing the given servers
- * @param {GuildManager} servers 
+ * @param {GuildManager} servers
  */
 function loggedInServersToString(servers) {
   return `Logged in to servers: ${servers.map(g => g.name).join(', ')}`;

@@ -6,4 +6,4 @@ describe('die rolls', () => {
     expect(result).toBeGreaterThanOrEqual(1);
     expect(result).toBeLessThanOrEqual(10);
   });
-})
+});

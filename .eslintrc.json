@@ -1,12 +1,12 @@
 {
   "env": {
     "node": true,
+    "commonjs": true,
     "es2020": true
   },
   "extends": ["eslint:recommended", "plugin:jest/recommended"],
   "parserOptions": {
-    "ecmaVersion": 11,
-    "sourceType": "module"
+    "ecmaVersion": 11
   },
   "rules": {
     "arrow-spacing": 2,

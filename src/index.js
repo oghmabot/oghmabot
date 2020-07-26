@@ -10,6 +10,7 @@ const { loggedInServersToEmbed, loggedInServersToString } = require('./util');
  * @ignore
  */
 const dotenv = require('dotenv');
+const path = require('path');
 
 /**
  * Discord.js
@@ -35,7 +36,12 @@ const client = new CommandoClient({
   unknownCommandResponse: false
 });
 
-client.registry.registerDefaults();
+client.registry
+  .registerGroups([
+    ['standard', 'Standard commands'],
+    ['arelith', 'Commands related to Arelith'],
+  ])
+  .registerDefaults().registerCommandsIn(path.join(__dirname, 'commands'));
 
 
 /**

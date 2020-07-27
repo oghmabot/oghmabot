@@ -1,12 +1,10 @@
 'use strict';
 
 const { Client } = require('pg');
+const { parse } = require('pg-connection-string');
 
 module.exports = {
   connect: () => new Client({
-    connectionString: `${process.env.DATABASE_URL}?ssl=true`,
-    ssl: {
-      rejectUnauthorized: false
-    }
+    ...parse(process.env.DATABASE_URL)
   }).connect()
 };

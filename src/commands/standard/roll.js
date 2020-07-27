@@ -20,7 +20,6 @@ module.exports = class Roll extends Command {
             if (diceRollRegExp.test(roll.replace(/\s/g, ''))) return true;
             return 'That\'s not a valid form of dice notation.';
           }
-
         }
       ]
     });

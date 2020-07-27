@@ -14,7 +14,7 @@ const rollAny = (input) => {
   return Roll(baseDie, baseMultiplier, result);
 };
 
-const rollSingleDie = (die) => Math.floor((Math.random() * parseInt(die)) + 1);
+const rollSingleDie = (die) => Roll(die, 1, Math.floor((Math.random() * parseInt(die)) + 1));
 
 const Roll = (die, multiplier, result) => {
   return {

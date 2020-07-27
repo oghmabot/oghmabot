@@ -51,11 +51,14 @@ client.registry
 client.on('ready', () => {
   const { guilds } = client;
   const { BOT_STATUS_SERVER, BOT_STATUS_CHANNEL } = process.env;
-  const statusServer = guilds.find(g => g.id == BOT_STATUS_SERVER);
-  const channel = statusServer.channels.find(c => c.id == BOT_STATUS_CHANNEL);
 
-  if (channel) {
-    channel.send('', loggedInServersToEmbed(guilds));
+  if(BOT_STATUS_SERVER && BOT_STATUS_CHANNEL) {
+    const statusServer = guilds.find(g => g.id == BOT_STATUS_SERVER);
+    const channel = statusServer.channels.find(c => c.id == BOT_STATUS_CHANNEL);
+
+    if (channel) {
+      channel.send('', loggedInServersToEmbed(guilds));
+    }
   }
   console.log(loggedInServersToString(guilds));
 });

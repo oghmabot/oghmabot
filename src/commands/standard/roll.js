@@ -19,16 +19,16 @@ module.exports = class Roll extends Command {
           validate: roll => {
             if (diceRollRegExp.test(roll.replace(/\s/g, ''))) return true;
             return 'That\'s not a valid form of dice notation.';
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
   }
 
   async run(msg, { roll }) {
     const {
       rollString,
-      result
+      result,
     } = rollAny(roll.replace(/\s/g, ''));
     const embed = new RichEmbed();
     embed.setColor(0xffffff);

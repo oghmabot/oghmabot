@@ -6,8 +6,8 @@ const { parse } = require('pg-connection-string');
 const connectionConfig = {
   ...parse(process.env.DATABASE_URL),
   ssl: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+  },
 };
 
 module.exports = class DbProvider {

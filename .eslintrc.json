@@ -10,6 +10,10 @@
   },
   "rules": {
     "arrow-spacing": 2,
+    "comma-dangle": [
+      "error",
+      "always-multiline"
+    ],
     "indent": [
         "error",
         2

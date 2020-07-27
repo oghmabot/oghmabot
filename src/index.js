@@ -32,7 +32,7 @@ const client = new CommandoClient({
   owners: process.env.BOT_OWNERS,
   commandPrefix: config.prefix,
   disableEveryone: true,
-  unknownCommandResponse: false
+  unknownCommandResponse: false,
 });
 
 client.registry

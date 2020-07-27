@@ -9,7 +9,7 @@ const rollAny = (input) => {
 
   let result = 0;
   for(let i = 0; i < baseMultiplier; i++) {
-    result += rollSingleDie(baseDie);
+    result += rollSingleDie(baseDie).result;
   }
   return Roll(baseDie, baseMultiplier, result);
 };

@@ -4,7 +4,7 @@ const { Client } = require('pg');
 const { parse } = require('pg-connection-string');
 
 module.exports = {
-  getClient: () => new Client({
+  getDbClient: () => new Client({
     ...parse(process.env.DATABASE_URL),
     ssl: {
       rejectUnauthorized: false

@@ -3,7 +3,6 @@
  * @ignore
  */
 const config = require('./config.json');
-const { getClient } = require('./db');
 const { loggedInServersToEmbed, loggedInServersToString } = require('./util');
 
 /**
@@ -24,13 +23,6 @@ const { CommandoClient } = require('discord.js-commando');
  * @ignore
  */
 dotenv.config();
-
-const db = getClient();
-db.connect();
-db.query('SELECT NOW()', (err, res) => {
-  console.log(err, res);
-  db.end();
-});
 
 /**
  * Instantiating the bot/client

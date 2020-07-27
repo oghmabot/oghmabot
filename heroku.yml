@@ -5,4 +5,4 @@ setup:
 build:
   docker:
     web: Dockerfile
-    worker: worker/Dockerfile
+    worker: Dockerfile

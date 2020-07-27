@@ -1,13 +1,10 @@
 'use strict';
 
-const { Client } = require('pg');
-const { parse } = require('pg-connection-string');
+const Enmap = require('emap');
+const Provider = require('./provider');
 
 module.exports = {
-  getDbClient: () => new Client({
-    ...parse(process.env.DATABASE_URL),
-    ssl: {
-      rejectUnauthorized: false
-    }
+  getEnmap: (name) => new Enmap({
+    provider: new Provider(name)
   })
 };

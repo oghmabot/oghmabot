@@ -29,6 +29,7 @@
   "dependencies": {
     "discord.js": "^11.6.4",
     "discord.js-commando": "^0.10.0",
+    "enmap": "^3.1.4",
     "pg": "^8.3.0",
     "pg-connection-string": "^2.3.0"
   }

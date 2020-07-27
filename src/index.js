@@ -3,10 +3,8 @@
  * @ignore
  */
 const config = require('./config.json');
-const { connect } = require('./db');
+const { getClient } = require('./db');
 const { loggedInServersToEmbed, loggedInServersToString } = require('./util');
-
-connect().then(response => console.log(response));
 
 /**
  * Package imports
@@ -27,6 +25,12 @@ const { CommandoClient } = require('discord.js-commando');
  */
 dotenv.config();
 
+const db = getClient();
+db.connect();
+db.query('SELECT NOW()', (err, res) => {
+  console.log(err, res);
+  db.end();
+});
 
 /**
  * Instantiating the bot/client

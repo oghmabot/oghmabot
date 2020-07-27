@@ -3,7 +3,10 @@
  * @ignore
  */
 const config = require('./config.json');
+const { connect } = require('./db');
 const { loggedInServersToEmbed, loggedInServersToString } = require('./util');
+
+connect().then(response => console.log(response));
 
 /**
  * Package imports

@@ -1,8 +1,8 @@
 'use strict';
-const { Dice } = require('../assets');
+const { Dice } = require('../../assets');
+const { diceRollRegExp, rollAny } = Dice;
 const { Command } = require('discord.js-commando');
 const { RichEmbed } = require('discord.js');
-const diceRollRegExp = /^(\d*)(D\d+)((?:[+-]\d*(?:D\d+)?)*)/gi;
 
 module.exports = class Roll extends Command {
   constructor(client) {
@@ -27,18 +27,13 @@ module.exports = class Roll extends Command {
   }
 
   async run(msg, { roll }) {
-    const { rollAny } = Dice;
-
-    var total = rollAny(roll.replace(/\s/g, ''));
-    var embed = new RichEmbed();
-    if (msg.guild) {
-      embed.setColor(msg.guild.me.displayColor);
-    }
-    else {
-      embed.setColor(0xffffff);
-    }
-    embed.setDescription(`Roll result: **${total}**`);
-    //embed.setThumbnail('https://i.imgur.com/AnSk6th.jpg');
+    const {
+      rollString,
+      result
+    } = rollAny(roll.replace(/\s/g, ''));
+    const embed = new RichEmbed();
+    embed.setColor(0xffffff);
+    embed.setDescription(`Roll ${rollString}: **${result}**`);
     return msg.embed(embed);
   }
 };

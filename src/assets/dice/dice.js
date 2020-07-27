@@ -11,12 +11,22 @@ const rollAny = (input) => {
   for(let i = 0; i < baseMultiplier; i++) {
     result += rollSingleDie(baseDie);
   }
-  return result;
+  return Roll(baseDie, baseMultiplier, result);
 };
 
 const rollSingleDie = (die) => Math.floor((Math.random() * parseInt(die)) + 1);
 
+const Roll = (die, multiplier, result) => {
+  return {
+    die,
+    multiplier,
+    result,
+    rollString: `${multiplier}d${die}`,
+  };
+};
+
 module.exports = {
+  diceRollRegExp,
   rollAny,
   rollSingleDie,
 };

@@ -3,13 +3,6 @@
 const { Pool } = require('pg');
 const { parse } = require('pg-connection-string');
 
-const connectionConfig = {
-  ...parse(process.env.DATABASE_URL),
-  ssl: {
-    rejectUnauthorized: false,
-  },
-};
-
 module.exports = class DbProvider {
   constructor(name) {
     this.defer = new Promise((resolve) => {
@@ -17,7 +10,12 @@ module.exports = class DbProvider {
     });
 
     this.validateName(name);
-    this.db = new Pool(connectionConfig);
+    this.db = new Pool({
+      ...parse(process.env.DATABASE_URL),
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    });
   }
 
   /**

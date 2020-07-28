@@ -81,7 +81,7 @@ module.exports = class DbProvider {
    */
   set(key, val) {
     if (!key || !['String', 'Number'].includes(key.constructor.name)) {
-      throw new Error('SQLite require keys to be strings or numbers.');
+      throw new Error('Key must to be string or number.');
     }
     const insert = typeof val === 'object' ? JSON.stringify(val) : val;
     return this.db.query(`INSERT INTO ${this.name} (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value = $2;`, [key, insert]);

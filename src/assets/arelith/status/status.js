@@ -52,5 +52,6 @@ const calculateUptime = (first_seen, last_seen) => new Date(Math.abs(first_seen 
 
 module.exports = {
   fetchServerStatus,
+  serverStateToEmbed,
   updateServerStatus,
 };

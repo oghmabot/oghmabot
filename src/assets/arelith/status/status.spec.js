@@ -1,6 +1,6 @@
 'use strict';
 
-const { ArelithServers } = require('./data.json');
+const { ArelithServers } = require('./config.json');
 const { fetchServerStatus } = require('./status');
 
 describe('Arelith Status', () => {

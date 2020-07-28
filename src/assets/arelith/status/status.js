@@ -1,24 +1,24 @@
 'use strict';
 
 const { getEnmap } = require('../../../db');
-const statusEnmap = getEnmap('servers');
+const serversEnmap = getEnmap('servers');
 const {
   ArelithIP,
+  ArelithServers,
   BeamdogAPI,
-  servers,
-} = require('./data.json');
+} = require('./config.json');
 const { RichEmbed } = require('discord.js');
 const fetch = require('node-fetch');
 
 const updateServerStatus = async (client) => {
-  for(const i in servers) {
-    const server = servers[i];
+  for(const i in ArelithServers) {
+    const server = ArelithServers[i];
     const status = await fetchServerStatus(server);
 
-    if(status.state === 'Online' && servers.get(i, 'state') !== 'Online') {
+    if(status.state === 'Online' && serversEnmap.get(i, 'state') !== 'Online') {
       postServerStatus(client, server, status);
     }
-    statusEnmap.set(i, status);
+    serversEnmap.set(i, status);
   }
 };
 

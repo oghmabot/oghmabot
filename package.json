@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "test": "jest --setupFiles dotenv/config",
+    "test": "jest",
     "eslint": "eslint src/"
   },
   "repository": {

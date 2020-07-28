@@ -10,7 +10,7 @@ describe('Arelith Status', () => {
       return fetchServerStatus(server)
         .then(data => {
           expect(data).toBeDefined();
-          expect(data.session_name).toBe('Arelith - Cordor and Planes');
+          expect(data.name).toBe('Arelith - Cordor and Planes');
         });
     });
   });

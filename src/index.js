@@ -4,19 +4,9 @@
  */
 const config = require('./config.json');
 const { loggedInServersToEmbed, loggedInServersToString } = require('./util');
-
-/**
- * Package imports
- * @ignore
- */
+const { CommandoClient } = require('discord.js-commando');
 const dotenv = require('dotenv');
 const path = require('path');
-
-/**
- * Discord.js
- * @ignore
- */
-const { CommandoClient } = require('discord.js-commando');
 
 /**
  * Set environment variables from .env, if present

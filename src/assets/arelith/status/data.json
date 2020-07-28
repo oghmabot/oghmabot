@@ -1,0 +1,26 @@
+{
+  "ArelithIP": "145.239.204.29",
+  "BeamdogAPI": "https://api.nwn.beamdog.net/v1/servers/",
+  "ArelithServers": [
+    {
+      "name": "Cordor and Planes",
+      "img": "http://portal.nwnarelith.com/images/planes_header.jpg",
+      "port": 5122
+    },
+    {
+      "name": "Distance Shores",
+      "img": "http://portal.nwnarelith.com/images/distant_shores_header.jpg",
+      "port": 5121
+    },
+    {
+      "name": "Surface",
+      "img": "http://portal.arelith.com/images/surface_header.jpg",
+      "port": 5123
+    },
+    {
+      "name": "Underdark",
+      "img": "http://portal.nwnarelith.com/images/underdark_header.jpg",
+      "port": 5124
+    }
+  ]
+}

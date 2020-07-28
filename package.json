@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "test": "jest",
+    "test": "jest --setupFiles dotenv/config",
     "eslint": "eslint src/"
   },
   "repository": {
@@ -30,6 +30,7 @@
     "discord.js": "^11.6.4",
     "discord.js-commando": "^0.10.0",
     "enmap": "^3.1.4",
+    "node-fetch": "^2.6.0",
     "pg": "^8.3.0",
     "pg-connection-string": "^2.3.0"
   }

@@ -1,3 +1,4 @@
 module.exports = {
-  Dice: require('./dice')
+  Arelith: require('./arelith'),
+  Dice: require('./dice'),
 };

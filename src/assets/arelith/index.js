@@ -7,5 +7,4 @@ module.exports = {
   ArelithPortal,
   ArelithServers,
   status: require('./status'),
-  updates: require('./updates'),
 };

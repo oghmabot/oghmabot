@@ -29,7 +29,7 @@ const serverStateToEmbed = (server, state) => {
   embed.setColor(state === 'Online' ? 0x00ff00 : 0xffcc00);
   embed.setTitle(`${server.name} is now ${state.toLowerCase()}.`);
   embed.setTimestamp();
-  embed.setThumbnail(server.thumbnail);
+  embed.setThumbnail(server.img);
   return embed;
 };
 

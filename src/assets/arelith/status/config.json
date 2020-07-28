@@ -5,21 +5,25 @@
   "ArelithServers": [
     {
       "name": "Cordor and Planes",
+      "abbreviations": ["c", "p", "cp", "cnp", "c&p", "cordor", "cities", "planes"],
       "img": "http://portal.nwnarelith.com/images/planes_header.jpg",
       "port": 5122
     },
     {
       "name": "Distance Shores",
+      "abbreviations": ["d", "ds", "distant", "shores"],
       "img": "http://portal.nwnarelith.com/images/distant_shores_header.jpg",
       "port": 5121
     },
     {
       "name": "Surface",
+      "abbreviations": ["s", "surface"],
       "img": "http://portal.arelith.com/images/surface_header.jpg",
       "port": 5123
     },
     {
       "name": "Underdark",
+      "abbreviations": ["u", "ud", "underdark"],
       "img": "http://portal.nwnarelith.com/images/underdark_header.jpg",
       "port": 5124
     }

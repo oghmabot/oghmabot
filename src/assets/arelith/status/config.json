@@ -1,5 +1,6 @@
 {
   "ArelithIP": "145.239.204.29",
+  "ArelithPortal": "http://portal.nwnarelith.com/",
   "BeamdogAPI": "https://api.nwn.beamdog.net/v1/servers/",
   "ArelithServers": [
     {

@@ -65,12 +65,7 @@ module.exports = class Status extends Command {
   }
 
   createStatusEmbed(server, status) {
-    const { ArelithPortal } = Arelith;
     const { serverStateToEmbed } = Arelith.status;
-    const embed = serverStateToEmbed(server, status.state);
-    embed.setTitle(server.name);
-    embed.setDescription(`**${status.state}** :hourglass: ${status.uptime} :busts_in_silhouette: ${status.players}`);
-    embed.setURL(ArelithPortal);
-    return embed;
+    return serverStateToEmbed(server, status);
   }
 };

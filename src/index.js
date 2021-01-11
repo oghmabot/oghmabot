@@ -3,6 +3,7 @@
  * @ignore
  */
 const config = require('./config.json');
+const { Arelith } = require('./assets');
 const { loggedInServersToEmbed, loggedInServersToString } = require('./util');
 const { CommandoClient } = require('discord.js-commando');
 const dotenv = require('dotenv');
@@ -57,3 +58,9 @@ client.on('ready', () => {
  * @ignore
  */
 client.login(process.env.BOT_TOKEN);
+
+/**
+ * Set intervals
+ * @ignore
+ */
+setInterval(() => Arelith.status.updateServerStatus(client), 1000);

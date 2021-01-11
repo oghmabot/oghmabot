@@ -1,35 +1,45 @@
 'use strict';
 
-const { ArelithIP, ArelithServers, BeamdogAPI } = require('./config.json');
+const { ArelithIP, ArelithPortal, ArelithServers, BeamdogAPI } = require('./config.json');
 const { getEnmap } = require('../../../db');
 const { RichEmbed } = require('discord.js');
 const fetch = require('node-fetch');
 
 const updateServerStatus = async (client) => {
   const serversEnmap = getEnmap('servers');
+  const settingsEnmap = getEnmap('settings');
 
   for(const i in ArelithServers) {
     const server = ArelithServers[i];
     const status = await fetchServerStatus(server);
 
-    if(status.state === 'Online' && serversEnmap.get(i, 'state') !== 'Online') {
-      postServerStatus(client, server, status);
+    if(serversEnmap.has(server.name) && serversEnmap.get(server.name, 'state') !== status.state) {
+      for(const key of settingsEnmap.indexes) {
+        const { active, channel } = settingsEnmap.fetch(key).status;
+        if(active) {
+          client.guilds.find(g => g.id == key).channels.find(c => c.id == channel).send(postServerStatus(client, server, status));
+        }
+      }
     }
-    serversEnmap.set(i, status);
+
+    serversEnmap.set(server.name, status);
   }
 };
 
 const postServerStatus = (client, server, status) => {
-  const statusEmbed = serverStateToEmbed(server, status.state);
+  const statusEmbed = serverStateToEmbed(server, status);
   return statusEmbed; // TODO: Iterate over webhooks that want server status updates
 };
 
-const serverStateToEmbed = (server, state) => {
+const serverStateToEmbed = (server, status) => {
   const embed = new RichEmbed();
-  embed.setColor(state === 'Online' ? 0x00ff00 : 0xffcc00);
-  embed.setTitle(`${server.name} is now ${state.toLowerCase()}.`);
+  embed.setColor(status.state === 'Online' ? 0x00ff00 : 0xffcc00);
+  embed.setTitle(`${server.name} is now ${status.state.toLowerCase()}.`);
   embed.setTimestamp();
   embed.setThumbnail(server.img);
+  embed.setTitle(server.name);
+  embed.setDescription(`**${status.state}** :hourglass: ${status.uptime} :busts_in_silhouette: ${status.players}`);
+  embed.setURL(ArelithPortal);
   return embed;
 };
 

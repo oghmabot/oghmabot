@@ -1,6 +1,7 @@
 'use strict';
 
 const { Arelith } = require('../../assets');
+const { getEnmap } = require('../../db');
 const { Command } = require('discord.js-commando');
 
 module.exports = class Status extends Command {
@@ -28,7 +29,8 @@ module.exports = class Status extends Command {
     } = this.processOptions(this.preProcessOptions(options));
 
     if(here) {
-      // TODO: Implement setting a webhook in given channel (msg.channel)
+      this.setStatusUpdates(msg.channel);
+      return msg.say('Server status updates will be updated here.');
     } else if(requestedServers) {
       const { fetchServerStatus } = Arelith.status;
       requestedServers.forEach(async server => {
@@ -47,6 +49,14 @@ module.exports = class Status extends Command {
       here: options.includes('here'),
       requestedServers: this.resolveRequestedServers(options),
     };
+  }
+
+  async setStatusUpdates(channel) {
+    const settingsEnmap = await getEnmap('settings');
+    await settingsEnmap.set(channel.guild.id, {
+      active: true,
+      channel: channel.id,
+    }, 'status');
   }
 
   resolveRequestedServers(input) {

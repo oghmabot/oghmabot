@@ -2,9 +2,9 @@
   "name": "y",
   "version": "1.0.0",
   "description": "A utility bot for things related to the Arelith NWN PW.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node src",
+    "start": "node dist",
     "test": "jest",
     "eslint": "eslint ./src/**/*.ts",
     "clean": "rm -rf dist",
@@ -37,8 +37,8 @@
     "typescript-eslint": "0.0.1-alpha.0"
   },
   "dependencies": {
-    "discord.js": "^11.6.4",
-    "discord.js-commando": "^0.10.0",
+    "discord.js": "^12.5.1",
+    "discord.js-commando": "github:discordjs/commando",
     "node-fetch": "^2.6.1",
     "pg": "^8.5.1",
     "pg-connection-string": "^2.4.0",

@@ -1,11 +1,10 @@
-'use strict';
-const { Dice } = require('../../assets');
-const { diceRollRegExp, rollAny } = Dice;
-const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
+import { MessageEmbed } from 'discord.js';
+import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
 
-module.exports = class Roll extends Command {
-  constructor(client) {
+import { diceRollRegExp, rollAny } from '../../assets/dice';
+
+export class Roll extends Command {
+  constructor(client: CommandoClient) {
     super(client, {
       name: 'roll',
       group: 'standard',
@@ -16,7 +15,7 @@ module.exports = class Roll extends Command {
           key: 'roll',
           type: 'string',
           prompt: 'Specify the roll you want to make.',
-          validate: roll => {
+          validate: (roll: string) => {
             if (diceRollRegExp.test(roll.replace(/\s/g, ''))) return true;
             return 'That\'s not a valid form of dice notation.';
           },
@@ -25,12 +24,12 @@ module.exports = class Roll extends Command {
     });
   }
 
-  async run(msg, { roll }) {
+  async run(msg: CommandoMessage, { roll }: { roll: string }): Promise<any> {
     const {
       rollString,
       result,
     } = rollAny(roll.replace(/\s/g, ''));
-    const embed = new RichEmbed();
+    const embed = new MessageEmbed();
     embed.setColor(0xffffff);
     embed.setDescription(`Roll ${rollString}: **${result}**`);
     return msg.embed(embed);

@@ -1,4 +1,4 @@
-const { rollAny, rollSingleDie } = require('./dice');
+import { rollAny, rollSingleDie } from './dice';
 
 describe('Dice', () => {
 

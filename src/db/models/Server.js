@@ -31,6 +31,10 @@ class Server extends Model {
   static async addServer(serverInfo) {
     return await Server.create(serverInfo);
   }
+
+  static async getServers() {
+    return await Server.findAll();
+  }
 }
 
 module.exports = {

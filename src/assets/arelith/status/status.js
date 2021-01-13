@@ -1,10 +1,28 @@
 'use strict';
 
-const { ArelithIP, ArelithPortal, ArelithServers, BeamdogAPI } = require('./config.json');
-const { RichEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const fetch = require('node-fetch');
 
+const { Server } = require('../../../db');
+
+const ArelithPortal = 'http://portal.nwnarelith.com/';
+const BeamdogAPI = 'https://api.nwn.beamdog.net/v1/servers/';
+
 const updateServerStatus = async (client) => {
+  for (const server of await Server.getServers()) {
+    const status = await fetchServerStatus(server);
+
+    if (/*status.state !== */ false) {
+      /*
+      for (const channel of await StatusUpdate.getChannels()) {
+        // Use postServerStatus to post embed to each subscribed channel
+        const { id } = channel;
+        client.channels.cache.find(c => c.id == id).send(postServerStatus(client, server, status));
+      }
+      */
+    }
+  }
+
   /*const serversEnmap = getEnmap('servers');
   const settingsEnmap = getEnmap('settings');
 
@@ -31,7 +49,7 @@ const postServerStatus = (client, server, status) => {
 };
 
 const serverStateToEmbed = (server, status) => {
-  const embed = new RichEmbed();
+  const embed = new MessageEmbed();
   embed.setColor(status.state === 'Online' ? 0x00ff00 : 0xffcc00);
   embed.setTitle(`${server.name} is now ${status.state.toLowerCase()}.`);
   embed.setTimestamp();
@@ -43,7 +61,7 @@ const serverStateToEmbed = (server, status) => {
 };
 
 const fetchServerStatus = async (server) => {
-  const apiResponse = await fetch(`${BeamdogAPI}${ArelithIP}/${server.port}`).then(response => response.json());
+  const apiResponse = await fetch(`${BeamdogAPI}${server.ip}/${server.port}`).then(response => response.json());
   return parseApiResponse(apiResponse);
 };
 

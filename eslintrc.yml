@@ -1,0 +1,28 @@
+env:
+  node: true
+  es2020: true
+extends:
+  - eslint:recommended
+  - plugin:jest/recommended
+  - plugin:@typescript-eslint/recommended
+  - plugin:@typescript-eslint/eslint-recommended
+parser: '@typescript-eslint/parser'
+parserOptions:
+  ecmaVersion: 11
+  warnOnUnsupportedTypeScriptVersion: true
+plugins:
+  - '@typescript-eslint'
+  - 'jest'
+rules:
+  '@typescript-eslint/no-inferrable-types': 0
+  'arrow-spacing': error
+  'indent': 
+    - error
+    - 2
+    - 'SwitchCase': 1
+  'keyword-spacing': error
+  'no-trailing-spaces': error
+  'prefer-const': error
+  'semi': 
+    - error
+    - always

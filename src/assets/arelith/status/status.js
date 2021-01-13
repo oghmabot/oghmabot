@@ -1,12 +1,11 @@
 'use strict';
 
 const { ArelithIP, ArelithPortal, ArelithServers, BeamdogAPI } = require('./config.json');
-const { getEnmap } = require('../../../db');
 const { RichEmbed } = require('discord.js');
 const fetch = require('node-fetch');
 
 const updateServerStatus = async (client) => {
-  const serversEnmap = getEnmap('servers');
+  /*const serversEnmap = getEnmap('servers');
   const settingsEnmap = getEnmap('settings');
 
   for(const i in ArelithServers) {
@@ -23,7 +22,7 @@ const updateServerStatus = async (client) => {
     }
 
     serversEnmap.set(server.name, status);
-  }
+  }*/
 };
 
 const postServerStatus = (client, server, status) => {

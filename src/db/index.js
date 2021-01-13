@@ -1,7 +1,25 @@
 'use strict';
 
-const Enmap = require('enmap');
+const { Server } = require('./models/Server');
 
 module.exports = {
-  getEnmap: (name, options) => new Enmap({ name, ...options }),
+  initialize: async sequelize => {
+    Server.init(sequelize);
+    await sequelize.sync();
+
+    const { ArelithIP, ArelithPortal, ArelithServers } = require('../assets/arelith/status/config.json');
+
+    const servers = ArelithServers.map(s => Server.addServer({
+      id: ArelithIP.replace(/[.]/g, '') + s.port,
+      name: s.name,
+      alias: s.abbreviations,
+      ip: ArelithIP,
+      port: s.port,
+      href: ArelithPortal,
+      img: s.img,
+    }));
+
+    Promise.all(servers).then(async () => await sequelize.sync());
+  },
+  Server,
 };

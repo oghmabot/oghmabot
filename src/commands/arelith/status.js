@@ -1,7 +1,6 @@
 'use strict';
 
 const { Arelith } = require('../../assets');
-const { getEnmap } = require('../../db');
 const { Command } = require('discord.js-commando');
 
 module.exports = class Status extends Command {
@@ -52,11 +51,7 @@ module.exports = class Status extends Command {
   }
 
   async setStatusUpdates(channel) {
-    const settingsEnmap = await getEnmap('settings');
-    await settingsEnmap.set(channel.guild.id, {
-      active: true,
-      channel: channel.id,
-    }, 'status');
+    console.warn('setStatusUpdates not implemented', channel);
   }
 
   resolveRequestedServers(input) {

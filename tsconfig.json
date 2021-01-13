@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "strict": true,
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "exclude": ["dist", "node_modules", "**/*.spec.ts"]
+}

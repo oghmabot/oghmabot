@@ -63,4 +63,15 @@ client.login(process.env.BOT_TOKEN);
  * Set intervals
  * @ignore
  */
-setInterval(() => Arelith.status.updateServerStatus(client), 1000);
+setInterval(() => Arelith.status.updateServerStatus(client), 60000);
+
+const { Sequelize } = require('sequelize');
+
+const sql = new Sequelize(process.env.DATABASE_URL, {
+  dialectOptions: { ssl: { rejectUnauthorized: false }},
+});
+
+(async () => {
+  const { initialize } = require('./db');
+  await initialize(sql);
+})();

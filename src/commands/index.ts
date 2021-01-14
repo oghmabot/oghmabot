@@ -1,2 +1,2 @@
-export { Roll } from './standard/roll';
-export { Status } from './arelith/status'
+export { RollCommand } from './standard/roll';
+export { StatusCommand } from './standard/status';

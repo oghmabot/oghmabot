@@ -3,13 +3,13 @@
 const { MessageEmbed } = require('discord.js');
 const fetch = require('node-fetch');
 
-const { Server } = require('../../../db');
+const { ServerProxy } = require('../../../db');
 
 const ArelithPortal = 'http://portal.nwnarelith.com/';
 const BeamdogAPI = 'https://api.nwn.beamdog.net/v1/servers/';
 
 const updateServerStatus = async (client) => {
-  for (const server of await Server.getServers()) {
+  for (const server of await ServerProxy.getServers()) {
     const status = await fetchServerStatus(server);
 
     if (/*status.state !== */ false) {

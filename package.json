@@ -37,8 +37,9 @@
     "typescript-eslint": "0.0.1-alpha.0"
   },
   "dependencies": {
+    "@half-elf/rogue": "^1.0.1",
     "discord.js": "^12.5.1",
-    "discord.js-commando": "github:discordjs/commando",
+    "discord.js-commando": "github:discordjs/Commando",
     "node-fetch": "^2.6.1",
     "pg": "^8.5.1",
     "pg-connection-string": "^2.4.0",

@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 
 import { Arelith } from './assets';
 import { loggedInServersToEmbed, loggedInServersToString } from './util';
-import { Roll, Status } from "./commands";
+import { RollCommand, StatusCommand } from "./commands";
 import { connect } from './db';
 
 /**
@@ -13,17 +13,10 @@ import { connect } from './db';
  */
 dotenv.config();
 
-const {
-  BOT_OWNERS
-} = process.env;
-
-/**
- * Instantiating the bot/client
- * @ignore
- */
+const { BOT_OWNER, BOT_PREFIX } = process.env;
 const client = new CommandoClient({
-  owner: process.env.BOT_OWNER,
-  commandPrefix: process.env.BOT_PREFIX || '-',
+  owner: BOT_OWNER,
+  commandPrefix: BOT_PREFIX || '-',
 });
 
 client.registry
@@ -32,7 +25,7 @@ client.registry
     ['arelith', 'Commands related to Arelith'],
   ])
   .registerDefaults()
-  .registerCommands([Status, Roll]);
+  .registerCommands([RollCommand, StatusCommand]);
 
 
 /**
@@ -43,6 +36,7 @@ client.on('ready', async () => {
   const { channels, guilds } = client;
   const { BOT_STATUS_CHANNEL, DATABASE_URL } = process.env;
 
+  if (!DATABASE_URL) throw new Error('Database URL missing.');
   await connect(DATABASE_URL);
 
   if (BOT_STATUS_CHANNEL) {

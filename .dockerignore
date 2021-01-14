@@ -1,0 +1,9 @@
+node_modules
+npm-debug.log
+heroku.yml
+.git*
+.eslint*
+jest.*
+README.md
+**/*.spec.js
+**/*.spec.ts

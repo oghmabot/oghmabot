@@ -1,10 +1,10 @@
-import { Channel } from "discord.js";
+import { Channel, MessageEmbed } from "discord.js";
 import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
 
 import { Arelith } from '../../assets';
-import { Server } from '../../db';
+import { Server, ServerProxy } from '../../db';
 
-export class Status extends Command {
+export class StatusCommand extends Command {
   constructor(client: CommandoClient) {
     super(client, {
       name: 'status',
@@ -28,10 +28,10 @@ export class Status extends Command {
       requestedServers,
     } = await this.processOptions(this.preProcessOptions(options));
 
-    if(here) {
+    if (here) {
       this.setStatusUpdates(msg.channel);
       return msg.say('Server status updates will be updated here.');
-    } else if(requestedServers) {
+    } else if (requestedServers) {
       const { fetchServerStatus } = Arelith.status;
       requestedServers.forEach(async (server: any) => {
         const status = await fetchServerStatus(server);
@@ -44,7 +44,7 @@ export class Status extends Command {
     return options.toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '').split(' ');
   }
 
-  async processOptions(options: string[]) {
+  async processOptions(options: string[]): Promise<{ here: boolean; requestedServers: Server[] }> {
     return {
       here: options.includes('here'),
       requestedServers: await this.resolveRequestedServers(options),
@@ -55,15 +55,15 @@ export class Status extends Command {
     console.warn('setStatusUpdates not implemented', channel);
   }
 
-  async resolveRequestedServers(input: string[]) {
-    const servers = await Server.getServers();
-    return servers.filter((server: { abbreviations: { filter: (arg0: (abbr: any) => boolean) => { (): any; new(): any; length: any; }; }; }) => {
-      return server.abbreviations.filter(abbr => input.includes(abbr)).length;
+  async resolveRequestedServers(input: string[]): Promise<Server[]> {
+    const servers = await ServerProxy.getServers();
+    return servers.filter(server => {
+      return server.alias?.filter(abbr => input.includes(abbr)).length;
     }) || servers;
   }
 
-  createStatusEmbed(server: any, status: any) {
+  createStatusEmbed(server: Server, status: any): MessageEmbed {
     const { serverStateToEmbed } = Arelith.status;
     return serverStateToEmbed(server, status);
   }
-};
+}

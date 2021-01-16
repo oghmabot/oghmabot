@@ -42,4 +42,10 @@ export class SubscriptionModel extends Model<Subscription> {
       channel: channelId,
     },
   })).map(s => s.get());
+
+  static getSubscriptionsForServer = async (serverId: string): Promise<Subscription[]> => (await SubscriptionModel.findAll({
+    where: {
+      server: serverId,
+    },
+  })).map(s => s.get());
 }

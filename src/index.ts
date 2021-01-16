@@ -3,10 +3,8 @@ import { CommandoClient } from 'discord.js-commando';
 import dotenv from 'dotenv';
 
 import { loggedInServersToEmbed, loggedInServersToString } from './util';
-import { AddCommand,  InitializeCommand, RollCommand, StatusCommand } from "./commands";
-import { connect } from './data';
-import { SubscribeCommand } from "./commands/standard/subscribe";
-import { UnsubscribeCommand } from "./commands/standard/unsubscribe";
+import { AddCommand,  InitializeCommand, RollCommand, StatusCommand, SubscribeCommand, UnsubscribeCommand } from "./commands";
+import { connect, StatusPoller } from './data';
 
 /**
  * Set environment variables from .env, if present
@@ -59,3 +57,5 @@ client.on('ready', async () => {
  * @ignore
  */
 client.login(BOT_TOKEN);
+
+new StatusPoller(client);

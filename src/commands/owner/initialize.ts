@@ -1,5 +1,5 @@
 import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
-import { initialize, ServerModel } from "../../data";
+import { initialize } from "../../data";
 
 export class InitializeCommand extends Command {
   constructor(client: CommandoClient) {
@@ -9,11 +9,19 @@ export class InitializeCommand extends Command {
       memberName: 'initialize',
       description: 'Initialize resources.',
       ownerOnly: true,
+      args: [
+        {
+          key: 'force',
+          prompt: 'N/A',
+          type: 'boolean',
+          default: false,
+        },
+      ],
     });
   }
 
-  async run(msg: CommandoMessage): Promise<any> {
-    await initialize(true);
+  async run(msg: CommandoMessage, { force }: { force: boolean }): Promise<any> {
+    await initialize(force);
     return msg.say('Databases initialized.');
   }
 }

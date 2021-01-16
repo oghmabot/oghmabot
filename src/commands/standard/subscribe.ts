@@ -1,5 +1,7 @@
+import { Message } from "discord.js";
 import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
-import { ServerModel, SubscriptionModel } from "../../data";
+
+import { Server, ServerModel, SubscriptionModel } from "../../data";
 
 export class SubscribeCommand extends Command {
   constructor(client: CommandoClient) {
@@ -7,12 +9,12 @@ export class SubscribeCommand extends Command {
       name: 'subscribe',
       group: 'standard',
       memberName: 'subscribe',
-      description: 'Subscribe to server status updates in a specific channel.',
+      description: 'Subscribe to server status updates in current channel.',
       userPermissions: ['MANAGE_GUILD'],
       args: [
         {
           key: 'servers',
-          prompt: 'Specify which servers to subscribe to (default is all).',
+          prompt: 'Specify servers to subscribe to (default is all).',
           type: 'string',
           default: '',
         },
@@ -21,25 +23,38 @@ export class SubscribeCommand extends Command {
   }
 
   async run(msg: CommandoMessage, { servers }: { servers: string }): Promise<any> {
-    const added: { [key: string]: boolean } = {};
-    const requestedServers = await ServerModel.getServersFromStringParse(servers);
-    if (requestedServers) {
+    const requestedServers = servers === ''
+      ? await ServerModel.getAllServers()
+      : await ServerModel.getServersFromStringParse(servers);
+
+    return requestedServers.length === 0
+      ? await msg.say(`Input doesn't match any known servers.`)
+      : await this.subscribe(msg, requestedServers);
+  }
+
+  async subscribe(msg: CommandoMessage, servers: Server[]): Promise<Message | CommandoMessage> {
+    const added: string[] = [];
+    for (const server of servers) {
+      const subscription = {
+        channel: msg.channel.id,
+        server: server.id,
+        createdBy: msg.author.id,
+      };
+
       try {
-        requestedServers.forEach(async server => {
-          const subscription = {
-            channel: msg.channel.id,
-            server: server.id,
-          };
+        if (await SubscriptionModel.subscriptionExists(subscription)) {
+          console.warn('Subscription already exists:', subscription);
+        } else {
           await SubscriptionModel.addSubscription(subscription);
-          added[server.name] = true;
-        });
+          added.push(server.name);
+        }
       } catch (err) {
-        console.warn(err.message);
+        console.warn('Failed to register new subscription:', subscription);
       }
     }
 
-    return added
-      ? msg.reply(`Server status updates will be updated here for: ${Object.keys(added).join(', ')}.`)
-      : msg.reply('Server status subscription failed.');
+    return added.length > 0
+      ? msg.say(`Status updates will be posted in this channel for: ${added.join(', ')}`)
+      : msg.say('Status updates already subscribed to.');
   }
 }

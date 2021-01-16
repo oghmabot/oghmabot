@@ -23,7 +23,10 @@ export class StatusCommand extends Command {
   }
 
   async run(msg: CommandoMessage, { servers }: { servers: string }): Promise<any> {
-    const requestedServers = await ServerModel.getServersFromStringParse(servers);
+    const requestedServers = servers == ''
+      ? await ServerModel.getAllServers()
+      : await ServerModel.getServersFromStringParse(servers);
+
     if (requestedServers) {
       requestedServers.forEach(async server => {
         const status = StatusModel.fromBeamdogAPIResponse(await fetchServer(server.id));

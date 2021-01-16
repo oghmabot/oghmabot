@@ -1,8 +1,9 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
+import { DataTypes, FindOptions, Model, Sequelize } from "sequelize";
 
 export interface Subscription {
   channel: string;
   server: string;
+  createdBy?: string;
 }
 
 export class SubscriptionModel extends Model<Subscription> {
@@ -16,13 +17,29 @@ export class SubscriptionModel extends Model<Subscription> {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      createdBy: {
+        type: DataTypes.STRING,
+      },
     }, {
       sequelize,
-      modelName: 'subscription'
+      modelName: 'subscription',
     });
   }
 
   static addSubscription = async (subscription: Subscription): Promise<SubscriptionModel> => await SubscriptionModel.create(subscription);
 
-  static getSubscriptions = async (): Promise<Subscription[]> => (await SubscriptionModel.findAll()).map(s => s.get());
+  static subscriptionExists = async (subscription: Subscription): Promise<boolean> => !!(await SubscriptionModel.findOne({
+    where: {
+      channel: subscription.channel,
+      server: subscription.server,
+    },
+  }));
+
+  static getAllSubscriptions = async (): Promise<Subscription[]> => (await SubscriptionModel.findAll()).map(s => s.get());
+
+  static getSubscriptionsForChannel = async (channelId: string): Promise<Subscription[]> => (await SubscriptionModel.findAll({
+    where: {
+      channel: channelId,
+    },
+  })).map(s => s.get());
 }

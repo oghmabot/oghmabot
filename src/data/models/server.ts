@@ -1,4 +1,4 @@
-import { DataTypes, Model, Sequelize } from 'sequelize';
+import { DataTypes, FindOptions, Model, Sequelize } from 'sequelize';
 import { BeamdogAPIResponse } from '../proxy';
 
 export interface Server {
@@ -50,11 +50,21 @@ export class ServerModel extends Model<Server> {
 
   static addServer = async (serverInfo: Server): Promise<ServerModel> => await ServerModel.create(serverInfo);
 
-  static getServers = async (): Promise<Server[]> => (await ServerModel.findAll()).map(s => s.get());
+  static serverExists = async (server: Server): Promise<boolean> => (await ServerModel.getServerById(server.id)) !== undefined;
 
-  static async getServersFromStringParse(str: string, defaultToAll: boolean = true): Promise<Server[]> {
+  static getServerById = async (serverId: string): Promise<Server | undefined> => (await ServerModel.findByPk(serverId))?.get();
+
+  static getServers = async (whereClause: FindOptions): Promise<Server[]> => (await ServerModel.findAll(whereClause)).map(s => s.get());
+
+  static getAllServers = async (): Promise<Server[]> => (await ServerModel.findAll()).map(s => s.get());
+
+  static async getServersFromStringParse(str: string): Promise<Server[]> {
+    const allServers = await this.getAllServers();
     const splitString = str.toLowerCase().split(' ');
-    const servers = await this.getServers();
-    return servers.filter(server => !!splitString.find(inp => server.name.includes(inp) || server.alias?.includes(inp))) || defaultToAll ? servers : [];
+    return allServers.filter(server => {
+      for (const inp of splitString) {
+        if (server.alias?.includes(inp) || (inp.length >= 3 && server.name.toLowerCase().includes(inp))) return true;
+      }
+    });
   }
 }

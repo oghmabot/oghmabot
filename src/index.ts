@@ -6,6 +6,7 @@ import { loggedInServersToEmbed, loggedInServersToString } from './util';
 import { AddCommand,  InitializeCommand, RollCommand, StatusCommand } from "./commands";
 import { connect } from './data';
 import { SubscribeCommand } from "./commands/standard/subscribe";
+import { UnsubscribeCommand } from "./commands/standard/unsubscribe";
 
 /**
  * Set environment variables from .env, if present
@@ -32,7 +33,7 @@ client.registry
     ['standard', 'Standard commands.'],
   ])
   .registerDefaults()
-  .registerCommands([AddCommand, InitializeCommand, RollCommand, StatusCommand, SubscribeCommand]);
+  .registerCommands([AddCommand, InitializeCommand, RollCommand, StatusCommand, SubscribeCommand, UnsubscribeCommand]);
 
 /**
  * When bot is ready, output logged in servers

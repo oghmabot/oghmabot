@@ -16,6 +16,9 @@ plugins:
 rules:
   '@typescript-eslint/no-inferrable-types': 0
   'arrow-spacing': error
+  'comma-dangle':
+    - warn
+    - always-multiline
   'indent': 
     - error
     - 2

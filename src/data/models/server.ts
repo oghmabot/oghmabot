@@ -1,7 +1,8 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
+import { BeamdogAPIResponse } from '../proxy';
 
 export interface Server {
-  id: number;
+  id: string;
   name: string;
   ip: string;
   port: number;
@@ -10,11 +11,11 @@ export interface Server {
   img?: string;
 }
 
-export class ServerProxy extends Model<Server> {
-  static initialize(sequelize: Sequelize): ServerProxy {
+export class ServerModel extends Model<Server> {
+  static initialize(sequelize: Sequelize): ServerModel {
     return this.init({
       id: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.STRING,
         primaryKey: true,
       },
       name: {
@@ -38,12 +39,19 @@ export class ServerProxy extends Model<Server> {
     });
   }
 
-  static async addServer(serverInfo: Server): Promise<ServerProxy> {
-    return await ServerProxy.create(serverInfo);
-  }
+  static fromBeamdogAPIResponse = (response: BeamdogAPIResponse): Server => (
+    {
+      id: response.kx_pk,
+      name: response.session_name,
+      ip: response.host,
+      port: response.port,
+    }
+  );
+
+  static addServer = async (serverInfo: Server): Promise<ServerModel> => await ServerModel.create(serverInfo);
 
   static async getServers(): Promise<Server[]> {
-    const servers = await ServerProxy.findAll();
+    const servers = await this.findAll();
     return servers.map(s => s.get());
   }
 }

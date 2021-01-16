@@ -1,69 +1,45 @@
-import { Channel, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
 
-import { Arelith } from '../../assets';
-import { Server, ServerProxy } from '../../db';
+import { Server, ServerModel, Status, serverStatusToEmbed, StatusModel } from '../../data';
+import { fetchServer } from '../../data/proxy/beamdog';
 
 export class StatusCommand extends Command {
   constructor(client: CommandoClient) {
     super(client, {
       name: 'status',
-      group: 'arelith',
+      group: 'standard',
       memberName: 'status',
-      description: 'Replies with the current status of Arelith servers. A server may be specified.',
+      description: 'Replies with the current status of given server(s).',
       args: [
         {
-          key: 'options',
+          key: 'servers',
+          prompt: 'N/A',
           type: 'string',
-          prompt: 'Set Oghmabot to announce statuses here?',
           default: '',
-        },
-      ],
+        }
+      ]
     });
   }
 
-  async run(msg: CommandoMessage, { options }: { options: string }): Promise<any> {
-    const {
-      here,
-      requestedServers,
-    } = await this.processOptions(this.preProcessOptions(options));
-
-    if (here) {
-      this.setStatusUpdates(msg.channel);
-      return msg.say('Server status updates will be updated here.');
-    } else if (requestedServers) {
-      const { fetchServerStatus } = Arelith.status;
-      requestedServers.forEach(async (server: any) => {
-        const status = await fetchServerStatus(server);
+  async run(msg: CommandoMessage, { servers }: { servers: string }): Promise<any> {
+    const requestedServers = await this.resolveRequestedServers(servers.toLowerCase().split(' '));
+    if (requestedServers) {
+      requestedServers.forEach(async (server: Server) => {
+        const status = StatusModel.fromBeamdogAPIResponse(await fetchServer(server.id));
         await msg.embed(this.createStatusEmbed(server, status));
       });
     }
   }
 
-  preProcessOptions(options: string): string[] {
-    return options.toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '').split(' ');
-  }
-
-  async processOptions(options: string[]): Promise<{ here: boolean; requestedServers: Server[] }> {
-    return {
-      here: options.includes('here'),
-      requestedServers: await this.resolveRequestedServers(options),
-    };
-  }
-
-  async setStatusUpdates(channel: Channel) {
-    console.warn('setStatusUpdates not implemented', channel);
-  }
+  preProcessOptions = (options: string): string[] => options.toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '').split(' ');
 
   async resolveRequestedServers(input: string[]): Promise<Server[]> {
-    const servers = await ServerProxy.getServers();
+    const servers = await ServerModel.getServers();
     return servers.filter(server => {
       return server.alias?.filter(abbr => input.includes(abbr)).length;
     }) || servers;
   }
 
-  createStatusEmbed(server: Server, status: any): MessageEmbed {
-    const { serverStateToEmbed } = Arelith.status;
-    return serverStateToEmbed(server, status);
-  }
+  createStatusEmbed = (server: Server, status: Status): MessageEmbed => serverStatusToEmbed(server, status);
 }

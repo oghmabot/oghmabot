@@ -22,8 +22,7 @@ export class SubscriptionModel extends Model<Subscription> {
     });
   }
 
-  static async getSubscriptions(): Promise<Subscription[]> {
-    const servers = await this.findAll();
-    return servers.map(s => s.get());
-  }
+  static addSubscription = async (subscription: Subscription): Promise<SubscriptionModel> => await SubscriptionModel.create(subscription);
+
+  static getSubscriptions = async (): Promise<Subscription[]> => (await SubscriptionModel.findAll()).map(s => s.get());
 }

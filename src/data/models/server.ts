@@ -50,8 +50,11 @@ export class ServerModel extends Model<Server> {
 
   static addServer = async (serverInfo: Server): Promise<ServerModel> => await ServerModel.create(serverInfo);
 
-  static async getServers(): Promise<Server[]> {
-    const servers = await this.findAll();
-    return servers.map(s => s.get());
+  static getServers = async (): Promise<Server[]> => (await ServerModel.findAll()).map(s => s.get());
+
+  static async getServersFromStringParse(str: string, defaultToAll: boolean = true): Promise<Server[]> {
+    const splitString = str.toLowerCase().split(' ');
+    const servers = await this.getServers();
+    return servers.filter(server => !!splitString.find(inp => server.name.includes(inp) || server.alias?.includes(inp))) || defaultToAll ? servers : [];
   }
 }

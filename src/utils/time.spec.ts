@@ -1,4 +1,4 @@
-import { calculateTimeBetween, convertMillisecondsToTimestamp } from "./time";
+import { calculateTimeBetween, convertMillisecondsToTimestamp } from './time';
 
 describe('time', () => {
   describe('calculateTimeBetween', () => {

@@ -1,8 +1,8 @@
-import { TextChannel } from "discord.js";
+import { TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
 import dotenv from 'dotenv';
 
-import { getAllCommands } from "./commands";
+import { getAllCommands } from './commands';
 import { connect, StatusPoller } from './data';
 import { loggedInServersToEmbed, loggedInServersToString } from './utils';
 

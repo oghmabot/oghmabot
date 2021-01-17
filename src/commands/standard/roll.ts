@@ -1,5 +1,5 @@
 import { MessageEmbed } from 'discord.js';
-import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { roll, RollOptions, RollResult } from '@half-elf/rogue';
 
 export class RollCommand extends Command {

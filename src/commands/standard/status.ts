@@ -1,9 +1,9 @@
-import { MessageEmbed } from "discord.js";
-import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
+import { MessageEmbed } from 'discord.js';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 
 import { Server, ServerModel, Status, StatusModel } from '../../data';
 import { fetchServer } from '../../data/proxy/beamdog';
-import { serverStatusToEmbed } from "../../utils";
+import { serverStatusToEmbed } from '../../utils';
 
 export class StatusCommand extends Command {
   constructor(client: CommandoClient) {

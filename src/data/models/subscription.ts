@@ -1,4 +1,4 @@
-import { DataTypes, FindOptions, Model, Sequelize } from "sequelize";
+import { DataTypes, Model, Sequelize } from 'sequelize';
 
 export interface Subscription {
   channel: string;

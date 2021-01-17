@@ -1,5 +1,5 @@
-import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
-import { initialize } from "../../data";
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
+import { initialize } from '../../data';
 
 export class InitializeCommand extends Command {
   constructor(client: CommandoClient) {

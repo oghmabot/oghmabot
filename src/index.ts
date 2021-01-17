@@ -2,9 +2,9 @@ import { TextChannel } from "discord.js";
 import { CommandoClient } from 'discord.js-commando';
 import dotenv from 'dotenv';
 
-import { loggedInServersToEmbed, loggedInServersToString } from './util';
-import { AddCommand,  InitializeCommand, RollCommand, StatusCommand, SubscribeCommand, UnsubscribeCommand } from "./commands";
+import { getAllCommands } from "./commands";
 import { connect, StatusPoller } from './data';
+import { loggedInServersToEmbed, loggedInServersToString } from './util';
 
 /**
  * Set environment variables from .env, if present
@@ -31,7 +31,7 @@ client.registry
     ['standard', 'Standard commands.'],
   ])
   .registerDefaults()
-  .registerCommands([AddCommand, InitializeCommand, RollCommand, StatusCommand, SubscribeCommand, UnsubscribeCommand]);
+  .registerCommands(getAllCommands());
 
 /**
  * When bot is ready, output logged in servers

@@ -17,8 +17,8 @@ export class StatusCommand extends Command {
           prompt: 'N/A',
           type: 'string',
           default: '',
-        }
-      ]
+        },
+      ],
     });
   }
 

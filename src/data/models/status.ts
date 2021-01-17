@@ -32,7 +32,7 @@ export const serverStatusToEmbed = (server: Server, status: Status): MessageEmbe
   embed.setColor(status.online ? 0x00ff00 : 0xffcc00);
   embed.setDescription(status.online
     ? `**${state}** :hourglass: ${new Date(status.uptime).toISOString().substr(11, 8)} :busts_in_silhouette: ${status.players}`
-    : `**${state}** :disappointed: `
+    : `**${state}** :disappointed: `,
   );
   if (server.img) embed.setThumbnail(server.img);
   if (server.href) embed.setURL(server.href);

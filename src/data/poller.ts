@@ -14,14 +14,14 @@ export class StatusPoller {
   }
 
   pollAndUpdate = async (): Promise<void> => {
-    console.log('Polling Beamdog for server status changes...')
+    console.log('Polling Beamdog for server status changes...');
     const servers = await ServerModel.getAllServers();
     for (const server of servers) {
       const { id } = server;
       const currentStatus = StatusModel.fromBeamdogAPIResponse(await fetchServer(id));
 
       if (this.status[id] && this.status[id].online !== currentStatus.online) {
-        console.log('Found new server status, posting to subscribers.')
+        console.log('Found new server status, posting to subscribers.');
 
         const messageEmbed = serverStatusToEmbed(server, currentStatus);
         const subscriptions = await SubscriptionModel.getSubscriptionsForServer(id);

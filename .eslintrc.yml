@@ -24,6 +24,9 @@ rules:
     - 2
     - 'SwitchCase': 1
   'keyword-spacing': error
+  'linebreak-style': 
+      - error
+      - unix
   'no-trailing-spaces': error
   'prefer-const': error
   'semi': 

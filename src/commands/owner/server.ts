@@ -2,7 +2,7 @@ import { Message } from "discord.js";
 import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
 
 import { Server, ServerModel } from "../../data";
-import { fetchServer } from "../../data/proxy";
+import { BeamdogApiError, fetchServer } from "../../data/proxy";
 import { isValidBeamdogIdentifier, isValidURL } from "../../utils";
 
 interface ServerCommandArgs {
@@ -70,9 +70,10 @@ export class ServerCommand extends Command {
 
   async addNewServer(msg: CommandoMessage, args: ServerCommandArgs): Promise<Message | CommandoMessage> {
     const { identifier } = args;
-    const server = ServerModel.fromBeamdogAPIResponseBody(await fetchServer(identifier));
 
     try {
+      const server = ServerModel.fromBeamdogAPIResponseBody(await fetchServer(identifier));
+
       if (await ServerModel.serverExists(server)) {
         return msg.say('Server already exists.');
       } else {
@@ -80,7 +81,11 @@ export class ServerCommand extends Command {
         return msg.say(this.formatServerAddedReply(server));
       }
     } catch (err) {
-      console.error(err);
+      if (err instanceof BeamdogApiError) {
+        return this.handleBeamdogApiError(msg, err);
+      } else {
+        console.error(err);
+      }
     }
 
     return msg.say('Failed to add new server.');
@@ -151,6 +156,9 @@ export class ServerCommand extends Command {
 
     return msg.say(`Failed to set ${field}.`);
   }
+
+  handleBeamdogApiError = (msg: CommandoMessage, error: BeamdogApiError): Promise<Message | CommandoMessage> =>
+    msg.say(error.code === 400 ? 'Invalid identifier' : 'Server is unavailable or does not exist.')
 
   formatServerAddedReply = (server: Server): string => (
     'Server added.'

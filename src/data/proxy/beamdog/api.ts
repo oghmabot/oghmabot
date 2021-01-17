@@ -4,6 +4,10 @@ import { isValidBeamdogDBKey, isValidIPAndPort } from '../../../utils';
 
 const BeamdogAPI = 'https://api.nwn.beamdog.net/v1/servers/';
 
+export interface BeamdogMapper<M> {
+  fromBeamdogAPIResponseBody: () => M;
+}
+
 export interface BeamdogAPIResponseBody {
   first_seen: number;
   last_advertisement: number;

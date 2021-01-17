@@ -1,8 +1,8 @@
 import { TextChannel } from "discord.js";
 import { CommandoClient } from "discord.js-commando";
 
-import { ServerModel, serverStatusToEmbed, Status, StatusModel, SubscriptionModel } from "./models";
-import { fetchServer } from "./proxy";
+import { Server, ServerModel, serverStatusToEmbed, Status, StatusModel, SubscriptionModel } from "./models";
+import { BeamdogApiError, fetchServer } from "./proxy";
 
 export class StatusPoller {
   private client: CommandoClient;
@@ -17,24 +17,54 @@ export class StatusPoller {
     console.log('Polling Beamdog for server status changes...');
     const servers = await ServerModel.getAllServers();
     for (const server of servers) {
-      const { id } = server;
-      const currentStatus = StatusModel.fromBeamdogAPIResponseBody(await fetchServer(id));
+      const newStatus = await this.resolveNewStatus(server);
 
-      if (this.status[id] && this.status[id].online !== currentStatus.online) {
-        console.log('Found new server status, posting to subscribers.');
+      if (newStatus) {
+        const { id } = server;
 
-        const messageEmbed = serverStatusToEmbed(server, currentStatus);
-        const subscriptions = await SubscriptionModel.getSubscriptionsForServer(id);
+        if (this.status[id] && this.status[id].online !== newStatus.online) {
+          console.log('Found new server status, posting to subscribers.');
+          this.notifySubscribers(server, newStatus);
+        }
 
-        for (const sub of subscriptions) {
-          const channel = this.client.channels.cache.find(c => c.id === sub.channel) as TextChannel;
-          if (channel) {
-            channel.send('', messageEmbed);
-          }
+        this.status[id] = newStatus;
+      }
+    }
+  }
+
+  notifySubscribers = async (server: Server, status: Status): Promise<void> => {
+    const messageEmbed = serverStatusToEmbed(server, status);
+    for (const sub of await SubscriptionModel.getSubscriptionsForServer(server.id)) {
+      const channel = this.client.channels.cache.find(c => c.id === sub.channel) as TextChannel;
+      if (channel) {
+        channel.send('', messageEmbed);
+      }
+    }
+  }
+
+  resolveNewStatus = async (server: Server): Promise<Status | null> => {
+    try {
+      return StatusModel.fromBeamdogAPIResponseBody(await fetchServer(server.id));
+    } catch (err) {
+      if (err instanceof BeamdogApiError) {
+        if (err.code === 400) {
+          console.error('StatusPoller has attempted an invalid query against the Beamdog API.', err);
+        }
+
+        if (err.code === 404) {
+          const { name, last_seen, kx_pk } = this.status[server.id];
+          return {
+            name: name || name,
+            players: 0,
+            online: false,
+            uptime: 0,
+            last_seen: last_seen,
+            kx_pk: kx_pk || server.id,
+          };
         }
       }
-
-      this.status[id] = currentStatus;
     }
+
+    return null;
   }
 }

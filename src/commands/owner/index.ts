@@ -1,7 +1,7 @@
-import { AddCommand } from './add';
 import { InitializeCommand } from './initialize';
+import { ServerCommand } from './server';
 
 export const ownerCommands = () => [
-  AddCommand,
   InitializeCommand,
+  ServerCommand,
 ];

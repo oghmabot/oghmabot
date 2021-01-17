@@ -50,6 +50,12 @@ export class ServerModel extends Model<Server> {
 
   static addServer = async (serverInfo: Server): Promise<ServerModel> => await ServerModel.create(serverInfo);
 
+  static removeServer = async (server: Server): Promise<number> => await ServerModel.destroy({
+    where: {
+      id: server.id,
+    },
+  });
+
   static serverExists = async (server: Server): Promise<boolean> => (await ServerModel.getServerById(server.id)) !== undefined;
 
   static getServerById = async (serverId: string): Promise<Server | undefined> => (await ServerModel.findByPk(serverId))?.get();

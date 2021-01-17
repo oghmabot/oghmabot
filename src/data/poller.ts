@@ -45,7 +45,7 @@ export class StatusPoller {
 
   resolveNewStatus = async (server: Server): Promise<Status | null> => {
     try {
-      return StatusModel.fromBeamdogAPIResponseBody(await fetchServer(server.id));
+      return await fetchServer(server.id, StatusModel);
     } catch (err) {
       if (err instanceof BeamdogApiError) {
         if (err.code === 400) {

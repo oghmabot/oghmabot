@@ -72,7 +72,7 @@ export class ServerCommand extends Command {
     const { identifier } = args;
 
     try {
-      const server = ServerModel.fromBeamdogAPIResponseBody(await fetchServer(identifier));
+      const server = await fetchServer(identifier, ServerModel);
 
       if (await ServerModel.serverExists(server)) {
         return msg.say('Server already exists.');

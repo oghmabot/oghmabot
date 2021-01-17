@@ -1,4 +1,4 @@
-import { BeamdogAPIResponseBody } from "../proxy/beamdog";
+import { BeamdogApiResponseBody } from "../proxy/beamdog";
 import { calculateTimeBetween } from "../../utils";
 
 export interface Status {
@@ -11,7 +11,7 @@ export interface Status {
 }
 
 export class StatusModel {
-  static fromBeamdogAPIResponseBody = (response: BeamdogAPIResponseBody): Status => (
+  static fromBeamdogApiResponseBody = (response: BeamdogApiResponseBody): Status => (
     {
       name: response.session_name,
       players: response.current_players,

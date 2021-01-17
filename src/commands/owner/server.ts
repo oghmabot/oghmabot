@@ -1,8 +1,9 @@
 import { Message } from "discord.js";
 import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
-import { Server, ServerModel } from "../../data";
 
-import { fetchServer, isValidBeamdogIdentifier } from "../../data/proxy";
+import { Server, ServerModel } from "../../data";
+import { fetchServer } from "../../data/proxy";
+import { isValidBeamdogIdentifier, isValidURL } from "../../util";
 
 interface ServerCommandArgs {
   descriptor: string;
@@ -59,13 +60,14 @@ export class ServerCommand extends Command {
     }
 
     if (descriptor === 'href' || descriptor === 'link') {
-      // return await this.setServerLink(msg, args);
+      return await this.setUrlField(msg, args, 'href');
     }
 
     if (descriptor === 'img') {
-      // return await this.setServerImage(msg, args);
+      return await this.setUrlField(msg, args, 'link');
     }
   }
+
   async addNewServer(msg: CommandoMessage, args: ServerCommandArgs): Promise<Message | CommandoMessage> {
     const { identifier } = args;
     const server = ServerModel.fromBeamdogAPIResponse(await fetchServer(identifier));
@@ -90,7 +92,7 @@ export class ServerCommand extends Command {
     try {
       const server = await ServerModel.getServerById(identifier);
       if (server === undefined) return msg.say('Cannot remove that which does not exist.');
-      
+
       if (await ServerModel.removeServer(server)) return msg.say('Successfully removed server.');
     } catch (err) {
       console.error(err);
@@ -114,15 +116,40 @@ export class ServerCommand extends Command {
       }, {
         where: {
           id: server.id,
-        }
+        },
       });
-      
+
       return msg.say('Successfully added new aliases.');
     } catch (err) {
       console.error(err);
     }
 
     return msg.say('Failed to add alias.');
+  }
+
+  async setUrlField(msg: CommandoMessage, args: ServerCommandArgs, field: string): Promise<Message | CommandoMessage> {
+    const { identifier, input } = args;
+    if (!input || !isValidURL(input)) return msg.say('Invalid input.');
+
+    try {
+      const server = await ServerModel.getServerById(identifier);
+      if (!server) return msg.say('No known server by that identifier');
+
+      const newFields: { [field: string]: string } = {};
+      newFields[field] = input;
+
+      await ServerModel.update(newFields, {
+        where: {
+          id: server.id,
+        },
+      });
+
+      return msg.say(`Successfully set new ${field}.`);
+    } catch (err) {
+      console.error(err);
+    }
+
+    return msg.say(`Failed to set ${field}.`);
   }
 
   formatServerAddedReply = (server: Server): string => (

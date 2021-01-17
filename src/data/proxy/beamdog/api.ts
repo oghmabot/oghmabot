@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { isValidBeamdogDBKey, isValidIPAndPort } from './validator';
+import { isValidBeamdogDBKey, isValidIPAndPort } from '../../../util';
 
 const BeamdogAPI = 'https://api.nwn.beamdog.net/v1/servers';
 

@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 
 import { getAllCommands } from "./commands";
 import { connect, StatusPoller } from './data';
-import { loggedInServersToEmbed, loggedInServersToString } from './util';
+import { loggedInServersToEmbed, loggedInServersToString } from './utils';
 
 /**
  * Set environment variables from .env, if present

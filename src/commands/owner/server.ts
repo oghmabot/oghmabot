@@ -3,7 +3,7 @@ import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
 
 import { Server, ServerModel } from "../../data";
 import { fetchServer } from "../../data/proxy";
-import { isValidBeamdogIdentifier, isValidURL } from "../../util";
+import { isValidBeamdogIdentifier, isValidURL } from "../../utils";
 
 interface ServerCommandArgs {
   descriptor: string;
@@ -70,7 +70,7 @@ export class ServerCommand extends Command {
 
   async addNewServer(msg: CommandoMessage, args: ServerCommandArgs): Promise<Message | CommandoMessage> {
     const { identifier } = args;
-    const server = ServerModel.fromBeamdogAPIResponse(await fetchServer(identifier));
+    const server = ServerModel.fromBeamdogAPIResponseBody(await fetchServer(identifier));
 
     try {
       if (await ServerModel.serverExists(server)) {

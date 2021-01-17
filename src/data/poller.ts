@@ -18,7 +18,7 @@ export class StatusPoller {
     const servers = await ServerModel.getAllServers();
     for (const server of servers) {
       const { id } = server;
-      const currentStatus = StatusModel.fromBeamdogAPIResponse(await fetchServer(id));
+      const currentStatus = StatusModel.fromBeamdogAPIResponseBody(await fetchServer(id));
 
       if (this.status[id] && this.status[id].online !== currentStatus.online) {
         console.log('Found new server status, posting to subscribers.');

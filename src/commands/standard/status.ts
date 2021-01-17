@@ -29,7 +29,7 @@ export class StatusCommand extends Command {
 
     if (requestedServers) {
       requestedServers.forEach(async server => {
-        const status = StatusModel.fromBeamdogAPIResponse(await fetchServer(server.id));
+        const status = StatusModel.fromBeamdogAPIResponseBody(await fetchServer(server.id));
         await msg.embed(this.createStatusEmbed(server, status));
       });
     }

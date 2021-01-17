@@ -10,5 +10,3 @@ export const loggedInServersToEmbed = (servers: Collection<string, Guild>): Mess
 
 export const loggedInServersToString = (servers: Collection<string, Guild>): string =>
   `Logged in to servers: ${servers.map(g => g.name).join(', ')}`;
-
-export * from './validation';

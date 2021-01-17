@@ -1,5 +1,5 @@
 import { MessageEmbed } from "discord.js";
-import { BeamdogAPIResponse } from "../proxy/beamdog";
+import { BeamdogAPIResponseBody } from "../proxy/beamdog";
 import { Server } from "./server";
 
 export interface Status {
@@ -12,7 +12,7 @@ export interface Status {
 }
 
 export class StatusModel {
-  static fromBeamdogAPIResponse = (response: BeamdogAPIResponse): Status => (
+  static fromBeamdogAPIResponseBody = (response: BeamdogAPIResponseBody): Status => (
     {
       name: response.session_name,
       module: response.module_name,

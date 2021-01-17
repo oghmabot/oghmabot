@@ -1,5 +1,5 @@
 import { DataTypes, FindOptions, Model, Sequelize } from 'sequelize';
-import { BeamdogAPIResponse } from '../proxy';
+import { BeamdogAPIResponseBody } from '../proxy';
 
 export interface Server {
   id: string;
@@ -39,7 +39,7 @@ export class ServerModel extends Model<Server> {
     });
   }
 
-  static fromBeamdogAPIResponse = (response: BeamdogAPIResponse): Server => (
+  static fromBeamdogAPIResponseBody = (response: BeamdogAPIResponseBody): Server => (
     {
       id: response.kx_pk,
       name: response.session_name,

@@ -1,9 +1,10 @@
-import fetch from 'node-fetch';
-import { isValidBeamdogDBKey, isValidIPAndPort } from '../../../util';
+import fetch, { Response } from 'node-fetch';
 
-const BeamdogAPI = 'https://api.nwn.beamdog.net/v1/servers';
+import { isValidBeamdogDBKey, isValidIPAndPort } from '../../../utils';
 
-export interface BeamdogAPIResponse {
+const BeamdogAPI = 'https://api.nwn.beamdog.net/v1/servers/';
+
+export interface BeamdogAPIResponseBody {
   first_seen: number;
   last_advertisement: number;
   session_name: string;
@@ -16,15 +17,25 @@ export interface BeamdogAPIResponse {
   kx_pk: string;
 }
 
-export const fetchServer = async (identifier: string): Promise<BeamdogAPIResponse> => {
-  if (isValidBeamdogDBKey(identifier)) {
-    return await fetch(`${BeamdogAPI}/${identifier}`).then(res => res.json());
-  }
+export class BeamdogApiError extends Error {
+  code: number;
+  response: Response;
 
-  if (isValidIPAndPort(identifier)) {
-    const [ip, port] = identifier.split(':');
-    return await fetch(`${BeamdogAPI}/${ip}/${port}`).then(res => res.json());
+  constructor(response: Response, message?: string) {
+    super(message);
+    this.name = 'BeamdogApiError';
+    this.code = response.status;
+    this.response = response;
   }
+}
 
-  throw new Error('Invalid Beamdog identifier.');
+export const fetchServer = async (identifier: string): Promise<BeamdogAPIResponseBody> => {
+  const url = `${BeamdogAPI}${
+    (isValidBeamdogDBKey(identifier) && identifier) || (isValidIPAndPort(identifier) && identifier.replace(':', '/'))
+  }`;
+
+  const response = await fetch(url);
+  if (response.status !== 200) throw new BeamdogApiError(response, await response.text());
+
+  return await response.json();
 };

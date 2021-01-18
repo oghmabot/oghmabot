@@ -10,6 +10,6 @@ export const isValidIPAndPort = (addr: string): boolean => {
   return false;
 };
 
-export const isValidBeamdogDbKey = (key: string): boolean => key.length === 44;
+export const isValidBeamdogDbKey = (key: string): boolean => key.length === 44 && key.endsWith('=');
 
 export const isValidBeamdogIdentifier = (id: string): boolean => !!id && (isValidIPAndPort(id) || isValidBeamdogDbKey(id));

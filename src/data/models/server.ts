@@ -60,12 +60,13 @@ export class ServerModel extends Model<Server> {
 
   static getServerById = async (serverId: string): Promise<Server | undefined> => (await ServerModel.findByPk(serverId))?.get();
 
-  static getServers = async (whereClause: FindOptions): Promise<Server[]> => (await ServerModel.findAll(whereClause)).map(s => s.get());
-
-  static getAllServers = async (): Promise<Server[]> => (await ServerModel.findAll()).map(s => s.get());
+  static getServers = async (options?: FindOptions): Promise<Server[]> => (await ServerModel.findAll({
+    order: [['name', 'DESC']],
+    ...options,
+  })).map(s => s.get());
 
   static async getServersFromStringParse(str: string): Promise<Server[]> {
-    const allServers = await this.getAllServers();
+    const allServers = await this.getServers();
     const splitString = str.toLowerCase().split(' ');
     return allServers.filter(server => {
       for (const inp of splitString) {

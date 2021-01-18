@@ -16,7 +16,7 @@ export class StatusPoller {
 
   pollAndUpdate = async (): Promise<void> => {
     console.log('Polling Beamdog for server status changes...');
-    const servers = await ServerModel.getAllServers();
+    const servers = await ServerModel.getServers();
     for (const server of servers) {
       const newStatus = await this.resolveNewStatus(server);
 

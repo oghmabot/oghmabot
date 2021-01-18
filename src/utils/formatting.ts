@@ -1,5 +1,5 @@
 import { Collection, Guild, MessageEmbed } from 'discord.js';
-import { convertMillisecondsToTimestamp, calculateTimeBetween } from './time';
+import { convertMillisecondsToTimestamp, calculateTimeBetween, nowUnixTime } from './time';
 import { Server, Status } from '../data';
 
 export const loggedInServersToEmbed = (servers: Collection<string, Guild>): MessageEmbed => {
@@ -21,7 +21,7 @@ export const serverStatusToEmbed = (server: Server, status: Status): MessageEmbe
   embed.setColor(status.online ? 0x00ff00 : 0xffcc00);
   embed.setDescription(status.online
     ? `**${state}** :hourglass: ${new Date(status.uptime).toISOString().substr(11, 8)} :busts_in_silhouette: ${status.players}`
-    : `**${state}** :disappointed: ${status.last_seen && convertMillisecondsToTimestamp(calculateTimeBetween(status.last_seen, new Date().getMilliseconds()))}`,
+    : `**${state}** :disappointed: ${status.last_seen && convertMillisecondsToTimestamp(calculateTimeBetween(status.last_seen, nowUnixTime()))}`,
   );
   if (server.img) embed.setThumbnail(server.img);
   if (server.href) embed.setURL(server.href);

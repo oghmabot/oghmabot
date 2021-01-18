@@ -24,7 +24,7 @@ export class UnsubscribeCommand extends Command {
 
   async run(msg: CommandoMessage, { servers }: { servers: string }): Promise<any> {
     const requestedServers = servers === ''
-      ? await ServerModel.getAllServers()
+      ? await ServerModel.getServers()
       : await ServerModel.getServersFromStringParse(servers);
 
     return requestedServers.length === 0

@@ -40,6 +40,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: registry.heroku.com/oghmabot/worker:${{ github.sha }}
+          tags: registry.heroku.com/oghmabot/${{ github.ref }}:${{ github.sha }},registry.heroku.com/oghmabot/${{ github.ref }}:latest
           secrets: |
             GIT_AUTH_TOKEN=${{ github.token }}

@@ -11,11 +11,11 @@ export class SubscriptionModel extends Model<Subscription> {
     return this.init({
       channel: {
         type: DataTypes.STRING,
-        allowNull: false,
+        primaryKey: true,
       },
       server: {
         type: DataTypes.STRING,
-        allowNull: false,
+        primaryKey: true,
       },
       createdBy: {
         type: DataTypes.STRING,

@@ -7,7 +7,7 @@ export class SubscribeCommand extends Command {
   constructor(client: CommandoClient) {
     super(client, {
       name: 'subscribe',
-      group: 'standard',
+      group: 'nwn',
       memberName: 'subscribe',
       description: 'Subscribe to server status updates in current channel.',
       userPermissions: ['MANAGE_GUILD'],

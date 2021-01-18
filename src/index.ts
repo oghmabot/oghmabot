@@ -27,8 +27,9 @@ const client = new CommandoClient({
 
 client.registry
   .registerGroups([
-    ['owner', 'Commands usable only by the bot owner.'],
-    ['standard', 'Standard commands.'],
+    ['owner', 'Owner'],
+    ['standard', 'Standard'],
+    ['nwn', 'Neverwinter Nights'],
   ])
   .registerDefaults()
   .registerCommands(getAllCommands());

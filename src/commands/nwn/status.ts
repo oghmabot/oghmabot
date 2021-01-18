@@ -9,7 +9,7 @@ export class StatusCommand extends Command {
   constructor(client: CommandoClient) {
     super(client, {
       name: 'status',
-      group: 'standard',
+      group: 'nwn',
       memberName: 'status',
       description: 'Replies with the current status of given server(s).',
       args: [

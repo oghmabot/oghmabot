@@ -64,7 +64,7 @@ export class ServerCommand extends Command {
     }
 
     if (descriptor === 'img') {
-      return await this.setUrlField(msg, args, 'link');
+      return await this.setUrlField(msg, args, 'img');
     }
   }
 

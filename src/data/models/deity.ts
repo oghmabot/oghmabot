@@ -3,6 +3,8 @@ import { DataTypes, Model, Sequelize } from "sequelize";
 export interface Deity {
   url: string;
   name: string;
+  power_level?: string;
+  symbol?: string;
   titles?: string[];
   alignment?: string;
   clergy_alignments?: string[];
@@ -10,8 +12,11 @@ export interface Deity {
   worshipers?: string[];
   domains?: string[];
   dogma?: string;
+  ar_abstract?: boolean;
   ar_aspects?: string[];
   ar_category?: string;
+  ar_clergy_alignments?: string[];
+  thumbnail?: string;
 }
 
 export class DeityModel extends Model<Deity> {
@@ -25,6 +30,8 @@ export class DeityModel extends Model<Deity> {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      power_level: DataTypes.STRING,
+      symbol: DataTypes.STRING,
       titles: DataTypes.ARRAY(DataTypes.STRING),
       alignment: DataTypes.STRING,
       clergy_alignments: DataTypes.STRING,
@@ -32,8 +39,14 @@ export class DeityModel extends Model<Deity> {
       worshipers: DataTypes.ARRAY(DataTypes.STRING),
       domains: DataTypes.ARRAY(DataTypes.STRING),
       dogma: DataTypes.STRING,
+      ar_abstract: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
       ar_aspects: DataTypes.ARRAY(DataTypes.STRING),
       ar_category: DataTypes.STRING,
+      ar_clergy_alignments: DataTypes.ARRAY(DataTypes.STRING),
+      thumbnail: DataTypes.STRING,
     }, {
       sequelize,
       modelName: 'deity',

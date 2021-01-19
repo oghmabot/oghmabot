@@ -14,6 +14,7 @@ describe('formatting', ()  => {
 
     const mockStatusOnline = {
       name: mockServer.name,
+      passworded: false,
       players: 100,
       online: true,
       uptime: hourMs,
@@ -22,6 +23,7 @@ describe('formatting', ()  => {
 
     const mockStatusOffline = {
       name: mockServer.name,
+      passworded: false,
       players: 0,
       online: false,
       uptime: 0,

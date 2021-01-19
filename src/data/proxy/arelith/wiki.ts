@@ -3,7 +3,7 @@ import HTMLElementData from "beautiful-dom/dist/htmlelement";
 import fetch from "node-fetch";
 import { Deity } from "../../models";
 
-const WikiUrl = 'http://wiki.arelith.com/';
+const WikiUrl = 'http://wiki.arelith.com';
 const DeityTableUrl = 'http://wiki.arelith.com/Deity_Table';
 
 const fetchBeautifulDom = async (url: string) => new BeautifulDom(await fetch(url).then(response => response.text()));
@@ -17,7 +17,7 @@ const getAbstractWorshipFields = (deityName?: string): Partial<Deity> | undefine
       titles: ['The Abyss'],
       alignment: 'Chaotic Evil',
       clergy_alignments: ['CN', 'CE', 'NE'],
-      url: `${WikiUrl}Abyss`,
+      ar_wiki_href: `/Abyss`,
     };
   }
 
@@ -33,7 +33,7 @@ const getAbstractWorshipFields = (deityName?: string): Partial<Deity> | undefine
 };
 
 const fetchAndMapDeityPage = async (deity: Deity): Promise<Deity> => {
-  const dom = await fetchBeautifulDom(deity.url);
+  const dom = await fetchBeautifulDom(`${WikiUrl}${deity.ar_wiki_href}`);
   const [
     ,
     symbol,
@@ -67,7 +67,7 @@ const mapDeityTableRowToDeity = async (row: HTMLElementData): Promise<Deity> => 
   ] = row.querySelectorAll('td');
 
   const deity = {
-    url: `${WikiUrl}${url}`,
+    ar_wiki_href: `${url}`,
     name: name?.textContent.trim(),
     alignment: alignment?.textContent.trim(),
     clergy_alignments: ar_clergy_alignments?.textContent.trim().split(' '),

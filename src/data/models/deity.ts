@@ -1,7 +1,6 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 
 export interface Deity {
-  url: string;
   name: string;
   power_level?: string;
   symbol?: string;
@@ -16,16 +15,13 @@ export interface Deity {
   ar_aspects?: string[];
   ar_category?: string;
   ar_clergy_alignments?: string[];
+  ar_wiki_href?: string;
   thumbnail?: string;
 }
 
 export class DeityModel extends Model<Deity> {
   static initialize(sequelize: Sequelize): DeityModel {
     return this.init({
-      url: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
       name: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -46,6 +42,7 @@ export class DeityModel extends Model<Deity> {
       ar_aspects: DataTypes.ARRAY(DataTypes.STRING),
       ar_category: DataTypes.STRING,
       ar_clergy_alignments: DataTypes.ARRAY(DataTypes.STRING),
+      ar_wiki_href: DataTypes.STRING,
       thumbnail: DataTypes.STRING,
     }, {
       sequelize,

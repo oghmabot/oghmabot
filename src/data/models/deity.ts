@@ -1,4 +1,4 @@
-import { DataTypes, Model, Sequelize } from "sequelize/types";
+import { DataTypes, Model, Sequelize } from "sequelize";
 
 export interface Deity {
   url: string;

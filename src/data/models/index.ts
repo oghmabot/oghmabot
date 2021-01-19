@@ -8,6 +8,7 @@ export const initializeAllModels = (sql: Sequelize): void => {
   SubscriptionModel.initialize(sql);
 };
 
+export * from './deity';
 export * from './server';
 export * from './status';
 export * from './subscription';

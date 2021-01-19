@@ -1,7 +1,8 @@
-import { MessageEmbed, TextChannel } from 'discord.js';
+import { TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
+import { serverStatusToStatusUpdateEmbed } from '../utils';
 
-import { Server, ServerModel, Status, StatusColors, StatusModel, SubscriptionModel } from './models';
+import { Server, ServerModel, Status, StatusModel, SubscriptionModel } from './models';
 import { BeamdogApiError, fetchServer } from './proxy';
 
 export class StatusPoller {
@@ -69,13 +70,5 @@ export class StatusPoller {
     return null;
   }
 
-  createStatusUpdateEmbed = (server: Server, status: Status): MessageEmbed => {
-    const state = status.passworded ? 'restarting' : status.online ? 'online' : 'offline';
-    const embed = new MessageEmbed();
-    embed.setTimestamp();
-    embed.setTitle(`${server.name} is now ${state}.`);
-    embed.setColor(StatusColors[state]);
-    if (server.img) embed.setThumbnail(server.img);
-    return embed;
-  }
+  createStatusUpdateEmbed = serverStatusToStatusUpdateEmbed;
 }

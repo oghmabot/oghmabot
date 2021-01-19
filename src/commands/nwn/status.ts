@@ -36,5 +36,5 @@ export class StatusCommand extends Command {
     }
   }
 
-  createStatusEmbed = (server: Server, status: Status): MessageEmbed => serverStatusToEmbed(server, status);
+  createStatusEmbed = serverStatusToEmbed;
 }

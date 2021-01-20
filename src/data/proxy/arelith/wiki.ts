@@ -67,6 +67,7 @@ const mapDeityTableRowToDeity = async (row: HTMLElementData): Promise<Deity> => 
   ] = row.querySelectorAll('td');
 
   const deity = {
+    url: `${WikiUrl}${url}`,
     ar_wiki_href: `${url}`,
     name: name?.textContent.trim(),
     alignment: alignment?.textContent.trim(),

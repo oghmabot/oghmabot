@@ -17,6 +17,7 @@ export interface Deity {
   ar_clergy_alignments?: string[];
   ar_wiki_href?: string;
   thumbnail?: string;
+  url: string;
 }
 
 export class DeityModel extends Model<Deity> {
@@ -44,6 +45,7 @@ export class DeityModel extends Model<Deity> {
       ar_clergy_alignments: DataTypes.ARRAY(DataTypes.STRING),
       ar_wiki_href: DataTypes.STRING,
       thumbnail: DataTypes.STRING,
+      url: DataTypes.STRING,
     }, {
       sequelize,
       modelName: 'deity',

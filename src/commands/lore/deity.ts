@@ -1,4 +1,7 @@
+import { MessageEmbed } from "discord.js";
 import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
+import { Deity } from "../../data";
+import { fetchDeity } from "../../data/proxy";
 
 export class DeityCommand extends Command {
   constructor(client: CommandoClient) {
@@ -9,7 +12,7 @@ export class DeityCommand extends Command {
       description: 'Replies with the details of a deity in the Arelith pantheon.',
       args: [
         {
-          key: 'deity',
+          key: 'deityQuery',
           type: 'string',
           prompt: 'Specify deity of which you want to find details.'
         },
@@ -17,7 +20,55 @@ export class DeityCommand extends Command {
     });
   }
 
-  async run(msg: CommandoMessage, { deity }: { deity: string }): Promise<any> {
-    return;
+  async run(msg: CommandoMessage, { deityQuery }: { deityQuery: string }): Promise<any> {
+    const deity = await fetchDeity(deityQuery);
+
+    if (deity) {
+      return msg.embed(this.createDeityEmbed(deity));
+    }
+
+    return msg.say('Deity not found.')
+  }
+
+  createDeityEmbed = (deity: Deity): MessageEmbed => {
+    const { name, titles, alignment, dogma, ar_aspects, ar_clergy_alignments, thumbnail, url } = deity;
+    const embed = new MessageEmbed();
+    embed.setURL(url);
+    embed.setTitle(name);
+    embed.setDescription(`*${titles && titles.join(', ')}*`);
+    if (thumbnail) embed.setThumbnail(thumbnail);
+    embed.addFields(
+      {
+        name: 'Alignment',
+        value: alignment,
+      },
+      {
+        name: 'Clergy Alignments',
+        value: ar_clergy_alignments ? ar_clergy_alignments.join(', ') : 'N/A',
+      },
+      {
+        name: 'Aspects',
+        value: ar_aspects ? ar_aspects?.join(', ') : 'N/A',
+      },
+      {
+        name: ':book:',
+        value: this.createDeityEmbedInfoField(deity),
+      },
+      {
+        name: 'Dogma',
+        value: dogma ? dogma : 'N/A',
+      }
+    );
+    embed.setTimestamp();
+
+    return embed;
+  }
+
+  createDeityEmbedInfoField = (deity: Deity): string => {
+    const { symbol, portfolio, worshipers, domains } = deity;
+    return `**Symbol:** ${symbol}\n`
+      + `**Portfolio:** ${portfolio && portfolio.join(', ')}\n`
+      + `**Worshipers:** ${worshipers && worshipers.join(', ')}\n`
+      + `**Domains:** ${domains && domains.join(', ')}\n`;
   }
 }

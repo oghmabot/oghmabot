@@ -29,6 +29,7 @@ client.registry
   .registerGroups([
     ['owner', 'Owner'],
     ['standard', 'Standard'],
+    ['lore', 'Lore'],
     ['nwn', 'Neverwinter Nights'],
   ])
   .registerDefaults()

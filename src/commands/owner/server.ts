@@ -172,14 +172,14 @@ export class ServerCommand extends Command {
 
   formatServerAddedReply = (server: Server): string => (
     'Server added.'
-    + '\n```'
-    + `\nID: ${server.id}`
-    + `\nNAME: ${server.name}`
-    + `\nIP: ${server.ip}`
-    + `\nPORT: ${server.port}`
-    + `\nALIAS: ${server.alias}`
-    + `\nHREF: ${server.href}`
-    + `\nIMG: ${server.img}`
-    + '\n```'
+      + '\n```'
+      + `\nID: ${server.id}`
+      + `\nNAME: ${server.name}`
+      + `\nIP: ${server.ip}`
+      + `\nPORT: ${server.port}`
+      + `\nALIAS: ${server.alias}`
+      + `\nHREF: ${server.href}`
+      + `\nIMG: ${server.img}`
+      + '\n```'
   );
 }

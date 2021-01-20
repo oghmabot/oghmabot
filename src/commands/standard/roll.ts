@@ -1,6 +1,6 @@
-import { MessageEmbed } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { roll, RollOptions, RollResult } from '@half-elf/rogue';
+import { getOghmabotEmbed } from '../../utils';
 
 export class RollCommand extends Command {
   constructor(client: CommandoClient) {
@@ -32,10 +32,9 @@ export class RollCommand extends Command {
 
   formatRollResult(msg: CommandoMessage, roll: RollResult): Promise<any> {
     const { input, total, max, min, avg } = roll;
-    const embed = new MessageEmbed({
-      title: `:game_die: Result: **${total}**`,
-      description: `Rolled ${input}`,
-    });
+    const embed = getOghmabotEmbed();
+    embed.setTitle(`:game_die: Result: **${total}**`);
+    embed.setDescription(`Rolled ${input}`);
     if (max) embed.addField('Maximum', max, true);
     if (min) embed.addField('Minimum', min, true);
     if (avg) embed.addField('Average', avg, true);

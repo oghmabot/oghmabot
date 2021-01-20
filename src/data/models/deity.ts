@@ -1,5 +1,5 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
-import { FandomApiDeityObj, FandomFRWiki } from "../proxy";
+import { FandomApiDeityObj } from "../proxy";
 
 export interface Deity {
   name: string;
@@ -62,7 +62,7 @@ export class DeityModel extends Model<Deity> {
     {
       name: el.title,
       fandom_fr_id: el.id,
-      fandom_fr_url: `${FandomFRWiki}${el.url}`,
+      fandom_fr_url: el.url,
       pronunciation: el.abstract.substr(el.abstract.indexOf('(pronounced:') + 12, el.abstract.indexOf('listen') - 12 - el.abstract.indexOf('(pronounced:')).replace(/[0-9]+/g, '').split(' or:'),
       thumbnail: el.thumbnail.substring(0, el.thumbnail.indexOf('revision')),
     }

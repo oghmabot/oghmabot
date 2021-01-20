@@ -44,8 +44,9 @@ export async function fetchDeityDetails<M>(query: number | string, mapper?: Fand
     if (response.status !== 200) throw new Error(response.statusText);
 
     const json: FandomApiResponseBody = await response.json();
-    return mapper && json.items[id]
-      ? mapper.fromFandomApiDeityObj(json.items[id])
-      : json.items[id];
+    const deityObj: FandomApiDeityObj = { ...json.items[id], url: `${json.basePath}${json.items[id].url}` };
+    return mapper && deityObj
+      ? mapper.fromFandomApiDeityObj(deityObj)
+      : deityObj;
   }
 }

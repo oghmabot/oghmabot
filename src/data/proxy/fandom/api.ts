@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 
 const ForgottenRealmsApi = 'https://forgottenrealms.fandom.com/api/v1/';
-const ABSTRACT_SIZE = 100;
+const ABSTRACT_SIZE = 500;
 
 export interface FandomMapper<M> {
   fromFandomApiDeityObj(el: FandomApiDeityObj): M;

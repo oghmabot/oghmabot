@@ -18,6 +18,7 @@ export interface Deity {
   ar_category?: string;
   ar_clergy_alignments?: string[];
   ar_wiki_url?: string;
+  fandom_fr_abstract?: string;
   fandom_fr_id?: number;
   fandom_fr_url?: string;
   pronunciation?: string[];
@@ -44,6 +45,7 @@ export class DeityModel extends Model<Deity> {
       ar_category: DataTypes.STRING,
       ar_clergy_alignments: DataTypes.ARRAY(DataTypes.STRING),
       ar_wiki_url: DataTypes.STRING,
+      fandom_fr_abstract: DataTypes.STRING,
       fandom_fr_id: DataTypes.INTEGER,
       fandom_fr_url: DataTypes.STRING,
       pronunciation: DataTypes.ARRAY(DataTypes.STRING),
@@ -64,6 +66,7 @@ export class DeityModel extends Model<Deity> {
   static fromFandomApiDeityObj = (el: FandomApiDeityObj): Deity => (
     {
       name: el.title,
+      fandom_fr_abstract: el.abstract.replace(/\s*?[(]pronounced:.*[)]/, '').match(/^.*?[.]/)?.join(),
       fandom_fr_id: el.id,
       fandom_fr_url: el.url,
       pronunciation: el.abstract.substr(el.abstract.indexOf('(pronounced:') + 12, el.abstract.indexOf('listen') - 12 - el.abstract.indexOf('(pronounced:')).replace(/[0-9]+/g, '').split(' or:'),
@@ -72,7 +75,7 @@ export class DeityModel extends Model<Deity> {
   );
 
   static toEmbed = (deity: Deity): MessageEmbed => {
-    const { name, power_level, titles, alignment, dogma, ar_aspects, ar_clergy_alignments, ar_wiki_url, thumbnail } = deity;
+    const { name, power_level, titles, alignment, fandom_fr_abstract, ar_aspects, ar_clergy_alignments, ar_wiki_url, thumbnail } = deity;
     const embed = getOghmabotEmbed();
     embed.setTitle(name);
     embed.setDescription(`*${titles && titles.join(', ')}*`);
@@ -85,7 +88,7 @@ export class DeityModel extends Model<Deity> {
     if (ar_aspects?.length) embed.addField('Aspects', ar_aspects.join(', '));
     const infoField = DeityModel.getInfoFieldString(deity);
     if (infoField) embed.addField(':book:', infoField);
-    if (dogma) embed.addField('Dogma', dogma);
+    if (fandom_fr_abstract) embed.addField('The Forgotten Realms Wiki', fandom_fr_abstract);
 
     return embed;
   }

@@ -15,14 +15,14 @@ plugins:
   - 'jest'
 rules:
   '@typescript-eslint/no-inferrable-types': 0
+  '@typescript-eslint/indent': 
+    - error
+    - 2
+    - 'SwitchCase': 1
   'arrow-spacing': error
   'comma-dangle':
     - warn
     - always-multiline
-  'indent': 
-    - error
-    - 2
-    - 'SwitchCase': 1
   'keyword-spacing': error
   'linebreak-style': 
       - error

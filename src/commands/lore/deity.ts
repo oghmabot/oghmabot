@@ -33,7 +33,7 @@ export class DeityCommand extends Command {
   }
 
   createDeityEmbed = (deity: Deity): MessageEmbed => {
-    const { name, titles, alignment, dogma, ar_aspects, ar_clergy_alignments, ar_wiki_url, thumbnail } = deity;
+    const { name, power_level, titles, alignment, dogma, ar_aspects, ar_clergy_alignments, ar_wiki_url, thumbnail } = deity;
     const embed = getOghmabotEmbed();
     embed.setTitle(name);
     embed.setDescription(`*${titles && titles.join(', ')}*`);
@@ -43,10 +43,16 @@ export class DeityCommand extends Command {
       {
         name: 'Alignment',
         value: alignment,
+        inline: true,
       },
       {
         name: 'Clergy Alignments',
         value: ar_clergy_alignments ? ar_clergy_alignments.join(', ') : 'N/A',
+        inline: true,
+      },
+      {
+        name: 'Power Level',
+        value: power_level,
       },
       {
         name: 'Aspects',
@@ -66,10 +72,10 @@ export class DeityCommand extends Command {
   }
 
   createDeityEmbedInfoField = (deity: Deity): string => {
-    const { symbol, portfolio, worshipers, domains } = deity;
+    const { symbol, portfolio, worshippers, domains } = deity;
     return `**Symbol:** ${symbol}\n`
       + `**Portfolio:** ${portfolio && portfolio.join(', ')}\n`
-      + `**Worshipers:** ${worshipers && worshipers.join(', ')}\n`
+      + `**Worshippers:** ${worshippers && worshippers.join(', ')}\n`
       + `**Domains:** ${domains && domains.join(', ')}\n`;
   }
 }

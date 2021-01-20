@@ -1,6 +1,7 @@
 import BeautifulDom from "beautiful-dom";
 import HTMLElementData from "beautiful-dom/dist/htmlelement";
 import fetch from "node-fetch";
+import { findBestStringMatch } from "../../../utils/parsing";
 import { Deity } from "../../models";
 
 const WikiUrl = 'http://wiki.arelith.com';
@@ -37,11 +38,11 @@ const fetchAndMapDeityPage = async (deity: Deity): Promise<Deity> => {
   const dom = await fetchBeautifulDom(`${deity.ar_wiki_url}`);
   const dogma = dom.querySelectorAll('h3').find(h => h.querySelector('span')?.getAttribute('id')?.toLowerCase() === 'dogma');
   const [
-    ,
+    power_level,
     symbol,
     alignment,
     portfolio,
-    worshipers,
+    worshippers,
     domains,
     ar_clergy_alignments,
   ] = dom.querySelectorAll('tbody tr');
@@ -49,10 +50,11 @@ const fetchAndMapDeityPage = async (deity: Deity): Promise<Deity> => {
   return {
     ...deity,
     titles: dom.querySelector('dl dd i')?.textContent.split(',').map(t => t.trim()),
+    power_level: power_level?.querySelectorAll('td')[1]?.textContent.trim(),
     symbol: symbol?.querySelectorAll('td')[1]?.textContent.trim(),
     alignment: alignment?.querySelectorAll('td')[1]?.textContent.trim(),
     portfolio: portfolio?.querySelectorAll('td')[1]?.textContent.split(',').map(p => p.trim()),
-    worshipers: worshipers?.querySelectorAll('td')[1]?.textContent.split(',').map(p => p.trim()),
+    worshippers: worshippers?.querySelectorAll('td')[1]?.textContent.split(',').map(p => p.trim()),
     domains: domains?.querySelectorAll('td')[1]?.textContent.replace(/ *\[[^\]]*]/g, '').split(',').map(d => d.trim()),
     ar_clergy_alignments: ar_clergy_alignments?.querySelectorAll('td')[1]?.textContent.split(',').map(a => a.trim()),
   };
@@ -87,8 +89,10 @@ const mapDeityTableRowToDeity = async (row: HTMLElementData): Promise<Deity> => 
 
 export const fetchDeity = async (deityQuery: string): Promise<Deity | undefined> => {
   const dom = await fetchBeautifulDom(DeityTableUrl);
-  const tableRow = dom.querySelectorAll('tbody tr').find(r =>
-    r.querySelector('a')?.textContent.toLowerCase().replace(/\s+/g, '').includes(deityQuery.toLowerCase().replace(/\s+/g, '')),
+  const tableRow = findBestStringMatch(
+    dom.querySelectorAll('tbody tr').filter(r => !r.querySelectorAll('td')[5]?.textContent.trim().toLowerCase().includes('heresies')),
+    deityQuery.toLowerCase().replace(/\s+/g, ''),
+    r => r.querySelector('a')?.textContent.toLowerCase().replace(/\s+/g, ''),
   );
 
   if (tableRow) return await mapDeityTableRowToDeity(tableRow);

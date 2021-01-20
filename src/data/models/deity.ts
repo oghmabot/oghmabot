@@ -9,7 +9,7 @@ export interface Deity {
   alignment?: string;
   clergy_alignments?: string[];
   portfolio?: string[];
-  worshipers?: string[];
+  worshippers?: string[];
   domains?: string[];
   dogma?: string;
   ar_abstract?: boolean;
@@ -19,7 +19,7 @@ export interface Deity {
   ar_wiki_url?: string;
   fandom_fr_id?: number;
   fandom_fr_url?: string;
-  pronunciation?: string;
+  pronunciation?: string[];
   thumbnail?: string;
 }
 
@@ -36,7 +36,7 @@ export class DeityModel extends Model<Deity> {
       alignment: DataTypes.STRING,
       clergy_alignments: DataTypes.STRING,
       portfolio: DataTypes.ARRAY(DataTypes.STRING),
-      worshipers: DataTypes.ARRAY(DataTypes.STRING),
+      worshippers: DataTypes.ARRAY(DataTypes.STRING),
       domains: DataTypes.ARRAY(DataTypes.STRING),
       dogma: DataTypes.STRING,
       ar_abstract: {
@@ -49,7 +49,7 @@ export class DeityModel extends Model<Deity> {
       ar_wiki_url: DataTypes.STRING,
       fandom_fr_id: DataTypes.INTEGER,
       fandom_fr_url: DataTypes.STRING,
-      pronunciation: DataTypes.STRING,
+      pronunciation: DataTypes.ARRAY(DataTypes.STRING),
       thumbnail: DataTypes.STRING,
     }, {
       sequelize,
@@ -63,7 +63,7 @@ export class DeityModel extends Model<Deity> {
       name: el.title,
       fandom_fr_id: el.id,
       fandom_fr_url: `${FandomFRWiki}${el.url}`,
-      pronunciation: el.abstract.substr(el.abstract.indexOf('(pronounced:') + 12, el.abstract.indexOf('listen') - 12 - el.abstract.indexOf('(pronounced:')).replace(/[0-9]+/g, '').replace(' or:', ', '),
+      pronunciation: el.abstract.substr(el.abstract.indexOf('(pronounced:') + 12, el.abstract.indexOf('listen') - 12 - el.abstract.indexOf('(pronounced:')).replace(/[0-9]+/g, '').split(' or:'),
       thumbnail: el.thumbnail.substring(0, el.thumbnail.indexOf('revision')),
     }
   );

@@ -1,5 +1,4 @@
 import fetch, { Response } from 'node-fetch';
-
 import { isValidBeamdogDbKey, isValidIPAndPort } from '../../../utils';
 
 const BeamdogApi = 'https://api.nwn.beamdog.net/v1/servers/';
@@ -13,6 +12,7 @@ export interface BeamdogApiResponseBody {
   last_advertisement: number;
   session_name: string;
   module_name: string;
+  passworded: boolean;
   current_players: number;
   max_players: number;
   latency: number;

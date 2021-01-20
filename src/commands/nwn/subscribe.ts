@@ -1,7 +1,6 @@
 import { Message } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
-
-import { Server, ServerModel, SubscriptionModel } from '../../data';
+import { Server, ServerModel, SubscriptionModel } from '../../data/models';
 
 export class SubscribeCommand extends Command {
   constructor(client: CommandoClient) {

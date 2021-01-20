@@ -1,7 +1,6 @@
 import { Message } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
-
-import { Server, ServerModel } from '../../data';
+import { Server, ServerModel } from '../../data/models';
 import { BeamdogApiError, fetchServer } from '../../data/proxy';
 import { isValidBeamdogIdentifier, isValidURL } from '../../utils';
 

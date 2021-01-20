@@ -15,7 +15,7 @@ export const loggedInServersToString = (servers: Collection<string, Guild>): str
 
 export const serverStatusToEmbed = (server: Server, status: Status): MessageEmbed => {
   const state = status.online ? 'Online' : 'Offline';
-  const embed = new MessageEmbed();
+  const embed = getOghmabotEmbed();
   embed.setTimestamp();
   embed.setTitle(server.name);
   embed.setColor(status.online ? 0x00ff00 : 0xffcc00);
@@ -27,3 +27,11 @@ export const serverStatusToEmbed = (server: Server, status: Status): MessageEmbe
   if (server.href) embed.setURL(server.href);
   return embed;
 };
+
+export const getOghmabotEmbed = (timestamp: boolean = true, icon: boolean = true): MessageEmbed => {
+  const { OGHMABOT_ICON_URL } = process.env;
+  const embed = new MessageEmbed();
+  if (timestamp) embed.setTimestamp();
+  if (icon && OGHMABOT_ICON_URL) embed.setFooter('Oghmabot', OGHMABOT_ICON_URL);
+  return embed;
+}

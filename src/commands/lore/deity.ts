@@ -2,6 +2,7 @@ import { MessageEmbed } from "discord.js";
 import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
 import { Deity } from "../../data";
 import { fetchDeity } from "../../data/proxy";
+import { getOghmabotEmbed } from "../../utils";
 
 export class DeityCommand extends Command {
   constructor(client: CommandoClient) {
@@ -32,7 +33,7 @@ export class DeityCommand extends Command {
 
   createDeityEmbed = (deity: Deity): MessageEmbed => {
     const { name, titles, alignment, dogma, ar_aspects, ar_clergy_alignments, thumbnail, url } = deity;
-    const embed = new MessageEmbed();
+    const embed = getOghmabotEmbed();
     embed.setURL(url);
     embed.setTitle(name);
     embed.setDescription(`*${titles && titles.join(', ')}*`);
@@ -59,7 +60,6 @@ export class DeityCommand extends Command {
         value: dogma ? dogma : 'N/A',
       }
     );
-    embed.setTimestamp();
 
     return embed;
   }

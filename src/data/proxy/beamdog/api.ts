@@ -44,7 +44,7 @@ export async function fetchServer<M>(identifier: string, mapper?: BeamdogMapper<
   if (response.status !== 200) throw new BeamdogApiError(response, await response.text());
 
   const json: BeamdogApiResponseBody = await response.json();
-  if (mapper) return mapper.fromBeamdogApiResponseBody(json);
-
-  return json;
+  return mapper
+    ? mapper.fromBeamdogApiResponseBody(json)
+    : json;
 }

@@ -32,9 +32,9 @@ export class DeityCommand extends Command {
   }
 
   createDeityEmbed = (deity: Deity): MessageEmbed => {
-    const { name, titles, alignment, dogma, ar_aspects, ar_clergy_alignments, thumbnail, url } = deity;
+    const { name, titles, alignment, dogma, ar_aspects, ar_clergy_alignments, thumbnail, ar_wiki_url } = deity;
     const embed = getOghmabotEmbed();
-    embed.setURL(url);
+    embed.setURL(ar_wiki_url);
     embed.setTitle(name);
     embed.setDescription(`*${titles && titles.join(', ')}*`);
     if (thumbnail) embed.setThumbnail(thumbnail);

@@ -1,4 +1,5 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
+import { FandomApiDeityObj } from "../proxy";
 
 export interface Deity {
   name: string;
@@ -15,9 +16,10 @@ export interface Deity {
   ar_aspects?: string[];
   ar_category?: string;
   ar_clergy_alignments?: string[];
-  ar_wiki_href?: string;
+  ar_wiki_url: string;
+  fandom_fr_id?: number;
+  fandom_fr_url?: string;
   thumbnail?: string;
-  url: string;
 }
 
 export class DeityModel extends Model<Deity> {
@@ -43,9 +45,13 @@ export class DeityModel extends Model<Deity> {
       ar_aspects: DataTypes.ARRAY(DataTypes.STRING),
       ar_category: DataTypes.STRING,
       ar_clergy_alignments: DataTypes.ARRAY(DataTypes.STRING),
-      ar_wiki_href: DataTypes.STRING,
+      ar_wiki_url: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      fandom_fr_id: DataTypes.INTEGER,
+      fandom_fr_url: DataTypes.STRING,
       thumbnail: DataTypes.STRING,
-      url: DataTypes.STRING,
     }, {
       sequelize,
       modelName: 'deity',

@@ -17,7 +17,7 @@ const getAbstractWorshipFields = (deityName?: string): Partial<Deity> | undefine
       titles: ['The Abyss'],
       alignment: 'Chaotic Evil',
       clergy_alignments: ['CN', 'CE', 'NE'],
-      ar_wiki_href: `/Abyss`,
+      ar_wiki_url: `${WikiUrl}/Abyss`,
     };
   }
 
@@ -27,13 +27,14 @@ const getAbstractWorshipFields = (deityName?: string): Partial<Deity> | undefine
       titles: ['Abeir-Toril'],
       alignment: 'No Alignment',
       clergy_alignments: ['N/A'],
+      ar_wiki_url: DeityTableUrl,
       thumbnail: 'https://vignette.wikia.nocookie.net/forgottenrealms/images/7/71/Toril-globe-small.jpg',
     };
   }
 };
 
 const fetchAndMapDeityPage = async (deity: Deity): Promise<Deity> => {
-  const dom = await fetchBeautifulDom(`${WikiUrl}${deity.ar_wiki_href}`);
+  const dom = await fetchBeautifulDom(`${WikiUrl}${deity.ar_wiki_url}`);
   const dogma = dom.querySelectorAll('h3').find(h => h.querySelector('span')?.getAttribute('id')?.toLowerCase() === 'dogma');
   const [
     ,
@@ -58,7 +59,7 @@ const fetchAndMapDeityPage = async (deity: Deity): Promise<Deity> => {
 };
 
 const mapDeityTableRowToDeity = async (row: HTMLElementData): Promise<Deity> => {
-  const url = row.querySelector('a')?.getAttribute('href');
+  const ar_wiki_url = `${WikiUrl}${row.querySelector('a')?.getAttribute('href')}`;
   const [
     name,
     alignment,
@@ -69,8 +70,7 @@ const mapDeityTableRowToDeity = async (row: HTMLElementData): Promise<Deity> => 
   ] = row.querySelectorAll('td');
 
   const deity = {
-    url: `${WikiUrl}${url}`,
-    ar_wiki_href: `${url}`,
+    ar_wiki_url: ar_wiki_url,
     name: name?.textContent.trim(),
     alignment: alignment?.textContent.trim(),
     clergy_alignments: ar_clergy_alignments?.textContent.trim().split(' '),

@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
-import { Deity } from "../../data";
-import { fetchDeity } from "../../data/proxy";
+import { Deity, DeityModel } from "../../data/models";
+import { fetchDeity, fetchDeityDetails } from "../../data/proxy";
 import { getOghmabotEmbed } from "../../utils";
 
 export class DeityCommand extends Command {
@@ -22,17 +22,18 @@ export class DeityCommand extends Command {
   }
 
   async run(msg: CommandoMessage, { deityQuery }: { deityQuery: string }): Promise<any> {
-    const deity = await fetchDeity(deityQuery);
+    const deityAR = await fetchDeity(deityQuery);
 
-    if (deity) {
-      return msg.embed(this.createDeityEmbed(deity));
+    if (deityAR) {
+      const deityFR = await fetchDeityDetails(deityQuery, DeityModel);
+      return msg.embed(this.createDeityEmbed({ ...deityFR, ...deityAR }));
     }
 
     return msg.say('Deity not found.');
   }
 
   createDeityEmbed = (deity: Deity): MessageEmbed => {
-    const { name, titles, alignment, dogma, ar_aspects, ar_clergy_alignments, thumbnail, ar_wiki_url } = deity;
+    const { name, titles, alignment, dogma, ar_aspects, ar_clergy_alignments, ar_wiki_url, thumbnail } = deity;
     const embed = getOghmabotEmbed();
     embed.setTitle(name);
     embed.setDescription(`*${titles && titles.join(', ')}*`);

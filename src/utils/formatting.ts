@@ -34,4 +34,4 @@ export const getOghmabotEmbed = (timestamp: boolean = true, icon: boolean = true
   if (timestamp) embed.setTimestamp();
   if (icon && OGHMABOT_ICON_URL) embed.setFooter('Oghmabot', OGHMABOT_ICON_URL);
   return embed;
-}
+};

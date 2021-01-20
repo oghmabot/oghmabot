@@ -15,7 +15,7 @@ export class DeityCommand extends Command {
         {
           key: 'deityQuery',
           type: 'string',
-          prompt: 'Specify deity of which you want to find details.'
+          prompt: 'Specify deity of which you want to find details.',
         },
       ],
     });
@@ -28,7 +28,7 @@ export class DeityCommand extends Command {
       return msg.embed(this.createDeityEmbed(deity));
     }
 
-    return msg.say('Deity not found.')
+    return msg.say('Deity not found.');
   }
 
   createDeityEmbed = (deity: Deity): MessageEmbed => {
@@ -58,7 +58,7 @@ export class DeityCommand extends Command {
       {
         name: 'Dogma',
         value: dogma ? dogma : 'N/A',
-      }
+      },
     );
 
     return embed;

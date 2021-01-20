@@ -1,15 +1,15 @@
 import { TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
+import { serverStatusToStatusUpdateEmbed } from '../utils';
 
 import { Server, ServerModel, Status, StatusModel, SubscriptionModel } from './models';
 import { BeamdogApiError, fetchServer } from './proxy';
-import { serverStatusToEmbed } from '../utils';
 
 export class StatusPoller {
   private client: CommandoClient;
   private status: { [serverId: string]: Status } = {};
 
-  constructor(client: CommandoClient, interval: number = 60000) {
+  constructor(client: CommandoClient, interval: number = 5000) {
     this.client = client;
     setInterval(this.pollAndUpdate, interval);
   }
@@ -34,7 +34,7 @@ export class StatusPoller {
   }
 
   notifySubscribers = async (server: Server, status: Status): Promise<void> => {
-    const messageEmbed = serverStatusToEmbed(server, status);
+    const messageEmbed = this.createStatusUpdateEmbed(server, status);
     for (const sub of await SubscriptionModel.getSubscriptionsForServer(server.id)) {
       const channel = this.client.channels.cache.find(c => c.id === sub.channel) as TextChannel;
       if (channel) {
@@ -56,6 +56,7 @@ export class StatusPoller {
           const { name, last_seen, kx_pk } = this.status[server.id];
           return {
             name: name || name,
+            passworded: false,
             players: 0,
             online: false,
             uptime: 0,
@@ -68,4 +69,6 @@ export class StatusPoller {
 
     return null;
   }
+
+  createStatusUpdateEmbed = serverStatusToStatusUpdateEmbed;
 }

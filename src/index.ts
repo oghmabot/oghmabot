@@ -18,6 +18,7 @@ const {
   BOT_STATUS_CHANNEL,
   BOT_TOKEN,
   DATABASE_URL,
+  IGNORE_SERVERS,
 } = process.env;
 
 const client = new CommandoClient({
@@ -40,6 +41,7 @@ client.registry
  */
 client.on('ready', async () => {
   const { channels, guilds } = client;
+  const guildsToList = guilds.cache.filter(g => !IGNORE_SERVERS?.includes(g.id));
 
   await connect(DATABASE_URL);
 
@@ -47,10 +49,10 @@ client.on('ready', async () => {
     const channel = channels.cache.find(c => c.id === BOT_STATUS_CHANNEL) as TextChannel;
 
     if (channel) {
-      channel.send('', loggedInServersToEmbed(guilds.cache));
+      channel.send('', loggedInServersToEmbed(guildsToList));
     }
   }
-  console.log(loggedInServersToString(guilds.cache));
+  console.log(loggedInServersToString(guildsToList));
 });
 
 /**

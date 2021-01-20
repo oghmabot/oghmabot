@@ -1,5 +1,5 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
-import { FandomApiDeityObj } from "../proxy";
+import { FandomApiDeityObj, FandomFRWiki } from "../proxy";
 
 export interface Deity {
   name: string;
@@ -16,9 +16,10 @@ export interface Deity {
   ar_aspects?: string[];
   ar_category?: string;
   ar_clergy_alignments?: string[];
-  ar_wiki_url: string;
+  ar_wiki_url?: string;
   fandom_fr_id?: number;
   fandom_fr_url?: string;
+  pronunciation?: string;
   thumbnail?: string;
 }
 
@@ -45,12 +46,10 @@ export class DeityModel extends Model<Deity> {
       ar_aspects: DataTypes.ARRAY(DataTypes.STRING),
       ar_category: DataTypes.STRING,
       ar_clergy_alignments: DataTypes.ARRAY(DataTypes.STRING),
-      ar_wiki_url: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
+      ar_wiki_url: DataTypes.STRING,
       fandom_fr_id: DataTypes.INTEGER,
       fandom_fr_url: DataTypes.STRING,
+      pronunciation: DataTypes.STRING,
       thumbnail: DataTypes.STRING,
     }, {
       sequelize,
@@ -58,6 +57,16 @@ export class DeityModel extends Model<Deity> {
       tableName: 'deities',
     });
   }
+
+  static fromFandomApiDeityObj = (el: FandomApiDeityObj): Deity => (
+    {
+      name: el.title,
+      fandom_fr_id: el.id,
+      fandom_fr_url: `${FandomFRWiki}${el.url}`,
+      pronunciation: el.abstract.substr(el.abstract.indexOf('(pronounced:') + 12, el.abstract.indexOf('listen)') - 13 - el.abstract.indexOf('(pronounced:')),
+      thumbnail: el.thumbnail.substring(0, el.thumbnail.indexOf('revision')),
+    }
+  );
 
   static addDeity = async (deity: Deity): Promise<DeityModel> => await DeityModel.create(deity);
 

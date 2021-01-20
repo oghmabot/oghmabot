@@ -34,7 +34,7 @@ const getAbstractWorshipFields = (deityName?: string): Partial<Deity> | undefine
 };
 
 const fetchAndMapDeityPage = async (deity: Deity): Promise<Deity> => {
-  const dom = await fetchBeautifulDom(`${WikiUrl}${deity.ar_wiki_url}`);
+  const dom = await fetchBeautifulDom(`${deity.ar_wiki_url}`);
   const dogma = dom.querySelectorAll('h3').find(h => h.querySelector('span')?.getAttribute('id')?.toLowerCase() === 'dogma');
   const [
     ,

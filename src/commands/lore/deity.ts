@@ -1,8 +1,6 @@
-import { MessageEmbed } from "discord.js";
 import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
-import { Deity, DeityModel } from "../../data/models";
+import { DeityModel } from "../../data/models";
 import { fetchDeity, fetchDeityDetails } from "../../data/proxy";
-import { getOghmabotEmbed } from "../../utils";
 
 export class DeityCommand extends Command {
   constructor(client: CommandoClient) {
@@ -26,56 +24,9 @@ export class DeityCommand extends Command {
 
     if (deityAR) {
       const deityFR = await fetchDeityDetails(deityQuery, DeityModel);
-      return msg.embed(this.createDeityEmbed({ ...deityFR, ...deityAR }));
+      return msg.embed(DeityModel.toEmbed({ ...deityFR, ...deityAR }));
     }
 
     return msg.say('Deity not found.');
-  }
-
-  createDeityEmbed = (deity: Deity): MessageEmbed => {
-    const { name, power_level, titles, alignment, dogma, ar_aspects, ar_clergy_alignments, ar_wiki_url, thumbnail } = deity;
-    const embed = getOghmabotEmbed();
-    embed.setTitle(name);
-    embed.setDescription(`*${titles && titles.join(', ')}*`);
-    if (ar_wiki_url) embed.setURL(ar_wiki_url);
-    if (thumbnail) embed.setThumbnail(thumbnail);
-    embed.addFields(
-      {
-        name: 'Alignment',
-        value: alignment,
-        inline: true,
-      },
-      {
-        name: 'Clergy Alignments',
-        value: ar_clergy_alignments ? ar_clergy_alignments.join(', ') : 'N/A',
-        inline: true,
-      },
-      {
-        name: 'Power Level',
-        value: power_level,
-      },
-      {
-        name: 'Aspects',
-        value: ar_aspects ? ar_aspects?.join(', ') : 'N/A',
-      },
-      {
-        name: ':book:',
-        value: this.createDeityEmbedInfoField(deity),
-      },
-      {
-        name: 'Dogma',
-        value: dogma ? dogma : 'N/A',
-      },
-    );
-
-    return embed;
-  }
-
-  createDeityEmbedInfoField = (deity: Deity): string => {
-    const { symbol, portfolio, worshippers, domains } = deity;
-    return `**Symbol:** ${symbol}\n`
-      + `**Portfolio:** ${portfolio && portfolio.join(', ')}\n`
-      + `**Worshippers:** ${worshippers && worshippers.join(', ')}\n`
-      + `**Domains:** ${domains && domains.join(', ')}\n`;
   }
 }

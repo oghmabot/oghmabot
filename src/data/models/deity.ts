@@ -1,4 +1,6 @@
+import { MessageEmbed } from "discord.js";
 import { DataTypes, Model, Sequelize } from "sequelize";
+import { getOghmabotEmbed } from "../../utils";
 import { FandomApiDeityObj } from "../proxy";
 
 export interface Deity {
@@ -12,7 +14,6 @@ export interface Deity {
   worshippers?: string[];
   domains?: string[];
   dogma?: string;
-  ar_abstract?: boolean;
   ar_aspects?: string[];
   ar_category?: string;
   ar_clergy_alignments?: string[];
@@ -39,10 +40,6 @@ export class DeityModel extends Model<Deity> {
       worshippers: DataTypes.ARRAY(DataTypes.STRING),
       domains: DataTypes.ARRAY(DataTypes.STRING),
       dogma: DataTypes.STRING,
-      ar_abstract: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
       ar_aspects: DataTypes.ARRAY(DataTypes.STRING),
       ar_category: DataTypes.STRING,
       ar_clergy_alignments: DataTypes.ARRAY(DataTypes.STRING),
@@ -58,6 +55,12 @@ export class DeityModel extends Model<Deity> {
     });
   }
 
+  static addDeity = async (deity: Deity): Promise<DeityModel> => await DeityModel.create(deity);
+
+  static getDeityByName = async (name: string): Promise<Deity | undefined> => (await DeityModel.findOne({
+    where: { name },
+  }))?.get();
+
   static fromFandomApiDeityObj = (el: FandomApiDeityObj): Deity => (
     {
       name: el.title,
@@ -68,9 +71,32 @@ export class DeityModel extends Model<Deity> {
     }
   );
 
-  static addDeity = async (deity: Deity): Promise<DeityModel> => await DeityModel.create(deity);
+  static toEmbed = (deity: Deity): MessageEmbed => {
+    const { name, power_level, titles, alignment, dogma, ar_aspects, ar_clergy_alignments, ar_wiki_url, thumbnail } = deity;
+    const embed = getOghmabotEmbed();
+    embed.setTitle(name);
+    embed.setDescription(`*${titles && titles.join(', ')}*`);
+    if (ar_wiki_url) embed.setURL(ar_wiki_url);
+    if (thumbnail) embed.setThumbnail(thumbnail);
 
-  static getDeityByName = async (name: string): Promise<Deity | undefined> => (await DeityModel.findOne({
-    where: { name },
-  }))?.get();
+    if (alignment) embed.addField('Alignment', alignment, !!(ar_clergy_alignments || power_level));
+    if (ar_clergy_alignments?.length) embed.addField('Clergy Alignments', ar_clergy_alignments.join(', '), !!alignment);
+    if (power_level) embed.addField('Power Level', power_level, !!alignment && !ar_clergy_alignments);
+    if (ar_aspects?.length) embed.addField('Aspects', ar_aspects.join(', '));
+    const infoField = DeityModel.getInfoFieldString(deity);
+    if (infoField) embed.addField(':book:', infoField);
+    if (dogma) embed.addField('Dogma', dogma);
+
+    return embed;
+  }
+
+  static getInfoFieldString = (deity: Deity): string => {
+    const { symbol, portfolio, worshippers, domains } = deity;
+    let result = '';
+    if (symbol) result += `**Symbol:** ${symbol}\n`;
+    if (portfolio?.length) result += `**Portfolio:** ${portfolio.join(', ')}\n`;
+    if (worshippers?.length) result += `**Worshippers:** ${worshippers.join(', ')}\n`;
+    if (domains?.length) result += `**Domains:** ${domains.join(', ')}\n`;
+    return result;
+  }
 }

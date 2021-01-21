@@ -61,7 +61,7 @@ export class ServerModel extends Model<Server> {
   static getServerById = async (serverId: string): Promise<Server | undefined> => (await ServerModel.findByPk(serverId))?.get();
 
   static getServers = async (options?: FindOptions): Promise<Server[]> => (await ServerModel.findAll({
-    order: [['name', 'DESC']],
+    order: ['name'],
     ...options,
   })).map(s => s.get());
 

@@ -33,7 +33,12 @@ client.registry
     ['lore', 'Lore'],
     ['nwn', 'Neverwinter Nights'],
   ])
-  .registerDefaults()
+  .registerDefaultTypes()
+  .registerDefaultGroups()
+  .registerDefaultCommands({
+    prefix: false,
+    unknownCommand: false,
+  })
   .registerCommands(getAllCommands());
 
 /**

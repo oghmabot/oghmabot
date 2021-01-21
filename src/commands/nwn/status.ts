@@ -1,8 +1,6 @@
-import { MessageEmbed } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
-
-import { Server, ServerModel, Status, StatusModel } from '../../data';
-import { fetchServer } from '../../data/proxy/beamdog';
+import { ServerModel, StatusModel } from '../../data/models';
+import { fetchServer } from '../../data/proxy';
 import { serverStatusToEmbed } from '../../utils';
 
 export class StatusCommand extends Command {
@@ -24,7 +22,7 @@ export class StatusCommand extends Command {
   }
 
   async run(msg: CommandoMessage, { servers }: { servers: string }): Promise<any> {
-    const requestedServers = servers == ''
+    const requestedServers = !servers
       ? await ServerModel.getServers()
       : await ServerModel.getServersFromStringParse(servers);
 

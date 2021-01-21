@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "@half-elf/rogue": "^1.0.1",
+    "beautiful-dom": "^1.0.8",
     "discord.js": "^12.5.1",
     "discord.js-commando": "github:discordjs/Commando",
     "node-fetch": "^2.6.1",

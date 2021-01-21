@@ -22,13 +22,17 @@ export class SubscribeCommand extends Command {
   }
 
   async run(msg: CommandoMessage, { servers }: { servers: string }): Promise<any> {
-    const requestedServers = servers === ''
-      ? await ServerModel.getServers()
-      : await ServerModel.getServersFromStringParse(servers);
+    try {
+      const requestedServers = servers === ''
+        ? await ServerModel.getServers()
+        : await ServerModel.getServersFromStringParse(servers);
 
-    return requestedServers.length === 0
-      ? await msg.say(`Input doesn't match any known servers.`)
-      : await this.subscribe(msg, requestedServers);
+      return requestedServers.length === 0
+        ? await msg.say(`Input doesn't match any known servers.`)
+        : await this.subscribe(msg, requestedServers);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async subscribe(msg: CommandoMessage, servers: Server[]): Promise<Message | CommandoMessage> {

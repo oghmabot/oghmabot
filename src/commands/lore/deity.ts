@@ -22,13 +22,16 @@ export class DeityCommand extends Command {
   }
 
   async run(msg: CommandoMessage, { deityQuery }: { deityQuery: string }): Promise<any> {
-    const deityAR = await fetchDeity(deityQuery);
+    try {
+      const deityAR = await fetchDeity(deityQuery);
+      if (!deityAR) return msg.say('Deity not found.');
 
-    if (deityAR) {
       const deityFR = await fetchDeityDetails(deityQuery, DeityModel);
       return msg.embed(DeityModel.toEmbed({ ...deityFR, ...deityAR }));
+    } catch (error) {
+      console.error(error);
     }
 
-    return msg.say('Deity not found.');
+    return msg.reply('Invalid input.');
   }
 }

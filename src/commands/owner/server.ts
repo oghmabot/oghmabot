@@ -23,9 +23,7 @@ export class ServerCommand extends Command {
           key: 'descriptor',
           prompt: 'new/remove/alias/href/img',
           type: 'string',
-          validate: (text: string) => [
-            'new', 'add', 'remove', 'rm', 'alias', 'name', 'href', 'img',
-          ].includes(text.toLowerCase().trim()),
+          oneOf: ['new', 'add', 'remove', 'rm', 'alias', 'name', 'href', 'img'],
         },
         {
           key: 'identifier',
@@ -44,32 +42,36 @@ export class ServerCommand extends Command {
   }
 
   async run(msg: CommandoMessage, args: ServerCommandArgs): Promise<any> {
-    const { descriptor } = args;
+    try {
+      const { descriptor } = args;
 
-    if (descriptor === 'new' || descriptor === 'add') {
-      return await this.addNewServer(msg, args);
-    }
+      if (descriptor === 'new' || descriptor === 'add') {
+        return await this.addNewServer(msg, args);
+      }
 
-    if (descriptor === 'remove' || descriptor === 'rm') {
-      return await this.removeServer(msg, args);
-    }
+      if (descriptor === 'remove' || descriptor === 'rm') {
+        return await this.removeServer(msg, args);
+      }
 
-    if (descriptor === 'alias') {
-      return await this.addAlias(msg, args);
-    }
+      if (descriptor === 'alias') {
+        return await this.addAlias(msg, args);
+      }
 
-    if (descriptor === 'name') {
-      return await this.setField(msg, args, descriptor);
-    }
+      if (descriptor === 'name') {
+        return await this.setField(msg, args, descriptor);
+      }
 
-    if (descriptor === 'href' || descriptor === 'link') {
-      const { input } = args;
-      if (input && isValidURL(input)) return await this.setField(msg, args, 'href');
-    }
+      if (descriptor === 'href' || descriptor === 'link') {
+        const { input } = args;
+        if (input && isValidURL(input)) return await this.setField(msg, args, 'href');
+      }
 
-    if (descriptor === 'img') {
-      const { input } = args;
-      if (input && isValidURL(input)) return await this.setField(msg, args, 'img');
+      if (descriptor === 'img') {
+        const { input } = args;
+        if (input && isValidURL(input)) return await this.setField(msg, args, 'img');
+      }
+    } catch (error) {
+      console.error(error);
     }
 
     return msg.say('Invalid input');
@@ -171,14 +173,14 @@ export class ServerCommand extends Command {
 
   formatServerAddedReply = (server: Server): string => (
     'Server added.'
-      + '\n```'
-      + `\nID: ${server.id}`
-      + `\nNAME: ${server.name}`
-      + `\nIP: ${server.ip}`
-      + `\nPORT: ${server.port}`
-      + `\nALIAS: ${server.alias}`
-      + `\nHREF: ${server.href}`
-      + `\nIMG: ${server.img}`
-      + '\n```'
+    + '\n```'
+    + `\nID: ${server.id}`
+    + `\nNAME: ${server.name}`
+    + `\nIP: ${server.ip}`
+    + `\nPORT: ${server.port}`
+    + `\nALIAS: ${server.alias}`
+    + `\nHREF: ${server.href}`
+    + `\nIMG: ${server.img}`
+    + '\n```'
   );
 }

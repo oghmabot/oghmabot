@@ -22,15 +22,18 @@ export class StatusCommand extends Command {
   }
 
   async run(msg: CommandoMessage, { servers }: { servers: string }): Promise<any> {
-    const requestedServers = !servers
-      ? await ServerModel.getServers()
-      : await ServerModel.getServersFromStringParse(servers);
+    try {
+      const requestedServers = !servers
+        ? await ServerModel.getServers()
+        : await ServerModel.getServersFromStringParse(servers);
+      if (!requestedServers?.length) msg.say('Server not found.');
 
-    if (requestedServers) {
       requestedServers.forEach(async server => {
         const status = await fetchServer(server.id, StatusModel);
         await msg.embed(this.createStatusEmbed(server, status));
       });
+    } catch (error) {
+      console.error(error);
     }
   }
 

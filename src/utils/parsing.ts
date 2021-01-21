@@ -1,3 +1,8 @@
+const { BOT_PREFIX = '-' } = process.env;
+const PrefixedCommandRegExp = new RegExp(`^[${BOT_PREFIX}][a-z]+`);
+
+export const stripCommandNotation = (inp: string): string => inp.replace(PrefixedCommandRegExp, '');
+
 export function findBestStringMatch(arr: string[], searchTerm: string): string | undefined;
 export function findBestStringMatch<T>(arr: T[], searchTerm: string, strResFunc: (el: T) => string | undefined): T | undefined;
 export function findBestStringMatch<T>(arr: T[], searchTerm: string, strResFunc?: (el: T) => string | undefined): T | undefined {

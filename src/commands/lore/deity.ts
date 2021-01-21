@@ -1,6 +1,7 @@
 import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
 import { DeityModel } from "../../data/models";
 import { fetchDeity, fetchDeityDetails } from "../../data/proxy";
+import { stripCommandNotation } from "../../utils";
 
 export class DeityCommand extends Command {
   constructor(client: CommandoClient) {
@@ -14,19 +15,23 @@ export class DeityCommand extends Command {
           key: 'deityQuery',
           type: 'string',
           prompt: 'Specify deity of which you want to find details.',
+          parse: stripCommandNotation,
         },
       ],
     });
   }
 
   async run(msg: CommandoMessage, { deityQuery }: { deityQuery: string }): Promise<any> {
-    const deityAR = await fetchDeity(deityQuery);
+    try {
+      const deityAR = await fetchDeity(deityQuery);
+      if (!deityAR) return msg.say('Deity not found.');
 
-    if (deityAR) {
       const deityFR = await fetchDeityDetails(deityQuery, DeityModel);
       return msg.embed(DeityModel.toEmbed({ ...deityFR, ...deityAR }));
+    } catch (error) {
+      console.error(error);
     }
 
-    return msg.say('Deity not found.');
+    return msg.reply('Invalid input.');
   }
 }

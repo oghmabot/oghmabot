@@ -1,12 +1,14 @@
-import { TextChannel } from 'discord.js';
+import { Channel, Message, TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
 import { Server, ServerModel, Status, StatusModel, SubscriptionModel } from './models';
 import { BeamdogApiError, fetchServer } from './proxy';
 import { serverStatusToStatusUpdateEmbed } from '../utils';
 
+type StatusMemory = Record<string, { status: Status; messages: Message[]; }>;
+
 export class StatusPoller {
   private client: CommandoClient;
-  private status: { [serverId: string]: Status } = {};
+  private status: StatusMemory = {};
 
   constructor(client: CommandoClient, interval: number = 5000) {
     this.client = client;
@@ -21,25 +23,32 @@ export class StatusPoller {
 
       if (newStatus) {
         const { id } = server;
+        if (!this.status[id]) this.status[id] = { status: newStatus, messages: [] };
 
-        if (this.status[id] && this.status[id].online !== newStatus.online) {
+        const { status } = this.status[id];
+        if (status && status.online !== newStatus.online) {
           console.log('Found new server status, posting to subscribers.');
-          this.notifySubscribers(server, newStatus);
+          this.status[id].messages = await this.notifySubscribers(server, newStatus);
         }
 
-        this.status[id] = newStatus;
+        this.status[id].status = newStatus;
       }
     }
   }
 
-  notifySubscribers = async (server: Server, status: Status): Promise<void> => {
+  notifySubscribers = async (server: Server, status: Status): Promise<Message[]> => {
     const messageEmbed = this.createStatusUpdateEmbed(server, status);
-    for (const sub of await SubscriptionModel.getSubscriptionsForServer(server.id)) {
+    const subscriptions = await SubscriptionModel.getSubscriptionsForServer(server.id);
+    return Promise.all(subscriptions.flatMap(sub => {
       const channel = this.client.channels.cache.find(c => c.id === sub.channel) as TextChannel;
+
       if (channel) {
-        channel.send('', messageEmbed);
+        this.deletePreviousMessage(server, channel);
+        return channel.send('', messageEmbed);
       }
-    }
+
+      return [];
+    }));
   }
 
   resolveNewStatus = async (server: Server): Promise<Status | null> => {
@@ -52,7 +61,7 @@ export class StatusPoller {
         }
 
         if (err.code === 404) {
-          const { name, last_seen, kx_pk } = this.status[server.id];
+          const { name, last_seen, kx_pk } = this.status[server.id].status;
           return {
             name: name || name,
             passworded: false,
@@ -67,6 +76,12 @@ export class StatusPoller {
     }
 
     return null;
+  }
+
+  deletePreviousMessage = async (server: Server, channel: Channel): Promise<void> => {
+    const { messages } = this.status[server.id];
+    const prevMsg = messages.find(msg => msg.channel.id === channel.id);
+    if (prevMsg && new Date().getTime() - prevMsg.createdTimestamp < 300000) prevMsg.delete();
   }
 
   createStatusUpdateEmbed = serverStatusToStatusUpdateEmbed;

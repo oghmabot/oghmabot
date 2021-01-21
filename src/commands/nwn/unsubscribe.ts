@@ -9,7 +9,7 @@ export class UnsubscribeCommand extends Command {
       group: 'nwn',
       memberName: 'unsubscribe',
       description: 'Unsubscribe to server status updates in current channel.',
-      userPermissions: ['MANAGE_GUILD'],
+      userPermissions: ['MANAGE_CHANNELS'],
       args: [
         {
           key: 'servers',

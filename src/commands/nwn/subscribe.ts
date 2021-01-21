@@ -9,7 +9,7 @@ export class SubscribeCommand extends Command {
       group: 'nwn',
       memberName: 'subscribe',
       description: 'Subscribe to server status updates in current channel.',
-      userPermissions: ['MANAGE_GUILD'],
+      userPermissions: ['MANAGE_CHANNELS'],
       args: [
         {
           key: 'servers',

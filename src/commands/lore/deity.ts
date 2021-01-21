@@ -1,6 +1,7 @@
 import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
 import { DeityModel } from "../../data/models";
 import { fetchDeity, fetchDeityDetails } from "../../data/proxy";
+import { stripCommandNotation } from "../../utils";
 
 export class DeityCommand extends Command {
   constructor(client: CommandoClient) {
@@ -14,6 +15,7 @@ export class DeityCommand extends Command {
           key: 'deityQuery',
           type: 'string',
           prompt: 'Specify deity of which you want to find details.',
+          parse: stripCommandNotation,
         },
       ],
     });

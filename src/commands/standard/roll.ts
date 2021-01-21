@@ -1,6 +1,6 @@
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { roll, RollOptions, RollResult } from '@half-elf/rogue';
-import { getOghmabotEmbed } from '../../utils';
+import { getOghmabotEmbed, stripCommandNotation } from '../../utils';
 
 export class RollCommand extends Command {
   constructor(client: CommandoClient) {
@@ -14,6 +14,7 @@ export class RollCommand extends Command {
           key: 'input',
           type: 'string',
           prompt: 'Specify the roll you want to make.',
+          parse: stripCommandNotation,
         },
       ],
     });
@@ -26,8 +27,10 @@ export class RollCommand extends Command {
         ? this.formatRollResult(msg, roll(notation, this.parseOptions(options)))
         : msg.say(`:game_die: Result: ${roll(notation)}`);
     } catch (error) {
-      return msg.say(error);
+      console.error(error);
     }
+
+    return msg.reply('Invalid input.');
   }
 
   formatRollResult(msg: CommandoMessage, roll: RollResult): Promise<any> {

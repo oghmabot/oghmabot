@@ -1,6 +1,6 @@
 import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
 import { DeityModel } from "../../data/models";
-import { fetchDeity, fetchDeityDetails } from "../../data/proxy";
+import { fetchDeity, fetchDeityDetails } from "../../data/proxies";
 import { stripCommandNotation } from "../../utils";
 
 export class DeityCommand extends Command {

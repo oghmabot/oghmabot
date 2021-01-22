@@ -1,7 +1,7 @@
 import { TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
 import { Server, ServerModel, Status, StatusModel, SubscriptionModel } from './models';
-import { BeamdogApiError, fetchServer } from './proxy';
+import { BeamdogApiError, fetchServer } from './proxies';
 import { serverStatusToStatusUpdateEmbed } from '../utils';
 
 export class StatusPoller {

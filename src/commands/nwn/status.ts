@@ -1,6 +1,6 @@
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { ServerModel, StatusModel } from '../../data/models';
-import { fetchServer } from '../../data/proxy';
+import { fetchServer } from '../../data/proxies';
 import { serverStatusToEmbed } from '../../utils';
 
 export class StatusCommand extends Command {

@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { DataTypes, Model, Sequelize } from "sequelize";
 import { getOghmabotEmbed } from "../../utils";
-import { FandomApiDeityObj } from "../proxy";
+import { FandomApiDeityObj } from "../proxies";
 
 export interface Deity {
   name: string;

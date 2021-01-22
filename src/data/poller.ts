@@ -1,67 +1,76 @@
-import { Channel, Message, TextChannel } from 'discord.js';
+import { TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
 import { Server, ServerModel, Status, StatusModel, SubscriptionModel } from './models';
 import { BeamdogApiError, BeamdogApiProxy } from './proxies';
 import { serverStatusToStatusUpdateEmbed } from '../utils';
 
-type StatusMemory = Record<string, { status: Status; messages: Message[]; }>;
-
 export class StatusPoller {
   private client: CommandoClient;
-  private status: StatusMemory = {};
+  private status: Record<string, Status>;
 
-  constructor(client: CommandoClient, interval: number = 5000) {
+  constructor(client: CommandoClient, interval: number = 10000) {
     this.client = client;
+    this.status = {};
     setInterval(this.pollAndUpdate, interval);
   }
-
+  
   pollAndUpdate = async (): Promise<void> => {
-    console.log('Polling Beamdog for server status changes...');
+    console.log('[StatusPoller] Polling Beamdog for server status changes...');
     const servers = await ServerModel.getServers();
     for (const server of servers) {
       const newStatus = await this.resolveNewStatus(server);
-
+      
       if (newStatus) {
         const { id } = server;
-        if (!this.status[id]) this.status[id] = { status: newStatus, messages: [] };
-
-        const { status } = this.status[id];
-        if (status && status.online !== newStatus.online) {
-          console.log('Found new server status, posting to subscribers.');
-          this.status[id].messages = await this.notifySubscribers(server, newStatus);
+        
+        const status = this.status[id];
+        if (status && (status.online !== newStatus.online || status.passworded !== newStatus.passworded)) {
+          console.log('[StatusPoller] Found new server status, posting to subscribers.');
+          await this.notifySubscribers(server, newStatus);
         }
-
-        this.status[id].status = newStatus;
+        
+        this.status[id] = newStatus;
       }
     }
   }
-
-  notifySubscribers = async (server: Server, status: Status): Promise<Message[]> => {
+  
+  notifySubscribers = async (server: Server, status: Status): Promise<void> => {
     const messageEmbed = this.createStatusUpdateEmbed(server, status);
     const subscriptions = await SubscriptionModel.getSubscriptionsForServer(server.id);
-    return Promise.all(subscriptions.flatMap(sub => {
-      const channel = this.client.channels.cache.find(c => c.id === sub.channel) as TextChannel;
-
+    for (const sub of subscriptions) {
+      const { channelId, autoDeleteMessages, lastMessageId } = sub;
+      const channel = this.client.channels.cache.find(c => c.id === channelId) as TextChannel | undefined;
+      
       if (channel) {
-        this.deletePreviousMessage(server, channel);
-        return channel.send('', messageEmbed);
+        if (autoDeleteMessages && lastMessageId) {
+          try {
+            channel.messages.delete(lastMessageId);
+          } catch (error) {
+            console.warn('[StatusPoller] Failed to delete last message.', error);
+          }
+        }
+
+        const newMsg = await channel.send('', messageEmbed);
+        SubscriptionModel.update({
+          lastMessageId: newMsg.id,
+        }, {
+          where: sub,
+        });
       }
-
-      return [];
-    }));
+    }
   }
-
-  resolveNewStatus = async (server: Server): Promise<Status | null> => {
+  
+  resolveNewStatus = async (server: Server): Promise<Status | undefined> => {
     try {
       return await BeamdogApiProxy.fetchServer(server.id, StatusModel);
     } catch (err) {
       if (err instanceof BeamdogApiError) {
         if (err.code === 400) {
-          console.error('StatusPoller has attempted an invalid query against the Beamdog API.', err);
+          console.error('[StatusPoller] Attempted an invalid request against the Beamdog API.');
         }
-
+        
         if (err.code === 404) {
-          const { name, last_seen, kx_pk } = this.status[server.id].status;
+          const { name, last_seen, kx_pk } = this.status[server.id];
           return {
             name: name || name,
             passworded: false,
@@ -74,15 +83,7 @@ export class StatusPoller {
         }
       }
     }
-
-    return null;
   }
-
-  deletePreviousMessage = async (server: Server, channel: Channel): Promise<void> => {
-    const { messages } = this.status[server.id];
-    const prevMsg = messages.find(msg => msg.channel.id === channel.id);
-    if (prevMsg && new Date().getTime() - prevMsg.createdTimestamp < 300000) prevMsg.delete();
-  }
-
+  
   createStatusUpdateEmbed = serverStatusToStatusUpdateEmbed;
 }

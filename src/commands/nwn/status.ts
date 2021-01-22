@@ -1,6 +1,6 @@
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { ServerModel, StatusModel } from '../../data/models';
-import { fetchServer } from '../../data/proxies';
+import { BeamdogApiProxy } from '../../data/proxies';
 import { serverStatusToEmbed } from '../../utils';
 
 export class StatusCommand extends Command {
@@ -29,7 +29,7 @@ export class StatusCommand extends Command {
       if (!requestedServers?.length) msg.say('Server not found.');
 
       requestedServers.forEach(async server => {
-        const status = await fetchServer(server.id, StatusModel);
+        const status = await BeamdogApiProxy.fetchServer(server.id, StatusModel);
         await msg.embed(this.createStatusEmbed(server, status));
       });
     } catch (error) {

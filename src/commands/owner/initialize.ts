@@ -21,7 +21,7 @@ export class InitializeCommand extends Command {
           prompt: 'Which database would you like to initialize?',
           type: 'string',
           oneOf: ['all', ...Object.keys(databases)],
-          parse: stripCommandNotation
+          parse: stripCommandNotation,
         },
         {
           key: 'force',
@@ -46,6 +46,6 @@ export class InitializeCommand extends Command {
       console.error(error);
     }
 
-    return msg.say('Initializing database failed.')
+    return msg.say('Initializing database failed.');
   }
 }

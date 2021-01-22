@@ -13,34 +13,34 @@ export class StatusPoller {
     this.status = {};
     setInterval(this.pollAndUpdate, interval);
   }
-  
+
   pollAndUpdate = async (): Promise<void> => {
     console.log('[StatusPoller] Polling Beamdog for server status changes...');
     const servers = await ServerModel.getServers();
     for (const server of servers) {
       const newStatus = await this.resolveNewStatus(server);
-      
+
       if (newStatus) {
         const { id } = server;
-        
+
         const status = this.status[id];
         if (status && (status.online !== newStatus.online || status.passworded !== newStatus.passworded)) {
           console.log('[StatusPoller] Found new server status, posting to subscribers.');
           await this.notifySubscribers(server, newStatus);
         }
-        
+
         this.status[id] = newStatus;
       }
     }
   }
-  
+
   notifySubscribers = async (server: Server, status: Status): Promise<void> => {
     const messageEmbed = this.createStatusUpdateEmbed(server, status);
     const subscriptions = await SubscriptionModel.getSubscriptionsForServer(server.id);
     for (const sub of subscriptions) {
       const { channelId, autoDeleteMessages, lastMessageId } = sub;
       const channel = this.client.channels.cache.find(c => c.id === channelId) as TextChannel | undefined;
-      
+
       if (channel) {
         if (autoDeleteMessages && lastMessageId) {
           try {
@@ -59,7 +59,7 @@ export class StatusPoller {
       }
     }
   }
-  
+
   resolveNewStatus = async (server: Server): Promise<Status | undefined> => {
     try {
       return await BeamdogApiProxy.fetchServer(server.id, StatusModel);
@@ -68,7 +68,7 @@ export class StatusPoller {
         if (err.code === 400) {
           console.error('[StatusPoller] Attempted an invalid request against the Beamdog API.');
         }
-        
+
         if (err.code === 404) {
           const { name, last_seen, kx_pk } = this.status[server.id];
           return {
@@ -84,6 +84,6 @@ export class StatusPoller {
       }
     }
   }
-  
+
   createStatusUpdateEmbed = serverStatusToStatusUpdateEmbed;
 }

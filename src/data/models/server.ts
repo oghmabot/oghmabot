@@ -1,5 +1,5 @@
 import { DataTypes, FindOptions, Model, Sequelize } from 'sequelize';
-import { BeamdogApiResponseBody } from '../proxy';
+import { BeamdogApiResponseBody } from '../proxies';
 
 export interface Server {
   id: string;

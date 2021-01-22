@@ -1,7 +1,7 @@
 import { Channel, Message, TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
 import { Server, ServerModel, Status, StatusModel, SubscriptionModel } from './models';
-import { BeamdogApiError, fetchServer } from './proxy';
+import { BeamdogApiError, BeamdogApiProxy } from './proxies';
 import { serverStatusToStatusUpdateEmbed } from '../utils';
 
 type StatusMemory = Record<string, { status: Status; messages: Message[]; }>;
@@ -53,7 +53,7 @@ export class StatusPoller {
 
   resolveNewStatus = async (server: Server): Promise<Status | null> => {
     try {
-      return await fetchServer(server.id, StatusModel);
+      return await BeamdogApiProxy.fetchServer(server.id, StatusModel);
     } catch (err) {
       if (err instanceof BeamdogApiError) {
         if (err.code === 400) {

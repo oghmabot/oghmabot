@@ -1,7 +1,7 @@
 import { Message } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { Server, ServerModel } from '../../data/models';
-import { BeamdogApiError, fetchServer } from '../../data/proxy';
+import { BeamdogApiError, BeamdogApiProxy } from '../../data/proxies';
 import { isValidBeamdogIdentifier, isValidURL } from '../../utils';
 
 interface ServerCommandArgs {
@@ -81,7 +81,7 @@ export class ServerCommand extends Command {
     const { identifier } = args;
 
     try {
-      const server = await fetchServer(identifier, ServerModel);
+      const server = await BeamdogApiProxy.fetchServer(identifier, ServerModel);
 
       if (await ServerModel.serverExists(server)) {
         return msg.say('Server already exists.');

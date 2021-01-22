@@ -33,18 +33,18 @@ export class BeamdogApiError extends Error {
   }
 }
 
-export async function fetchServer(identifier: string): Promise<BeamdogApiResponseBody>;
-export async function fetchServer<M>(identifier: string, mapper: BeamdogMapper<M>): Promise<M>;
-export async function fetchServer<M>(identifier: string, mapper?: BeamdogMapper<M>): Promise<BeamdogApiResponseBody | M> {
-  const url = `${BeamdogApi}${
-    (isValidBeamdogDbKey(identifier) && identifier) || (isValidIPAndPort(identifier) && identifier.replace(':', '/'))
-  }`;
+export class BeamdogApiProxy {
+  static async fetchServer(identifier: string): Promise<BeamdogApiResponseBody>;
+  static async fetchServer<M>(identifier: string, mapper: BeamdogMapper<M>): Promise<M>;
+  static async fetchServer<M>(identifier: string, mapper?: BeamdogMapper<M>): Promise<BeamdogApiResponseBody | M> {
+    const url = `${BeamdogApi}${(isValidBeamdogDbKey(identifier) && identifier) || (isValidIPAndPort(identifier) && identifier.replace(':', '/'))}`;
 
-  const response = await fetch(url);
-  if (response.status !== 200) throw new BeamdogApiError(response, await response.text());
+    const response = await fetch(url);
+    if (response.status !== 200) throw new BeamdogApiError(response, await response.text());
 
-  const json: BeamdogApiResponseBody = await response.json();
-  return mapper
-    ? mapper.fromBeamdogApiResponseBody(json)
-    : json;
+    const json: BeamdogApiResponseBody = await response.json();
+    return mapper
+      ? mapper.fromBeamdogApiResponseBody(json)
+      : json;
+  }
 }

@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { DataTypes, Model, Sequelize } from "sequelize";
 import { getOghmabotEmbed } from "../../utils";
-import { FandomApiDeityObj } from "../proxy";
+import { FandomApiArticle } from "../proxies";
 
 export interface Deity {
   name: string;
@@ -63,7 +63,7 @@ export class DeityModel extends Model<Deity> {
     where: { name },
   }))?.get();
 
-  static fromFandomApiDeityObj = (el: FandomApiDeityObj): Deity => (
+  static fromFandomApiArticle = (el: FandomApiArticle): Deity => (
     {
       name: el.title,
       fandom_fr_abstract: el.abstract.replace(/\s*?[(]pronounced:.*[)]/, '').match(/^.*?[.]/)?.join(),

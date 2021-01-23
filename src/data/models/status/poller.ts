@@ -1,4 +1,4 @@
-import { Channel, TextChannel } from 'discord.js';
+import { TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
 import { Server, ServerModel, Status, StatusModel, SubscriptionModel } from '..';
 import { BeamdogApiError, BeamdogApiProxy } from '../../proxies';

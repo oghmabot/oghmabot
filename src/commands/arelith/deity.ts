@@ -7,7 +7,7 @@ export class DeityCommand extends Command {
   constructor(client: CommandoClient) {
     super(client, {
       name: 'deity',
-      group: 'lore',
+      group: 'arelith',
       memberName: 'deity',
       description: 'Replies with the details of a deity in the Arelith pantheon.',
       args: [
@@ -29,7 +29,7 @@ export class DeityCommand extends Command {
       const deityFR = await FandomApiProxy.fetchDeityDetails(deityQuery, DeityModel);
       return msg.embed(DeityModel.toEmbed({ ...deityFR, ...deityAR }));
     } catch (error) {
-      console.error(error);
+      console.error('[DeityCommand] Unexpected error.', error);
     }
 
     return msg.reply('Invalid input.');

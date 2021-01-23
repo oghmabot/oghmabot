@@ -21,8 +21,7 @@ export class OghmabotClient extends CommandoClient {
     this.registry
       .registerGroups([
         ['owner', 'Owner'],
-        ['standard', 'Standard'],
-        ['lore', 'Lore'],
+        ['arelith', 'Arelith'],
         ['nwn', 'Neverwinter Nights'],
       ])
       .registerDefaultTypes()

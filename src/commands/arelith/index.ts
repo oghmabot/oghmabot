@@ -1,5 +1,5 @@
 import { DeityCommand } from './deity';
 
-export const loreCommands = () => [
+export const arelithCommands = () => [
   DeityCommand,
 ];

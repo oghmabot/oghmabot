@@ -30,4 +30,3 @@ export const initialize = async (force: boolean = false, ...dbs: string[]): Prom
 };
 
 export * from './models';
-export * from './poller';

@@ -1,6 +1,5 @@
 import { Sequelize } from 'sequelize/types';
 import { DeityModel } from './deity';
-
 import { ServerModel } from './server';
 import { SubscriptionModel } from './subscription';
 

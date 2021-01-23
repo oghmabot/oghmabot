@@ -1,20 +1,25 @@
 import { TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
-import { Server, ServerModel, Status, StatusModel, SubscriptionModel } from './models';
-import { BeamdogApiError, BeamdogApiProxy } from './proxies';
-import { serverStatusToStatusUpdateEmbed } from '../utils';
+import { Server, ServerModel, Status, StatusModel, SubscriptionModel } from '..';
+import { BeamdogApiError, BeamdogApiProxy } from '../../proxies';
+import { serverStatusToStatusUpdateEmbed } from '../../../utils';
+import { BasePoller } from '../../proxies/poller';
 
-export class StatusPoller {
-  private client: CommandoClient;
-  private status: Record<string, Status>;
+export class StatusPoller extends BasePoller<Status> {
+  // private client: CommandoClient;
+  // private status: Record<string, Status>;
 
   constructor(client: CommandoClient, interval: number = 10000) {
-    this.client = client;
-    this.status = {};
-    setInterval(this.pollAndUpdate, interval);
+    super(client, interval);
+    this.activatePolling();
+    // this.client = client;
+    // this.status = {};
+    // setInterval(this.pollAndUpdate, interval);
   }
 
-  pollAndUpdate = async (): Promise<void> => {
+  getOrFetch = async (serverId: string): Promise<Status | undefined> => this.cache.get(serverId) ?? await BeamdogApiProxy.fetchServer(serverId, StatusModel);
+
+  protected pollAndUpdate = async (): Promise<void> => {
     console.log('[StatusPoller] Polling Beamdog for server status changes...');
     const servers = await ServerModel.getServers();
     for (const server of servers) {
@@ -23,18 +28,20 @@ export class StatusPoller {
       if (newStatus) {
         const { id } = server;
 
-        const status = this.status[id];
-        if (status && (status.online !== newStatus.online || status.passworded !== newStatus.passworded)) {
+        const status = this.cache.get(id);
+        if (status && this.shouldNotify(status, newStatus)) {
           console.log('[StatusPoller] Found new server status, posting to subscribers.');
           await this.notifySubscribers(server, newStatus);
         }
 
-        this.status[id] = newStatus;
+        this.cache.set(id, newStatus);
+
+        console.log(this.cache);
       }
     }
   }
 
-  notifySubscribers = async (server: Server, status: Status): Promise<void> => {
+  private notifySubscribers = async (server: Server, status: Status): Promise<void> => {
     const messageEmbed = this.createStatusUpdateEmbed(server, status);
     const subscriptions = await SubscriptionModel.getSubscriptionsForServer(server.id);
     for (const sub of subscriptions) {
@@ -60,7 +67,14 @@ export class StatusPoller {
     }
   }
 
-  resolveNewStatus = async (server: Server): Promise<Status | undefined> => {
+  protected shouldNotify = (prevStatus: Status, newStatus: Status): boolean => {
+    const pState = StatusModel.resolveStatusAsDescriptor(prevStatus);
+    const nState = StatusModel.resolveStatusAsDescriptor(newStatus);
+
+    return pState < nState;
+  }
+
+  protected resolveNewStatus = async (server: Server): Promise<Status | undefined> => {
     try {
       return await BeamdogApiProxy.fetchServer(server.id, StatusModel);
     } catch (err) {
@@ -70,9 +84,9 @@ export class StatusPoller {
         }
 
         if (err.code === 404) {
-          const { name, last_seen, kx_pk } = this.status[server.id];
+          const { name, last_seen, kx_pk } = this.cache.get(server.id) || {};
           return {
-            name: name || name,
+            name: name || server.name,
             passworded: false,
             players: 0,
             online: false,
@@ -85,5 +99,5 @@ export class StatusPoller {
     }
   }
 
-  createStatusUpdateEmbed = serverStatusToStatusUpdateEmbed;
+  protected createStatusUpdateEmbed = serverStatusToStatusUpdateEmbed;
 }

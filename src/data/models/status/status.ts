@@ -1,5 +1,5 @@
-import { BeamdogApiResponseBody } from '../proxies';
-import { calculateTimeBetween } from '../../utils';
+import { BeamdogApiResponseBody } from '../../proxies';
+import { calculateTimeBetween } from '../../../utils';
 
 export interface Status {
   name: string;
@@ -7,8 +7,15 @@ export interface Status {
   players: number;
   online: boolean;
   uptime: number;
-  last_seen?: number;
-  kx_pk: string;
+  lastSeen?: number;
+  serverId: string;
+}
+
+export enum StatusDescriptor {
+  Offline,
+  Restarting,
+  Stabilizing = Restarting,
+  Online,
 }
 
 export const StatusColors: Record<string, number> = {
@@ -26,8 +33,16 @@ export class StatusModel {
       players: response.current_players,
       online: true,
       uptime: calculateTimeBetween(response.first_seen, response.last_advertisement),
-      last_seen: response.last_advertisement,
-      kx_pk: response.kx_pk,
+      lastSeen: response.last_advertisement,
+      serverId: response.kx_pk,
     }
   );
+
+  static resolveStatusAsDescriptor = (status: Status): StatusDescriptor => {
+    if (status.online) {
+      return status.passworded ? StatusDescriptor.Restarting : StatusDescriptor.Online;
+    }
+
+    return StatusDescriptor.Offline;
+  }
 }

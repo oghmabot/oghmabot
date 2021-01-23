@@ -6,7 +6,7 @@ export class RollCommand extends Command {
   constructor(client: CommandoClient) {
     super(client, {
       name: 'roll',
-      group: 'standard',
+      group: 'nwn',
       memberName: 'roll',
       description: 'Resolves a given d20-style dice roll.',
       args: [
@@ -27,13 +27,13 @@ export class RollCommand extends Command {
         ? this.formatRollResult(msg, roll(notation, this.parseOptions(options)))
         : msg.say(`:game_die: Result: ${roll(notation)}`);
     } catch (error) {
-      console.error(error);
+      console.error('[RollCommand] Unexpected error.', error);
     }
 
     return msg.reply('Invalid input.');
   }
 
-  formatRollResult(msg: CommandoMessage, roll: RollResult): Promise<any> {
+  formatRollResult(msg: CommandoMessage, roll: RollResult): Promise<CommandoMessage> {
     const { input, total, max, min, avg } = roll;
     const embed = getOghmabotEmbed();
     embed.setTitle(`:game_die: Result: **${total}**`);

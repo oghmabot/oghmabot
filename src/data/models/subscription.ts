@@ -1,25 +1,41 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
 
+export enum SubscriptionType {
+  Status,
+  ArelithAnnouncements,
+  ArelithUpdates,
+}
+
 export interface Subscription {
-  channel: string;
-  server: string;
+  type: SubscriptionType;
+  channelId: string;
+  subscribedTo?: string;
+  autoDeleteMessages?: boolean;
+  lastMessageId?: string;
   createdBy?: string;
 }
 
 export class SubscriptionModel extends Model<Subscription> {
   static initialize(sequelize: Sequelize): SubscriptionModel {
     return this.init({
-      channel: {
+      type: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+      },
+      channelId: {
         type: DataTypes.STRING,
         primaryKey: true,
       },
-      server: {
+      subscribedTo: {
         type: DataTypes.STRING,
         primaryKey: true,
       },
-      createdBy: {
-        type: DataTypes.STRING,
+      autoDeleteMessages: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
       },
+      lastMessageId: DataTypes.STRING,
+      createdBy: DataTypes.STRING,
     }, {
       sequelize,
       modelName: 'subscription',
@@ -30,8 +46,9 @@ export class SubscriptionModel extends Model<Subscription> {
 
   static subscriptionExists = async (subscription: Subscription): Promise<boolean> => !!(await SubscriptionModel.findOne({
     where: {
-      channel: subscription.channel,
-      server: subscription.server,
+      type: subscription.type,
+      channelId: subscription.channelId,
+      subscribedTo: subscription.subscribedTo,
     },
   }));
 
@@ -39,13 +56,14 @@ export class SubscriptionModel extends Model<Subscription> {
 
   static getSubscriptionsForChannel = async (channelId: string): Promise<Subscription[]> => (await SubscriptionModel.findAll({
     where: {
-      channel: channelId,
+      channelId,
     },
   })).map(s => s.get());
 
   static getSubscriptionsForServer = async (serverId: string): Promise<Subscription[]> => (await SubscriptionModel.findAll({
     where: {
-      server: serverId,
+      type: SubscriptionType.Status,
+      subscribedTo: serverId,
     },
   })).map(s => s.get());
 }

@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import { initializeAllModels } from './models';
+import { initializeAllModels, ServerModel, SubscriptionModel } from './models';
 
 export const connect = async (url: string | undefined = process.env.DATABASE_URL): Promise<Sequelize> => {
   if (!url) throw new Error('Database URL is not defined.');
@@ -11,11 +11,22 @@ export const connect = async (url: string | undefined = process.env.DATABASE_URL
   return sql;
 };
 
-export const initialize = async (force: boolean = false): Promise<void> => {
+export const initialize = async (force: boolean = false, ...dbs: string[]): Promise<void> => {
   const sql = await connect();
-  initializeAllModels(sql);
-  sql.sync({ force });
+  if (!dbs.length) {
+    initializeAllModels(sql);
+    sql.sync({ force });
+  } else {
+    if (dbs.includes('servers')) {
+      ServerModel.initialize(sql);
+      ServerModel.sync({ force });
+    }
+
+    if (dbs.includes('subscriptions')) {
+      SubscriptionModel.initialize(sql);
+      SubscriptionModel.sync({ force });
+    }
+  }
 };
 
 export * from './models';
-export * from './poller';

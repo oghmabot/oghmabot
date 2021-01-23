@@ -1,10 +1,12 @@
-import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
-import { ServerModel, StatusModel } from '../../data/models';
-import { BeamdogApiProxy } from '../../data/proxies';
+import { Command, CommandoMessage } from 'discord.js-commando';
+import { OghmabotClient } from '../../client';
+import { ServerModel, StatusPoller } from '../../data/models';
 import { serverStatusToEmbed } from '../../utils';
 
 export class StatusCommand extends Command {
-  constructor(client: CommandoClient) {
+  private poller: StatusPoller;
+
+  constructor(client: OghmabotClient) {
     super(client, {
       name: 'status',
       group: 'nwn',
@@ -19,6 +21,8 @@ export class StatusCommand extends Command {
         },
       ],
     });
+
+    this.poller = client.pollers.get('status') as StatusPoller;
   }
 
   async run(msg: CommandoMessage, { servers }: { servers: string }): Promise<any> {
@@ -29,11 +33,11 @@ export class StatusCommand extends Command {
       if (!requestedServers?.length) msg.say('Server not found.');
 
       requestedServers.forEach(async server => {
-        const status = await BeamdogApiProxy.fetchServer(server.id, StatusModel);
-        await msg.embed(this.createStatusEmbed(server, status));
+        const status = await this.poller.getOrFetch(server.id);
+        if (status) await msg.embed(this.createStatusEmbed(server, status));
       });
     } catch (error) {
-      console.error(error);
+      console.error('[StatusCommand] Unexpected error.', error);
     }
   }
 

@@ -29,7 +29,7 @@ export const serverStatusToEmbed = (server: Server, status: Status): MessageEmbe
   embed.setColor(StatusColors[state.toLowerCase()]);
   embed.setDescription(status.online
     ? `**${state}** :hourglass: ${new Date(status.uptime).toISOString().substr(11, 8)} :busts_in_silhouette: ${status.players}`
-    : `**${state}** :hourglass: ${status.last_seen && convertMillisecondsToTimestamp(calculateTimeBetween(status.last_seen, nowUnixTime()))}`,
+    : `**${state}** :hourglass: ${status.lastSeen && convertMillisecondsToTimestamp(calculateTimeBetween(status.lastSeen, nowUnixTime()))}`,
   );
   if (server.img) embed.setThumbnail(server.img);
   if (server.href) embed.setURL(server.href);

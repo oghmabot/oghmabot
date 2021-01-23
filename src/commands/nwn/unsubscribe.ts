@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
-import { Server, ServerModel, SubscriptionModel } from '../../data/models';
+import { Server, ServerModel, SubscriptionModel, SubscriptionType } from '../../data/models';
 
 export class UnsubscribeCommand extends Command {
   constructor(client: CommandoClient) {
@@ -38,8 +38,9 @@ export class UnsubscribeCommand extends Command {
     const removed: string[] = [];
     for (const server of servers) {
       const subscription = {
-        channel: msg.channel.id,
-        server: server.id,
+        type: SubscriptionType.Status,
+        channelId: msg.channel.id,
+        subscribedTo: server.id,
       };
 
       if (await SubscriptionModel.subscriptionExists(subscription)) {

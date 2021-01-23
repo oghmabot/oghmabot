@@ -1,9 +1,7 @@
 import { TextChannel } from 'discord.js';
-import { CommandoClient } from 'discord.js-commando';
 import dotenv from 'dotenv';
-
-import { getAllCommands } from './commands';
-import { connect, StatusPoller } from './data';
+import { OghmabotClient } from './client';
+import { connect } from './data';
 import { loggedInServersToEmbed, loggedInServersToString } from './utils';
 
 /**
@@ -21,30 +19,11 @@ const {
   IGNORE_SERVERS,
 } = process.env;
 
-const client = new CommandoClient({
+const client = new OghmabotClient({
   owner: BOT_OWNER,
   commandPrefix: BOT_PREFIX || '-',
 });
 
-client.registry
-  .registerGroups([
-    ['owner', 'Owner'],
-    ['standard', 'Standard'],
-    ['lore', 'Lore'],
-    ['nwn', 'Neverwinter Nights'],
-  ])
-  .registerDefaultTypes()
-  .registerDefaultGroups()
-  .registerDefaultCommands({
-    prefix: false,
-    unknownCommand: false,
-  })
-  .registerCommands(getAllCommands());
-
-/**
- * When bot is ready, output logged in servers
- * @ignore
- */
 client.on('ready', async () => {
   const { channels, guilds } = client;
   const guildsToList = guilds.cache.filter(g => !IGNORE_SERVERS?.includes(g.id));
@@ -52,7 +31,7 @@ client.on('ready', async () => {
   await connect(DATABASE_URL);
 
   if (BOT_STATUS_CHANNEL) {
-    const channel = channels.cache.find(c => c.id === BOT_STATUS_CHANNEL) as TextChannel;
+    const channel = channels.cache.find(c => c.id === BOT_STATUS_CHANNEL) as TextChannel | undefined;
 
     if (channel) {
       channel.send('', loggedInServersToEmbed(guildsToList));
@@ -66,5 +45,3 @@ client.on('ready', async () => {
  * @ignore
  */
 client.login(BOT_TOKEN);
-
-new StatusPoller(client);

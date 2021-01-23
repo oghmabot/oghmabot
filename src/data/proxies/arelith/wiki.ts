@@ -1,7 +1,7 @@
 import HTMLElementData from "beautiful-dom/dist/htmlelement";
 import { findBestStringMatch } from "../../../utils/parsing";
 import { Deity } from "../../models";
-import { BaseScraper } from "../scraper";
+import { BaseScraper } from "../../common";
 
 const WikiUrl = 'http://wiki.arelith.com';
 const DeityTableUrl = 'http://wiki.arelith.com/Deity_Table';

@@ -13,10 +13,10 @@ export abstract class BasePoller<T> {
   }
 
   protected activatePolling(): void {
-    setInterval(this.pollAndUpdate, this.interval);
+    this.client.setInterval(this.pollAndUpdate, this.interval);
   }
 
   protected abstract pollAndUpdate(): Promise<void>;
 
-  public abstract getOrFetch(key: unknown): Promise<T | undefined>;
+  public abstract getOrFetch(key: string): Promise<T | undefined>;
 }

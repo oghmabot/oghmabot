@@ -1,20 +1,14 @@
-import { TextChannel } from 'discord.js';
+import { Channel, TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
 import { Server, ServerModel, Status, StatusModel, SubscriptionModel } from '..';
 import { BeamdogApiError, BeamdogApiProxy } from '../../proxies';
 import { serverStatusToStatusUpdateEmbed } from '../../../utils';
-import { BasePoller } from '../../proxies/poller';
+import { BasePoller } from '../../common';
 
 export class StatusPoller extends BasePoller<Status> {
-  // private client: CommandoClient;
-  // private status: Record<string, Status>;
-
   constructor(client: CommandoClient, interval: number = 10000) {
     super(client, interval);
     this.activatePolling();
-    // this.client = client;
-    // this.status = {};
-    // setInterval(this.pollAndUpdate, interval);
   }
 
   getOrFetch = async (serverId: string): Promise<Status | undefined> => this.cache.get(serverId) ?? await BeamdogApiProxy.fetchServer(serverId, StatusModel);
@@ -35,8 +29,6 @@ export class StatusPoller extends BasePoller<Status> {
         }
 
         this.cache.set(id, newStatus);
-
-        console.log(this.cache);
       }
     }
   }

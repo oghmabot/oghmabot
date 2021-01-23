@@ -21,7 +21,7 @@
     "faerun",
     "chatbot"
   ],
-  "author": "aergnist",
+  "authors": ["aergnist", "Silvard"],
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^26.0.20",

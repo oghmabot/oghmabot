@@ -26,51 +26,51 @@ export class ArelithWikiScraper extends BaseScraper {
   }
 
   private static async mapDeityTableRowToDeity(row: HTMLElementData): Promise<Deity> {
-    const ar_wiki_url = `${WikiUrl}${row.querySelector('a')?.getAttribute('href')}`;
+    const arelithWikiUrl = `${WikiUrl}${row.querySelector('a')?.getAttribute('href')}`;
     const [
       name,
       alignment,
-      ar_clergy_alignments,
+      arelithClergyAlignments,
       aspect1,
       aspect2,
-      ar_category,
+      arelithCategory,
     ] = row.querySelectorAll('td');
 
     const deity = {
-      ar_wiki_url: ar_wiki_url,
+      arelithWikiUrl: arelithWikiUrl,
       name: name?.textContent.trim(),
       alignment: alignment?.textContent.trim(),
-      clergy_alignments: ar_clergy_alignments?.textContent.trim().split(' ').filter(Boolean),
-      ar_aspects: [aspect1?.textContent.trim(), aspect2?.textContent.trim()].filter(Boolean),
-      ar_clergy_alignments: ar_clergy_alignments?.textContent.trim().split(' ').filter(Boolean),
-      ar_category: ar_category?.textContent.trim(),
+      clergyAlignments: arelithClergyAlignments?.textContent.trim().split(' ').filter(Boolean),
+      arelithAspects: [aspect1?.textContent.trim(), aspect2?.textContent.trim()].filter(Boolean),
+      arelithClergyAlignments: arelithClergyAlignments?.textContent.trim().split(' ').filter(Boolean),
+      arelithCategory: arelithCategory?.textContent.trim(),
     };
 
     return await this.fetchAndMapDeityPage(deity);
   }
 
   private static async fetchAndMapDeityPage(deity: Deity): Promise<Deity> {
-    const dom = await this.fetchAsBeautifulDom(`${deity.ar_wiki_url}`);
+    const dom = await this.fetchAsBeautifulDom(`${deity.arelithWikiUrl}`);
     const [
-      power_level,
+      powerLevel,
       symbol,
       alignment,
       portfolio,
       worshippers,
       domains,
-      ar_clergy_alignments,
+      arelithClergyAlignments,
     ] = dom.querySelectorAll('tbody tr');
 
     return {
       ...deity,
       titles: dom.querySelector('dl dd i')?.textContent.split(',').map(t => t.trim()).filter(Boolean),
-      power_level: power_level?.querySelectorAll('td')[1]?.textContent.trim(),
+      powerLevel: powerLevel?.querySelectorAll('td')[1]?.textContent.trim(),
       symbol: symbol?.querySelectorAll('td')[1]?.textContent.trim(),
       alignment: alignment?.querySelectorAll('td')[1]?.textContent.trim(),
       portfolio: portfolio?.querySelectorAll('td')[1]?.textContent.split(',').map(p => p.trim()).filter(Boolean),
       worshippers: worshippers?.querySelectorAll('td')[1]?.textContent.split(',').map(p => p.trim()).filter(Boolean),
       domains: domains?.querySelectorAll('td')[1]?.textContent.replace(/ *\[[^\]]*]/g, '').split(',').map(d => d.trim()).filter(Boolean),
-      ar_clergy_alignments: ar_clergy_alignments?.querySelectorAll('td')[1]?.textContent.split(',').map(a => a.trim()).filter(Boolean),
+      arelithClergyAlignments: arelithClergyAlignments?.querySelectorAll('td')[1]?.textContent.split(',').map(a => a.trim()).filter(Boolean),
     };
   }
 
@@ -79,8 +79,8 @@ export class ArelithWikiScraper extends BaseScraper {
       const deity = {
         name: 'Abeir-Toril',
         alignment: 'No Alignment',
-        ar_wiki_url: `${WikiUrl}/Toril`,
-        ar_aspects: ['Nature', 'Magic'],
+        arelithWikiUrl: `${WikiUrl}/Toril`,
+        arelithAspects: ['Nature', 'Magic'],
         thumbnail: 'https://vignette.wikia.nocookie.net/forgottenrealms/images/7/71/Toril-globe-small.jpg',
       };
 

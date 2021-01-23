@@ -76,15 +76,15 @@ export class StatusPoller extends BasePoller<Status> {
         }
 
         if (err.code === 404) {
-          const { name, last_seen, kx_pk } = this.cache.get(server.id) || {};
+          const { name, lastSeen, serverId } = this.cache.get(server.id) || {};
           return {
             name: name || server.name,
             passworded: false,
             players: 0,
             online: false,
             uptime: 0,
-            last_seen: last_seen,
-            kx_pk: kx_pk || server.id,
+            lastSeen: lastSeen,
+            serverId: serverId || server.id,
           };
         }
       }

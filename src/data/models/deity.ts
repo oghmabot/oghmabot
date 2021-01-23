@@ -5,24 +5,24 @@ import { FandomApiArticle } from "../proxies";
 
 export interface Deity {
   name: string;
-  power_level?: string;
+  powerLevel?: string;
   symbol?: string;
   titles?: string[];
   alignment?: string;
-  clergy_alignments?: string[];
+  clergyAlignments?: string[];
   portfolio?: string[];
   worshippers?: string[];
   domains?: string[];
   dogma?: string;
-  ar_aspects?: string[];
-  ar_category?: string;
-  ar_clergy_alignments?: string[];
-  ar_wiki_url?: string;
-  fandom_fr_abstract?: string;
-  fandom_fr_id?: number;
-  fandom_fr_url?: string;
+  arelithAspects?: string[];
+  arelithCategory?: string;
+  arelithClergyAlignments?: string[];
+  arelithWikiUrl?: string;
+  fandomFRAbstract?: string;
+  fandomFRId?: number;
+  fandomFRUrl?: string;
+  fandomFRThumbnail?: string;
   pronunciation?: string[];
-  thumbnail?: string;
 }
 
 export class DeityModel extends Model<Deity> {
@@ -32,24 +32,24 @@ export class DeityModel extends Model<Deity> {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      power_level: DataTypes.STRING,
+      powerLevel: DataTypes.STRING,
       symbol: DataTypes.STRING,
       titles: DataTypes.ARRAY(DataTypes.STRING),
       alignment: DataTypes.STRING,
-      clergy_alignments: DataTypes.STRING,
+      clergyAlignments: DataTypes.STRING,
       portfolio: DataTypes.ARRAY(DataTypes.STRING),
       worshippers: DataTypes.ARRAY(DataTypes.STRING),
       domains: DataTypes.ARRAY(DataTypes.STRING),
       dogma: DataTypes.STRING,
-      ar_aspects: DataTypes.ARRAY(DataTypes.STRING),
-      ar_category: DataTypes.STRING,
-      ar_clergy_alignments: DataTypes.ARRAY(DataTypes.STRING),
-      ar_wiki_url: DataTypes.STRING,
-      fandom_fr_abstract: DataTypes.STRING,
-      fandom_fr_id: DataTypes.INTEGER,
-      fandom_fr_url: DataTypes.STRING,
+      arelithAspects: DataTypes.ARRAY(DataTypes.STRING),
+      arelithCategory: DataTypes.STRING,
+      arelithClergyAlignments: DataTypes.ARRAY(DataTypes.STRING),
+      arelithWikiUrl: DataTypes.STRING,
+      fandomFRAbstract: DataTypes.STRING,
+      fandomFRId: DataTypes.INTEGER,
+      fandomFRUrl: DataTypes.STRING,
+      fandomFRThumbnail: DataTypes.STRING,
       pronunciation: DataTypes.ARRAY(DataTypes.STRING),
-      thumbnail: DataTypes.STRING,
     }, {
       sequelize,
       modelName: 'deity',
@@ -66,29 +66,29 @@ export class DeityModel extends Model<Deity> {
   static fromFandomApiArticle = (el: FandomApiArticle): Deity => (
     {
       name: el.title,
-      fandom_fr_abstract: el.abstract.replace(/\s*?[(]pronounced:.*[)]/, '').match(/^.*?[.]/)?.join(),
-      fandom_fr_id: el.id,
-      fandom_fr_url: el.url,
+      fandomFRAbstract: el.abstract.replace(/\s*?[(]pronounced:.*[)]/, '').match(/^.*?[.]/)?.join(),
+      fandomFRId: el.id,
+      fandomFRUrl: el.url,
+      fandomFRThumbnail: el.thumbnail.substring(0, el.thumbnail.indexOf('revision')),
       pronunciation: el.abstract.substr(el.abstract.indexOf('(pronounced:') + 12, el.abstract.indexOf('listen') - 12 - el.abstract.indexOf('(pronounced:')).replace(/[0-9]+/g, '').split(' or:'),
-      thumbnail: el.thumbnail.substring(0, el.thumbnail.indexOf('revision')),
     }
   );
 
   static toEmbed = (deity: Deity): MessageEmbed => {
-    const { name, power_level, titles, alignment, fandom_fr_abstract, ar_aspects, ar_clergy_alignments, ar_wiki_url, thumbnail } = deity;
+    const { name, powerLevel, titles, alignment, fandomFRAbstract, arelithAspects, arelithClergyAlignments, arelithWikiUrl, fandomFRThumbnail } = deity;
     const embed = getOghmabotEmbed();
     embed.setTitle(name);
     embed.setDescription(`*${titles && titles.join(', ')}*`);
-    if (ar_wiki_url) embed.setURL(ar_wiki_url);
-    if (thumbnail) embed.setThumbnail(thumbnail);
+    if (arelithWikiUrl) embed.setURL(arelithWikiUrl);
+    if (fandomFRThumbnail) embed.setThumbnail(fandomFRThumbnail);
 
-    if (alignment) embed.addField('Alignment', alignment, !!(ar_clergy_alignments || power_level));
-    if (ar_clergy_alignments?.length) embed.addField('Clergy Alignments', ar_clergy_alignments.join(', '), !!alignment);
-    if (power_level) embed.addField('Power Level', power_level, !!alignment && !ar_clergy_alignments);
-    if (ar_aspects?.length) embed.addField('Aspects', ar_aspects.join(', '));
+    if (alignment) embed.addField('Alignment', alignment, !!(arelithClergyAlignments || powerLevel));
+    if (arelithClergyAlignments?.length) embed.addField('Clergy Alignments', arelithClergyAlignments.join(', '), !!alignment);
+    if (powerLevel) embed.addField('Power Level', powerLevel, !!alignment && !arelithClergyAlignments);
+    if (arelithAspects?.length) embed.addField('Aspects', arelithAspects.join(', '));
     const infoField = DeityModel.getInfoFieldString(deity);
     if (infoField) embed.addField(':book:', infoField);
-    if (fandom_fr_abstract) embed.addField('The Forgotten Realms Wiki', fandom_fr_abstract);
+    if (fandomFRAbstract) embed.addField('The Forgotten Realms Wiki', fandomFRAbstract);
 
     return embed;
   }

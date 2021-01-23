@@ -17,7 +17,7 @@ describe('formatting', ()  => {
     players: 100,
     online: true,
     uptime: hourMs,
-    kx_pk: mockServer.id,
+    serverId: mockServer.id,
   };
 
   const mockStatusStabilizing = {
@@ -26,7 +26,7 @@ describe('formatting', ()  => {
     players: 0,
     online: true,
     uptime: hourMs,
-    kx_pk: mockServer.id,
+    serverId: mockServer.id,
   };
 
   const mockStatusOffline = {
@@ -35,8 +35,8 @@ describe('formatting', ()  => {
     players: 0,
     online: false,
     uptime: 0,
-    last_seen: nowUnixTime() - hourUnixTime,
-    kx_pk: mockServer.id,
+    lastSeen: nowUnixTime() - hourUnixTime,
+    serverId: mockServer.id,
   };
 
   describe('serverStatusToEmbed', () => {

@@ -1,2 +1,2 @@
 export * from './api';
-export * from './wiki';
+export * from './wiki.scraper';

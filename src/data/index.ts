@@ -1,5 +1,6 @@
 import { Sequelize } from 'sequelize';
 import { DeityModel, initializeAllModels, ServerModel, SubscriptionModel } from './models';
+import { fetchAllDeities } from './proxies';
 
 export const connect = async (url: string | undefined = process.env.DATABASE_URL): Promise<Sequelize> => {
   if (!url) throw new Error('Database URL is not defined.');
@@ -20,6 +21,9 @@ export const initialize = async (force: boolean = false, ...dbs: string[]): Prom
     if (dbs.includes('deities')) {
       DeityModel.initialize(sql);
       DeityModel.sync({ force });
+
+      const deities = await fetchAllDeities();
+      deities.forEach(DeityModel.addDeity);
     }
 
     if (dbs.includes('servers')) {
@@ -33,5 +37,3 @@ export const initialize = async (force: boolean = false, ...dbs: string[]): Prom
     }
   }
 };
-
-export * from './models';

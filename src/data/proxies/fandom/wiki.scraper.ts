@@ -14,7 +14,7 @@ export class FandomWikiScraper extends BaseScraper {
     try {
       const $ = await this.fetchAsCheerioRoot(url);
       const titlesElement = $('div.pi-item.pi-data').filter((i, d) => $(d).attr('data-source') === 'title').find('div.pi-data-value')[0] as cheerio.TagElement;
-      const titles = titlesElement.childNodes?.flatMap(node =>
+      const titles = titlesElement?.childNodes?.flatMap(node =>
         node.type === 'text' && node.data && trimPunctuationAndWhitespace(node.data)
           ? trimPunctuationAndWhitespace(node.data)
           : [],

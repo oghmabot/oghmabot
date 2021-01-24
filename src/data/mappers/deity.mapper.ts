@@ -6,12 +6,12 @@ import { getOghmabotEmbed } from '../../utils';
 export class DeityMapper {
   static fromFandomApiArticle(article: FandomApiArticle, subdomain: FandomSubdomain): Deity | undefined {
     const { title, abstract, id, url, thumbnail } = article;
-    const parsedThumbnail = thumbnail.substring(0, thumbnail.indexOf('revision'));
+    const parsedThumbnail = thumbnail?.substring(0, thumbnail.indexOf('revision'));
 
     if (subdomain === FandomSubdomain.ForgottenRealms) {
       return {
         name: title,
-        fandomFRAbstract: abstract.replace(/\s*?[(]pronounced:.*[)]/, '').match(/^.*?[.]/)?.join(),
+        fandomFRAbstract: abstract?.replace(/\s*?[(]pronounced:.*[)]/, '').match(/^.*?[.]/)?.join(),
         fandomFRId: id,
         fandomFRUrl: url,
         fandomFRThumbnail: parsedThumbnail,
@@ -24,7 +24,7 @@ export class DeityMapper {
         fandomFRCormyrId: id,
         fandomFRCormyrUrl: url,
         fandomFRCormyrThumbnail: parsedThumbnail,
-        pronunciation: abstract.substring(abstract.indexOf(title) + title.length + 1).match(/^[(](.+?)[)]/)?.slice(1, 2)[0],
+        pronunciation: abstract?.substring(abstract?.indexOf(title) + title.length + 1).match(/^[(](.+?)[)]/)?.slice(1, 2)[0],
       };
     }
   }

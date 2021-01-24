@@ -7,7 +7,7 @@ export const trimPunctuationAndWhitespace = (inp: string): string => inp.replace
 export function findBestStringMatch(arr: string[], searchTerm: string): string | undefined;
 export function findBestStringMatch<T>(arr: T[], searchTerm: string, strResFunc: (el: T) => string | undefined): T | undefined;
 export function findBestStringMatch<T>(arr: T[], searchTerm: string, strResFunc?: (el: T) => string | undefined): T | undefined {
-  searchTerm = searchTerm.toLowerCase().replace(/\s+/g, '');
+  searchTerm = searchTerm?.toLowerCase().replace(/\s+/g, '');
   return arr.reduce<T | undefined>((prev, cur) => {
     const prevStr = (typeof prev === 'string'
       ? strResFunc ? strResFunc(prev) : prev

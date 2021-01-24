@@ -59,7 +59,7 @@ export class FandomApiProxy {
     const deities = await this.fetchDeityList(subdomain);
     return findBestStringMatch(
       deities,
-      deityName.toLowerCase().replace(/\s+/g, ''),
-      deity => deity.title.toLowerCase().replace(/\s+/g, ''))?.id;
+      deityName,
+      deity => deity?.title)?.id;
   }
 }

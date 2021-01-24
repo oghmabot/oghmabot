@@ -8,8 +8,7 @@ const DeityTableUrl = 'http://wiki.arelith.com/Deity_Table';
 
 export class ArelithWikiScraper extends BaseScraper {
   static async fetchDeity(deityQuery: string): Promise<Deity | undefined> {
-    const dom = await this.fetchAsBeautifulDom(DeityTableUrl);
-    const deityListings = dom.querySelectorAll('tbody tr').filter(r => !r.querySelectorAll('td')[5]?.textContent.trim().toLowerCase().includes('heresies'));
+    const deityListings = await this.getDeityTableRows();
     const tableRow = findBestStringMatch(deityListings, deityQuery, r => r.querySelector('a')?.textContent);
 
     if (tableRow) return await this.mapDeityTableRowToDeity(tableRow);
@@ -18,12 +17,17 @@ export class ArelithWikiScraper extends BaseScraper {
   }
 
   static async fetchAllDeities(): Promise<Deity[]> {
+    const rows = await this.getDeityTableRows();
+    return Promise.all(rows.map(ArelithWikiScraper.mapDeityTableRowToDeity));
+  }
+
+  private static async getDeityTableRows(): Promise<HTMLElementData[]> {
     const dom = await this.fetchAsBeautifulDom(DeityTableUrl);
-    return Promise.all(dom.querySelectorAll('tbody tr').map(this.mapDeityTableRowToDeity));
+    return dom.querySelectorAll('table')[1]?.querySelectorAll('tbody tr').filter(r => !r.querySelectorAll('td')[5]?.textContent.trim().toLowerCase().includes('heresies'));
   }
 
   private static async mapDeityTableRowToDeity(row: HTMLElementData): Promise<Deity> {
-    const arelithWikiUrl = `${WikiUrl}${row.querySelector('a')?.getAttribute('href')}`;
+    const url = row.querySelector('a')?.getAttribute('href');
     const [
       name,
       alignment,
@@ -34,7 +38,7 @@ export class ArelithWikiScraper extends BaseScraper {
     ] = row.querySelectorAll('td');
 
     const deity = {
-      arelithWikiUrl: arelithWikiUrl,
+      arelithWikiUrl: url ? `${WikiUrl}${url}` : undefined,
       name: name?.textContent.trim(),
       alignment: alignment?.textContent.trim(),
       clergyAlignments: arelithClergyAlignments?.textContent.trim().split(' ').filter(Boolean),
@@ -43,11 +47,14 @@ export class ArelithWikiScraper extends BaseScraper {
       arelithCategory: arelithCategory?.textContent.trim(),
     };
 
-    return await this.fetchAndMapDeityPage(deity);
+    return await ArelithWikiScraper.fetchAndMapDeityPage(deity);
   }
 
   private static async fetchAndMapDeityPage(deity: Deity): Promise<Deity> {
-    const dom = await this.fetchAsBeautifulDom(`${deity.arelithWikiUrl}`);
+    const { arelithWikiUrl } = deity;
+    if (!arelithWikiUrl) return deity;
+
+    const dom = await this.fetchAsBeautifulDom(`${arelithWikiUrl}`);
     const [
       powerLevel,
       symbol,

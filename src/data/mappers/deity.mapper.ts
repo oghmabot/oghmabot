@@ -2,6 +2,7 @@ import { Deity } from '../models/deity.model';
 import { FandomApiArticle, FandomSubdomain } from '../proxies';
 import { EmbedFieldData, MessageEmbed } from 'discord.js';
 import { getOghmabotEmbed } from '../../utils';
+import { getAlignmentAbbreviation, getAlignmentName } from '../models';
 
 export class DeityMapper {
   static fromFandomApiArticle(article: FandomApiArticle, subdomain: FandomSubdomain): Deity | undefined {
@@ -60,7 +61,7 @@ export class DeityMapper {
     const fields: EmbedFieldData[] = [];
 
     if (alignment) {
-      fields.push({ name: 'Alignment', value: alignment, inline: !!(powerLevel || arelithClergyAlignments) });
+      fields.push({ name: 'Alignment', value: getAlignmentName(alignment), inline: !!(powerLevel || arelithClergyAlignments) });
     }
 
     if (powerLevel) {
@@ -68,7 +69,10 @@ export class DeityMapper {
     }
 
     if (arelithClergyAlignments) {
-      fields.push({ name: 'Clergy Alignments', value: arelithClergyAlignments.join(', '), inline: !!alignment && !powerLevel });
+      fields.push({
+        name: 'Clergy Alignments',
+        value: arelithClergyAlignments.map(getAlignmentAbbreviation).join(', '),
+        inline: !!alignment && !powerLevel });
     }
 
     if (arelithAspects) {

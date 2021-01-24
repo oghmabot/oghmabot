@@ -1,21 +1,22 @@
 import { DataTypes, FindOptions, Model, Sequelize } from 'sequelize';
 import { findBestStringMatch } from '../../utils';
-import { fetchAllDeities, fetchDeity } from '../proxies';
+import { fetchDeity } from '../proxies';
+import { Alignment } from './alignment';
 
 export interface Deity {
   name: string;
   powerLevel?: string;
   symbol?: string;
   titles?: string[];
-  alignment?: string;
-  clergyAlignments?: string[];
+  alignment?: Alignment;
+  clergyAlignments?: Alignment[];
   portfolio?: string[];
   worshippers?: string[];
   domains?: string[];
   dogma?: string;
   arelithAspects?: string[];
   arelithCategory?: string;
-  arelithClergyAlignments?: string[];
+  arelithClergyAlignments?: Alignment[];
   arelithWikiUrl?: string;
   fandomFRAbstract?: string;
   fandomFRId?: number;
@@ -41,15 +42,15 @@ export class DeityModel extends Model<Deity> {
       powerLevel: DataTypes.STRING,
       symbol: DataTypes.STRING,
       titles: DataTypes.ARRAY(DataTypes.STRING),
-      alignment: DataTypes.STRING,
-      clergyAlignments: DataTypes.ARRAY(DataTypes.STRING),
+      alignment: DataTypes.INTEGER,
+      clergyAlignments: DataTypes.ARRAY(DataTypes.INTEGER),
       portfolio: DataTypes.ARRAY(DataTypes.STRING),
       worshippers: DataTypes.ARRAY(DataTypes.STRING),
       domains: DataTypes.ARRAY(DataTypes.STRING),
       dogma: DataTypes.TEXT,
       arelithAspects: DataTypes.ARRAY(DataTypes.STRING),
       arelithCategory: DataTypes.STRING,
-      arelithClergyAlignments: DataTypes.ARRAY(DataTypes.STRING),
+      arelithClergyAlignments: DataTypes.ARRAY(DataTypes.INTEGER),
       arelithWikiUrl: DataTypes.STRING,
       fandomFRAbstract: DataTypes.TEXT,
       fandomFRId: {

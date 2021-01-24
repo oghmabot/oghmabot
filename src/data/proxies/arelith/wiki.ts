@@ -1,6 +1,6 @@
 import HTMLElementData from "beautiful-dom/dist/htmlelement";
 import { findBestStringMatch } from "../../../utils/parsing";
-import { Deity } from "../../models";
+import { Alignment, getAlignment, Deity } from "../../models";
 import { BaseScraper } from "../../common";
 
 const WikiUrl = 'http://wiki.arelith.com';
@@ -40,10 +40,10 @@ export class ArelithWikiScraper extends BaseScraper {
     const deity = {
       arelithWikiUrl: url ? `${WikiUrl}${url}` : undefined,
       name: name?.textContent.trim(),
-      alignment: alignment?.textContent.trim(),
-      clergyAlignments: arelithClergyAlignments?.textContent.trim().split(' ').filter(Boolean),
+      alignment: getAlignment(alignment?.textContent.trim()),
+      clergyAlignments: arelithClergyAlignments?.textContent.trim().split(' ').map(a => getAlignment(a.trim())).filter(Boolean) as Alignment[] | undefined,
       arelithAspects: [aspect1?.textContent.trim(), aspect2?.textContent.trim()].filter(Boolean),
-      arelithClergyAlignments: arelithClergyAlignments?.textContent.trim().split(' ').filter(Boolean),
+      arelithClergyAlignments: arelithClergyAlignments?.textContent.trim().split(' ').map(a => getAlignment(a.trim())).filter(Boolean) as Alignment[] | undefined,
       arelithCategory: arelithCategory?.textContent.trim(),
     };
 
@@ -70,11 +70,11 @@ export class ArelithWikiScraper extends BaseScraper {
       titles: dom.querySelector('dl dd i')?.textContent.split(',').map(t => t.trim()).filter(Boolean),
       powerLevel: powerLevel?.querySelectorAll('td')[1]?.textContent.trim(),
       symbol: symbol?.querySelectorAll('td')[1]?.textContent.trim(),
-      alignment: alignment?.querySelectorAll('td')[1]?.textContent.trim(),
+      alignment: getAlignment(alignment?.querySelectorAll('td')[1]?.textContent.trim()),
       portfolio: portfolio?.querySelectorAll('td')[1]?.textContent.split(',').map(p => p.trim()).filter(Boolean),
       worshippers: worshippers?.querySelectorAll('td')[1]?.textContent.split(',').map(p => p.trim()).filter(Boolean),
       domains: domains?.querySelectorAll('td')[1]?.textContent.replace(/ *\[[^\]]*]/g, '').split(',').map(d => d.trim()).filter(Boolean),
-      arelithClergyAlignments: arelithClergyAlignments?.querySelectorAll('td')[1]?.textContent.split(',').map(a => a.trim()).filter(Boolean),
+      arelithClergyAlignments: arelithClergyAlignments?.querySelectorAll('td')[1]?.textContent.split(',').map(a => getAlignment(a.trim())).filter(Boolean) as Alignment[] | undefined,
     };
   }
 
@@ -82,7 +82,7 @@ export class ArelithWikiScraper extends BaseScraper {
     if (findBestStringMatch(['abeir-toril', 'toril', 'nature', 'beasts'], deityQuery)) {
       const deity = {
         name: 'Abeir-Toril',
-        alignment: 'No Alignment',
+        alignment: Alignment.NA,
         arelithWikiUrl: `${WikiUrl}/Toril`,
         arelithAspects: ['Nature', 'Magic'],
         thumbnail: 'https://vignette.wikia.nocookie.net/forgottenrealms/images/7/71/Toril-globe-small.jpg',

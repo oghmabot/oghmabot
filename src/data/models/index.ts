@@ -9,6 +9,7 @@ export const initializeAllModels = (sql: Sequelize): void => {
   SubscriptionModel.initialize(sql);
 };
 
+export * from './alignment';
 export * from './deity.model';
 export * from './server';
 export * from './status';

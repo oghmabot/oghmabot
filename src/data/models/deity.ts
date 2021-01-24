@@ -1,7 +1,7 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedFieldData, MessageEmbed } from "discord.js";
 import { DataTypes, Model, Sequelize } from "sequelize";
 import { getOghmabotEmbed } from "../../utils";
-import { FandomApiArticle } from "../proxies";
+import { FandomApiArticle, FandomSubdomain } from "../proxies";
 
 export interface Deity {
   name: string;
@@ -22,7 +22,11 @@ export interface Deity {
   fandomFRId?: number;
   fandomFRUrl?: string;
   fandomFRThumbnail?: string;
-  pronunciation?: string[];
+  fandomFRCormyrAbstract?: string;
+  fandomFRCormyrId?: number;
+  fandomFRCormyrUrl?: string;
+  fandomFRCormyrThumbnail?: string;
+  pronunciation?: string;
 }
 
 export class DeityModel extends Model<Deity> {
@@ -31,6 +35,7 @@ export class DeityModel extends Model<Deity> {
       name: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
       },
       powerLevel: DataTypes.STRING,
       symbol: DataTypes.STRING,
@@ -49,7 +54,10 @@ export class DeityModel extends Model<Deity> {
       fandomFRId: DataTypes.INTEGER,
       fandomFRUrl: DataTypes.STRING,
       fandomFRThumbnail: DataTypes.STRING,
-      pronunciation: DataTypes.ARRAY(DataTypes.STRING),
+      fandomFRCormyrId: DataTypes.STRING,
+      fandomFRCormyrUrl: DataTypes.STRING,
+      fandomFRCormyrThumbnail: DataTypes.STRING,
+      pronunciation: DataTypes.STRING,
     }, {
       sequelize,
       modelName: 'deity',
@@ -63,37 +71,88 @@ export class DeityModel extends Model<Deity> {
     where: { name },
   }))?.get();
 
-  static fromFandomApiArticle = (el: FandomApiArticle): Deity => (
-    {
-      name: el.title,
-      fandomFRAbstract: el.abstract.replace(/\s*?[(]pronounced:.*[)]/, '').match(/^.*?[.]/)?.join(),
-      fandomFRId: el.id,
-      fandomFRUrl: el.url,
-      fandomFRThumbnail: el.thumbnail.substring(0, el.thumbnail.indexOf('revision')),
-      pronunciation: el.abstract.substr(el.abstract.indexOf('(pronounced:') + 12, el.abstract.indexOf('listen') - 12 - el.abstract.indexOf('(pronounced:')).replace(/[0-9]+/g, '').split(' or:'),
+  static fromFandomApiArticle = (article: FandomApiArticle, subdomain: FandomSubdomain): Partial<Deity> => {
+    const { title, abstract, id, url, thumbnail } = article;
+    const parsedThumbnail = thumbnail.substring(0, thumbnail.indexOf('revision'));
+
+    if (subdomain === FandomSubdomain.ForgottenRealms) {
+      return {
+        name: title,
+        fandomFRAbstract: abstract.replace(/\s*?[(]pronounced:.*[)]/, '').match(/^.*?[.]/)?.join(),
+        fandomFRId: id,
+        fandomFRUrl: url,
+        fandomFRThumbnail: parsedThumbnail,
+      };
     }
-  );
+
+    if (subdomain === FandomSubdomain.FRC) {
+      return {
+        name: title,
+        fandomFRCormyrId: id,
+        fandomFRCormyrUrl: url,
+        fandomFRCormyrThumbnail: parsedThumbnail,
+        pronunciation: abstract.substring(abstract.indexOf(title) + title.length + 1).match(/^[(](.+?)[)]/)?.slice(1, 2)[0],
+      };
+    }
+
+    return {};
+  };
 
   static toEmbed = (deity: Deity): MessageEmbed => {
-    const { name, powerLevel, titles, alignment, fandomFRAbstract, arelithAspects, arelithClergyAlignments, arelithWikiUrl, fandomFRThumbnail } = deity;
+    const { name, titles, arelithWikiUrl, fandomFRThumbnail, fandomFRCormyrThumbnail, pronunciation } = deity;
     const embed = getOghmabotEmbed();
-    embed.setTitle(name);
+
+    embed.setTitle(`${name} (${pronunciation})`);
     embed.setDescription(`*${titles && titles.join(', ')}*`);
-    if (arelithWikiUrl) embed.setURL(arelithWikiUrl);
-    if (fandomFRThumbnail) embed.setThumbnail(fandomFRThumbnail);
+    if (arelithWikiUrl) {
+      embed.setURL(arelithWikiUrl);
+    }
 
-    if (alignment) embed.addField('Alignment', alignment, !!(arelithClergyAlignments || powerLevel));
-    if (arelithClergyAlignments?.length) embed.addField('Clergy Alignments', arelithClergyAlignments.join(', '), !!alignment);
-    if (powerLevel) embed.addField('Power Level', powerLevel, !!alignment && !arelithClergyAlignments);
-    if (arelithAspects?.length) embed.addField('Aspects', arelithAspects.join(', '));
-    const infoField = DeityModel.getInfoFieldString(deity);
-    if (infoField) embed.addField(':book:', infoField);
-    if (fandomFRAbstract) embed.addField('The Forgotten Realms Wiki', fandomFRAbstract);
+    if (fandomFRThumbnail) {
+      embed.setThumbnail(fandomFRThumbnail);
+    } else if (fandomFRCormyrThumbnail) {
+      embed.setThumbnail(fandomFRCormyrThumbnail);
+    }
 
+    embed.addFields(DeityModel.getFields(deity));
     return embed;
   }
 
-  static getInfoFieldString = (deity: Deity): string => {
+  private static getFields = (deity: Deity): EmbedFieldData[] => {
+    const { alignment, arelithClergyAlignments, powerLevel, arelithAspects, dogma, fandomFRAbstract } = deity;
+    const fields: EmbedFieldData[] = [];
+
+    if (alignment) {
+      fields.push({ name: 'Alignment', value: alignment, inline: !!(powerLevel || arelithClergyAlignments) });
+    }
+
+    if (powerLevel) {
+      fields.push({ name: 'Power Level', value: powerLevel, inline: !!alignment });
+    }
+
+    if (arelithClergyAlignments) {
+      fields.push({ name: 'Clergy Alignments', value: arelithClergyAlignments.join(', '), inline: !!alignment && !powerLevel });
+    }
+
+    if (arelithAspects) {
+      fields.push({ name: 'Aspects', value: arelithAspects.join(', ') });
+    }
+
+    const infoField = DeityModel.getInfoFieldString(deity);
+    if (infoField) {
+      fields.push({ name: ':book:', value: infoField });
+    }
+
+    if (dogma) {
+      fields.push({ name: 'Dogma', value: dogma });
+    } else if (fandomFRAbstract) {
+      fields.push({ name: 'The Forgotten Realms Wiki', value: fandomFRAbstract });
+    }
+
+    return fields;
+  }
+
+  private static getInfoFieldString = (deity: Deity): string => {
     const { symbol, portfolio, worshippers, domains } = deity;
     let result = '';
     if (symbol) result += `**Symbol:** ${symbol}\n`;

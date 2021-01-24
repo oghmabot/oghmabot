@@ -23,7 +23,7 @@ export interface FandomApiArticle {
 
 export interface FandomApiResponseBody {
   items: FandomApiArticle[];
-  basePath: string;
+  basepath: string;
 }
 
 export class FandomApiProxy {
@@ -42,10 +42,10 @@ export class FandomApiProxy {
       if (response.status !== 200) throw new Error(response.statusText);
 
       const json: FandomApiResponseBody = await response.json();
-      const article: FandomApiArticle = { ...json.items[id], url: `${json.basePath}${json.items[id].url}` };
-      return mapper && article
-        ? mapper.fromFandomApiArticle(article, subdomain)
-        : article;
+      const article: FandomApiArticle = { ...json.items[id], url: `${json.basepath}${json.items[id].url}` };
+      return json.items[id]
+        ? mapper ? mapper.fromFandomApiArticle(article, subdomain) : article
+        : json.items[id];
     }
   }
 

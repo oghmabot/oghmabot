@@ -1,7 +1,7 @@
 import { EmbedFieldData, MessageEmbed } from "discord.js";
-import { DataTypes, Model, Sequelize } from "sequelize";
-import { getOghmabotEmbed } from "../../utils";
-import { FandomApiArticle, FandomSubdomain } from "../proxies";
+import { DataTypes, FindOptions, Model, Sequelize } from "sequelize";
+import { findBestStringMatch, getOghmabotEmbed } from "../../utils";
+import { ArelithWikiScraper, FandomApiArticle, FandomApiProxy, FandomSubdomain } from "../proxies";
 
 export interface Deity {
   name: string;
@@ -26,6 +26,7 @@ export interface Deity {
   fandomFRCormyrId?: number;
   fandomFRCormyrUrl?: string;
   fandomFRCormyrThumbnail?: string;
+  thumbnail?: string;
   pronunciation?: string;
 }
 
@@ -41,7 +42,7 @@ export class DeityModel extends Model<Deity> {
       symbol: DataTypes.STRING,
       titles: DataTypes.ARRAY(DataTypes.STRING),
       alignment: DataTypes.STRING,
-      clergyAlignments: DataTypes.STRING,
+      clergyAlignments: DataTypes.ARRAY(DataTypes.STRING),
       portfolio: DataTypes.ARRAY(DataTypes.STRING),
       worshippers: DataTypes.ARRAY(DataTypes.STRING),
       domains: DataTypes.ARRAY(DataTypes.STRING),
@@ -51,12 +52,19 @@ export class DeityModel extends Model<Deity> {
       arelithClergyAlignments: DataTypes.ARRAY(DataTypes.STRING),
       arelithWikiUrl: DataTypes.STRING,
       fandomFRAbstract: DataTypes.STRING,
-      fandomFRId: DataTypes.INTEGER,
+      fandomFRId: {
+        type: DataTypes.INTEGER,
+        unique: true,
+      },
       fandomFRUrl: DataTypes.STRING,
       fandomFRThumbnail: DataTypes.STRING,
-      fandomFRCormyrId: DataTypes.STRING,
+      fandomFRCormyrId: {
+        type: DataTypes.STRING,
+        unique: true,
+      },
       fandomFRCormyrUrl: DataTypes.STRING,
       fandomFRCormyrThumbnail: DataTypes.STRING,
+      thumbnail: DataTypes.STRING,
       pronunciation: DataTypes.STRING,
     }, {
       sequelize,
@@ -67,9 +75,28 @@ export class DeityModel extends Model<Deity> {
 
   static addDeity = async (deity: Deity): Promise<DeityModel> => await DeityModel.create(deity);
 
-  static getDeityByName = async (name: string): Promise<Deity | undefined> => (await DeityModel.findOne({
-    where: { name },
-  }))?.get();
+  static getOrAddDeity = async (deityQuery: string): Promise<Deity | undefined> => {
+    const deities = await DeityModel.getDeities();
+    const foundDeity = findBestStringMatch(deities, deityQuery, d => d.name);
+    if (foundDeity) return foundDeity;
+
+    const newDeity = await ArelithWikiScraper.fetchDeity(deityQuery);
+    if (newDeity) {
+      const frDeity = await FandomApiProxy.fetchDeityDetails(newDeity.name, FandomSubdomain.ForgottenRealms, DeityModel);
+      const frcDeity = await FandomApiProxy.fetchDeityDetails(frDeity?.name ?? newDeity.name, FandomSubdomain.FRC, DeityModel);
+      const deity = { ...frDeity, ...frcDeity, ...newDeity };
+      await DeityModel.addDeity(deity);
+      return deity;
+    }
+  }
+
+  static getDeities = async (options?: FindOptions): Promise<Deity[]> => {
+    const deities = await DeityModel.findAll({
+      order: ['name'],
+      ...options,
+    });
+    return deities.map(d => d.get());
+  }
 
   static fromFandomApiArticle = (article: FandomApiArticle, subdomain: FandomSubdomain): Partial<Deity> => {
     const { title, abstract, id, url, thumbnail } = article;
@@ -99,19 +126,21 @@ export class DeityModel extends Model<Deity> {
   };
 
   static toEmbed = (deity: Deity): MessageEmbed => {
-    const { name, titles, arelithWikiUrl, fandomFRThumbnail, fandomFRCormyrThumbnail, pronunciation } = deity;
+    const { name, titles, arelithWikiUrl, fandomFRThumbnail, fandomFRCormyrThumbnail, thumbnail, pronunciation } = deity;
     const embed = getOghmabotEmbed();
 
-    embed.setTitle(`${name} (${pronunciation})`);
+    embed.setTitle(pronunciation ? `${name} (${pronunciation})` : name);
     embed.setDescription(`*${titles && titles.join(', ')}*`);
     if (arelithWikiUrl) {
       embed.setURL(arelithWikiUrl);
     }
 
-    if (fandomFRThumbnail) {
-      embed.setThumbnail(fandomFRThumbnail);
+    if (thumbnail) {
+      embed.setThumbnail(thumbnail);
     } else if (fandomFRCormyrThumbnail) {
       embed.setThumbnail(fandomFRCormyrThumbnail);
+    } else if (fandomFRThumbnail) {
+      embed.setThumbnail(fandomFRThumbnail);
     }
 
     embed.addFields(DeityModel.getFields(deity));

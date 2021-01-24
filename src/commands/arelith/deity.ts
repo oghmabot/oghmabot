@@ -1,6 +1,5 @@
 import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
 import { DeityModel } from "../../data/models";
-import { ArelithWikiScraper, FandomApiProxy, FandomSubdomain } from "../../data/proxies";
 import { stripCommandNotation } from "../../utils";
 
 export class DeityCommand extends Command {
@@ -23,12 +22,9 @@ export class DeityCommand extends Command {
 
   async run(msg: CommandoMessage, { deityQuery }: { deityQuery: string }): Promise<any> {
     try {
-      const deityAR = await ArelithWikiScraper.fetchDeity(deityQuery);
-      if (!deityAR) return msg.say('Deity not found.');
-
-      const deityFR = await FandomApiProxy.fetchDeityDetails(deityQuery, FandomSubdomain.ForgottenRealms, DeityModel);
-      const deityFRC = await FandomApiProxy.fetchDeityDetails(deityQuery, FandomSubdomain.FRC, DeityModel);
-      return msg.embed(DeityModel.toEmbed({ ...deityFR, ...deityFRC, ...deityAR }));
+      const deity = await DeityModel.getOrAddDeity(deityQuery);
+      if (!deity) return msg.say('Deity not found.');
+      return msg.embed(DeityModel.toEmbed(deity));
     } catch (error) {
       console.error('[DeityCommand] Unexpected error.', error);
     }

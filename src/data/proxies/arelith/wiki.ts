@@ -9,11 +9,8 @@ const DeityTableUrl = 'http://wiki.arelith.com/Deity_Table';
 export class ArelithWikiScraper extends BaseScraper {
   static async fetchDeity(deityQuery: string): Promise<Deity | undefined> {
     const dom = await this.fetchAsBeautifulDom(DeityTableUrl);
-    const tableRow = findBestStringMatch(
-      dom.querySelectorAll('tbody tr').filter(r => !r.querySelectorAll('td')[5]?.textContent.trim().toLowerCase().includes('heresies')),
-      deityQuery.toLowerCase().replace(/\s+/g, ''),
-      r => r.querySelector('a')?.textContent.toLowerCase().replace(/\s+/g, ''),
-    );
+    const deityListings = dom.querySelectorAll('tbody tr').filter(r => !r.querySelectorAll('td')[5]?.textContent.trim().toLowerCase().includes('heresies'));
+    const tableRow = findBestStringMatch(deityListings, deityQuery, r => r.querySelector('a')?.textContent);
 
     if (tableRow) return await this.mapDeityTableRowToDeity(tableRow);
 

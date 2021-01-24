@@ -1,4 +1,5 @@
 import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
+import { DeityMapper } from "../../data/mappers";
 import { DeityModel } from "../../data/models";
 import { stripCommandNotation } from "../../utils";
 
@@ -24,7 +25,7 @@ export class DeityCommand extends Command {
     try {
       const deity = await DeityModel.getOrAddDeity(deityQuery);
       if (!deity) return msg.say('Deity not found.');
-      return msg.embed(DeityModel.toEmbed(deity));
+      return msg.embed(DeityMapper.toMessageEmbed(deity));
     } catch (error) {
       console.error('[DeityCommand] Unexpected error.', error);
     }

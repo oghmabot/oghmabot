@@ -21,3 +21,5 @@ export function findBestStringMatch<T>(arr: T[], searchTerm: string, strResFunc?
       : prev;
   }, undefined);
 }
+
+export const getUntilLastWithin = (inp: string, until: string, within: number): string => inp.substring(0, 1 + inp.substring(0, within).lastIndexOf(until));

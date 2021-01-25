@@ -1,7 +1,7 @@
 import { Deity } from '../models/deity.model';
 import { FandomApiArticle, FandomSubdomain } from '../proxies';
 import { EmbedFieldData, MessageEmbed } from 'discord.js';
-import { getOghmabotEmbed } from '../../utils';
+import { getOghmabotEmbed, getUntilLastWithin } from '../../utils';
 import { getAlignmentAbbreviation, getAlignmentName } from '../models';
 
 export class DeityMapper {
@@ -12,7 +12,7 @@ export class DeityMapper {
     if (subdomain === FandomSubdomain.ForgottenRealms) {
       return {
         name: title,
-        fandomFRAbstract: abstract?.replace(/\s*?[(]pronounced:.*[)]/, '').match(/^.*?[.]/)?.join(),
+        fandomFRAbstract: abstract?.replace(/\s*?[(]pronounced:.*[)]/, ''),
         fandomFRId: id,
         fandomFRUrl: url,
         fandomFRThumbnail: parsedThumbnail,
@@ -71,7 +71,7 @@ export class DeityMapper {
     if (arelithClergyAlignments) {
       fields.push({
         name: 'Clergy Alignments',
-        value: arelithClergyAlignments.map(getAlignmentAbbreviation).join(', '),
+        value: arelithClergyAlignments.sort().map(getAlignmentAbbreviation).join(', '),
         inline: !!alignment && !powerLevel });
     }
 
@@ -85,9 +85,9 @@ export class DeityMapper {
     }
 
     if (dogma) {
-      fields.push({ name: 'Dogma', value: dogma });
+      fields.push({ name: 'Dogma', value: getUntilLastWithin(dogma, '.', 350) });
     } else if (fandomFRAbstract) {
-      fields.push({ name: 'The Forgotten Realms Wiki', value: fandomFRAbstract });
+      fields.push({ name: 'The Forgotten Realms Wiki', value: getUntilLastWithin(fandomFRAbstract, '.', 200) });
     }
 
     return fields;

@@ -69,7 +69,7 @@ describe('formatting', ()  => {
         {
           title: mockServer.name,
           color: 0xff0000,
-          description: `**Offline** :hourglass: 01:00:00`,
+          description: '**Offline** :hourglass: 01:00:00',
           thumbnail: mockServer.img,
           url: mockServer.href,
         },

@@ -41,7 +41,7 @@ export class ServerCommand extends Command {
     });
   }
 
-  async run(msg: CommandoMessage, args: ServerCommandArgs): Promise<any> {
+  async run(msg: CommandoMessage, args: ServerCommandArgs): Promise<Message> {
     try {
       const { descriptor } = args;
 
@@ -77,7 +77,7 @@ export class ServerCommand extends Command {
     return msg.say('Invalid input');
   }
 
-  async addNewServer(msg: CommandoMessage, args: ServerCommandArgs): Promise<Message | CommandoMessage> {
+  async addNewServer(msg: CommandoMessage, args: ServerCommandArgs): Promise<Message> {
     const { identifier } = args;
 
     try {
@@ -100,7 +100,7 @@ export class ServerCommand extends Command {
     return msg.say('Failed to add new server.');
   }
 
-  async removeServer(msg: CommandoMessage, args: ServerCommandArgs): Promise<Message | CommandoMessage> {
+  async removeServer(msg: CommandoMessage, args: ServerCommandArgs): Promise<Message> {
     const { identifier } = args;
 
     try {
@@ -143,7 +143,7 @@ export class ServerCommand extends Command {
     return msg.say('Failed to add alias.');
   }
 
-  async setField(msg: CommandoMessage, args: ServerCommandArgs, field: string): Promise<Message | CommandoMessage> {
+  async setField(msg: CommandoMessage, args: ServerCommandArgs, field: string): Promise<Message> {
     const { identifier, input } = args;
     if (!input) return msg.say('Invalid input.');
 
@@ -168,7 +168,7 @@ export class ServerCommand extends Command {
     return msg.say(`Failed to set ${field}.`);
   }
 
-  handleBeamdogApiError = (msg: CommandoMessage, error: BeamdogApiError): Promise<Message | CommandoMessage> =>
+  handleBeamdogApiError = (msg: CommandoMessage, error: BeamdogApiError): Promise<Message> =>
     msg.say(error.code === 400 ? 'Invalid identifier' : 'Server is unavailable or does not exist.')
 
   formatServerAddedReply = (server: Server): string => (

@@ -1,7 +1,8 @@
-import { Command, CommandoClient, CommandoMessage } from "discord.js-commando";
-import { DeityMapper } from "../../data/mappers";
-import { DeityModel } from "../../data/models";
-import { stripCommandNotation } from "../../utils";
+import { Message } from 'discord.js';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
+import { DeityMapper } from '../../data/mappers';
+import { DeityModel } from '../../data/models';
+import { stripCommandNotation } from '../../utils';
 
 export class DeityCommand extends Command {
   constructor(client: CommandoClient) {
@@ -18,10 +19,14 @@ export class DeityCommand extends Command {
           parse: stripCommandNotation,
         },
       ],
+      throttling: {
+        duration: 10,
+        usages: 2,
+      },
     });
   }
 
-  async run(msg: CommandoMessage, { deityQuery }: { deityQuery: string }): Promise<any> {
+  async run(msg: CommandoMessage, { deityQuery }: { deityQuery: string }): Promise<Message> {
     try {
       const deity = await DeityModel.getOrAddDeity(deityQuery);
       if (!deity) return msg.say('Deity not found.');

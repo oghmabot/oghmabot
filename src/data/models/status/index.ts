@@ -1,2 +1,2 @@
-export * from './poller';
-export * from './status';
+export * from './status.poller';
+export * from './status.model';

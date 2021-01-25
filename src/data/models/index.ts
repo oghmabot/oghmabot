@@ -1,7 +1,7 @@
 import { Sequelize } from 'sequelize/types';
 import { DeityModel } from './deity.model';
-import { ServerModel } from './server';
-import { SubscriptionModel } from './subscription';
+import { ServerModel } from './server.model';
+import { SubscriptionModel } from './subscription.model';
 
 export const initializeAllModels = (sql: Sequelize): void => {
   DeityModel.initialize(sql);
@@ -11,6 +11,6 @@ export const initializeAllModels = (sql: Sequelize): void => {
 
 export * from './alignment';
 export * from './deity.model';
-export * from './server';
+export * from './server.model';
 export * from './status';
-export * from './subscription';
+export * from './subscription.model';

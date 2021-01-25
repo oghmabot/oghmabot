@@ -23,12 +23,23 @@ rules:
   'comma-dangle':
     - warn
     - always-multiline
+  'eol-last':
+    - error
+    - always
   'keyword-spacing': error
   'linebreak-style': 
-      - error
-      - unix
+    - error
+    - unix
+  'no-multiple-empty-lines':
+    - error
+    - 'max': 2
+      'maxBOF': 0
+      'maxEOF': 0
   'no-trailing-spaces': error
   'prefer-const': error
+  'quotes':
+    - error
+    - single
   'semi': 
     - error
     - always

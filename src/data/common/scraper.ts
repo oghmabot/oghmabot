@@ -1,6 +1,6 @@
-import BeautifulDom from "beautiful-dom";
+import BeautifulDom from 'beautiful-dom';
 import cheerio from 'cheerio';
-import fetch from "node-fetch";
+import fetch from 'node-fetch';
 
 export class BaseScraper {
   protected static async fetchAsBeautifulDom(url: string): Promise<BeautifulDom> {

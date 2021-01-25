@@ -1,7 +1,8 @@
-import { InitializeCommand } from './initialize';
-import { ServerCommand } from './server';
+import { Command } from 'discord.js-commando';
+import { InitializeCommand } from './initialize.command';
+import { ServerCommand } from './server.command';
 
-export const ownerCommands = () => [
+export const ownerCommands = (): (typeof Command)[] => [
   InitializeCommand,
   ServerCommand,
 ];

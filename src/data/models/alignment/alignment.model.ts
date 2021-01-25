@@ -1,4 +1,4 @@
-import { findBestStringMatch } from "../../../utils";
+import { findBestStringMatch } from '../../../utils';
 
 export const enum Alignment {
   NA = 0,

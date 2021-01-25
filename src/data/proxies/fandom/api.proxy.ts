@@ -1,5 +1,5 @@
-import fetch from "node-fetch";
-import { findBestStringMatch } from "../../../utils";
+import fetch from 'node-fetch';
+import { findBestStringMatch } from '../../../utils';
 
 const ABSTRACT_SIZE = 500;
 

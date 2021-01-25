@@ -1,6 +1,6 @@
-import { trimPunctuationAndWhitespace } from "../../../utils";
-import { BaseScraper } from "../../common";
-import { Deity } from "../../models";
+import { trimPunctuationAndWhitespace } from '../../../utils';
+import { BaseScraper } from '../../common';
+import { Deity } from '../../models';
 
 export class FandomWikiScraper extends BaseScraper {
   static async fetchAndMapDeityArticles(deity: Partial<Deity>): Promise<Partial<Deity>> {

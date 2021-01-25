@@ -16,5 +16,5 @@ export const fetchAllFandomDeityData = async (deity: Deity): Promise<Deity | und
   }
 };
 
-export * from './api';
+export * from './api.proxy';
 export * from './wiki.scraper';

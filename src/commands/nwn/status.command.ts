@@ -1,3 +1,4 @@
+import { Message } from 'discord.js';
 import { Command, CommandoMessage } from 'discord.js-commando';
 import { OghmabotClient } from '../../client';
 import { ServerModel, StatusPoller } from '../../data/models';
@@ -20,12 +21,16 @@ export class StatusCommand extends Command {
           default: '',
         },
       ],
+      throttling: {
+        duration: 10,
+        usages: 2,
+      },
     });
 
     this.poller = client.pollers.get('status') as StatusPoller;
   }
 
-  async run(msg: CommandoMessage, { servers }: { servers: string }): Promise<any> {
+  async run(msg: CommandoMessage, { servers }: { servers: string }): Promise<Message | null> {
     try {
       const requestedServers = !servers
         ? await ServerModel.getServers()
@@ -39,6 +44,8 @@ export class StatusCommand extends Command {
     } catch (error) {
       console.error('[StatusCommand] Unexpected error.', error);
     }
+
+    return null;
   }
 
   createStatusEmbed = serverStatusToEmbed;

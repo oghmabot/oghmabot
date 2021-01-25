@@ -1,6 +1,7 @@
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { roll, RollOptions, RollResult } from '@half-elf/rogue';
 import { getOghmabotEmbed, stripCommandNotation } from '../../utils';
+import { Message } from 'discord.js';
 
 export class RollCommand extends Command {
   constructor(client: CommandoClient) {
@@ -20,7 +21,7 @@ export class RollCommand extends Command {
     });
   }
 
-  run(msg: CommandoMessage, { input }: { input: string }): Promise<any> {
+  run(msg: CommandoMessage, { input }: { input: string }): Promise<Message> {
     try {
       const { notation, options } = this.parseInput(input);
       return options

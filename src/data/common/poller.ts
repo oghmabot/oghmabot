@@ -1,5 +1,5 @@
-import { Collection } from "discord.js";
-import { CommandoClient } from "discord.js-commando";
+import { Collection } from 'discord.js';
+import { CommandoClient } from 'discord.js-commando';
 
 export abstract class BasePoller<T> {
   private interval: number;

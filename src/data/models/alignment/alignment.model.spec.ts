@@ -13,5 +13,9 @@ describe('alignment.model', () => {
       ['neutral evil', Alignment.NE], ['ne', Alignment.NE],
       ['chaotic evil', Alignment.CE], ['ce', Alignment.CE],
     ])('should return the expected alignment', (str, expected) => expect(getAlignment(str)).toBe(expected));
+
+    it.each(['na', 'none', 'no alignment'])('should return no alignment', str => expect(getAlignment(str)).toBe(Alignment.NA));
+
+    it.each(['', 'rofl', 'lmao', 'dolphins'])('should return undefined', str => expect(getAlignment(str)).toBeUndefined());
   });
 });

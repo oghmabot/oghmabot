@@ -9,9 +9,10 @@ export const enum Alignment {
 
 export const getAlignment = (str: string): Alignment | undefined => {
   if (!str) return;
+  if (str.toLowerCase().includes('na') || str.toLowerCase().includes('no')) return Alignment.NA;
   const [p1, p2] = str.length == 2 ? str : str.split(' ');
-  const x = findBestStringMatch([['lawful', 1], ['neutral', 2], ['true', 2], ['chaotic', 3]], p1, v => v[0] as string) || [2, 2];
-  const y = findBestStringMatch([['good', 0], ['neutral', 1], ['evil', 2]], p2, v => v[0] as string) || [1, 1];
+  const x = findBestStringMatch([['lawful', 1], ['neutral', 2], ['true', 2], ['chaotic', 3]], p1, v => v[0] as string);
+  const y = findBestStringMatch([['good', 0], ['neutral', 1], ['evil', 2]], p2, v => v[0] as string);
   if (x && y) return x[1] as number + (y[1] as number * 3);
 };
 

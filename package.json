@@ -21,9 +21,13 @@
     "faerun",
     "chatbot"
   ],
-  "authors": ["aergnist", "Silvard"],
+  "authors": [
+    "aergnist",
+    "Silvard"
+  ],
   "license": "ISC",
   "devDependencies": {
+    "@types/cheerio": "^0.22.23",
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.20",
     "@types/node-fetch": "^2.5.8",
@@ -40,6 +44,7 @@
   "dependencies": {
     "@half-elf/rogue": "^1.0.1",
     "beautiful-dom": "^1.0.8",
+    "cheerio": "^1.0.0-rc.5",
     "discord.js": "^12.5.1",
     "discord.js-commando": "github:discordjs/Commando",
     "node-fetch": "^2.6.1",

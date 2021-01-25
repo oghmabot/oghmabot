@@ -1,11 +1,6 @@
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
-import { initialize, ServerModel, SubscriptionModel } from '../../data';
+import { initialize } from '../../data';
 import { stripCommandNotation } from '../../utils';
-
-const databases: Record<string, any> = {
-  'servers': ServerModel,
-  'subscriptions': SubscriptionModel,
-};
 
 export class InitializeCommand extends Command {
   constructor(client: CommandoClient) {
@@ -20,7 +15,7 @@ export class InitializeCommand extends Command {
           key: 'db',
           prompt: 'Which database would you like to initialize?',
           type: 'string',
-          oneOf: ['all', ...Object.keys(databases)],
+          oneOf: ['all', 'deities', 'servers', 'subscriptions'],
           parse: stripCommandNotation,
         },
         {
@@ -33,7 +28,7 @@ export class InitializeCommand extends Command {
     });
   }
 
-  async run(msg: CommandoMessage, { db, force }: { db: string, force: boolean }): Promise<any> {
+  async run(msg: CommandoMessage, { db, force }: { db: string, force: boolean }): Promise<CommandoMessage> {
     try {
       if (db === 'all') {
         await initialize(force);

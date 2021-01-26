@@ -22,8 +22,7 @@ export const handleClientReady = async (client: CommandoClient): Promise<void> =
   await connect(DATABASE_URL);
 
   if (BOT_STATUS_CHANNEL) {
-    const channel = channels.cache.find(c => c.id === BOT_STATUS_CHANNEL) as TextChannel | undefined;
-
+    const channel = await channels.fetch(BOT_STATUS_CHANNEL) as TextChannel | undefined;
     if (channel) {
       channel.send('', loggedInServersToEmbed(guildsToList));
     }

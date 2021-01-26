@@ -5,8 +5,8 @@ const guildString = (guild: Guild): string => `${guild.name} (${guild.memberCoun
 
 const joinedGuildToEmbed = (guild: Guild): MessageEmbed => {
   const embed = getOghmabotEmbed();
-  embed.setTitle('Joined Server');
-  embed.setDescription(guildString(guild));
+  embed.setTitle(guild.name);
+  embed.setDescription('Joined server.');
   return embed;
 };
 
@@ -15,10 +15,10 @@ export const handleGuildCreate = async (guild: Guild): Promise<void> => {
   const { channels } = guild.client;
 
   if (BOT_STATUS_CHANNEL && !IGNORE_GUILDS?.includes(guild.id)) {
-    const channel = channels.cache.find(c => c.id === BOT_STATUS_CHANNEL) as TextChannel | undefined;
+    const channel = await channels.fetch(BOT_STATUS_CHANNEL) as TextChannel | undefined;
     if (channel) {
       channel.send('', joinedGuildToEmbed(guild));
     }
+    console.log(`Joined server: ${guildString(guild)}`);
   }
-  console.log(`Joined server: ${guildString(guild)}`);
 };

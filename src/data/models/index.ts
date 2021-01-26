@@ -9,6 +9,10 @@ export const initializeAllModels = (sql: Sequelize): void => {
   SubscriptionModel.initialize(sql);
 };
 
+export const purgeRefsToChannel = async (channelId: string): Promise<number> => {
+  return await SubscriptionModel.destroy({ where: { channelId } });
+};
+
 export * from './alignment';
 export * from './deity.model';
 export * from './server.model';

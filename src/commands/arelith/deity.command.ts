@@ -11,11 +11,12 @@ export class DeityCommand extends Command {
       group: 'arelith',
       memberName: 'deity',
       description: 'Replies with the details of a deity in the Arelith pantheon.',
+      details: 'The command will return one deity based on the given input, assuming it is listed on Arelith\'s Deity Table. Results show aggregated information from the Arelith Wiki, The Forgotten Realms Wiki, and The Forgotten Realms Cormyr Wiki.',
       args: [
         {
-          key: 'deityQuery',
+          key: 'name',
           type: 'string',
-          prompt: 'Specify deity of which you want to find details.',
+          prompt: 'Specify deity by name.',
           parse: stripCommandNotation,
         },
       ],
@@ -23,12 +24,15 @@ export class DeityCommand extends Command {
         duration: 10,
         usages: 2,
       },
+      examples: [
+        '-deity oghma',
+      ],
     });
   }
 
-  async run(msg: CommandoMessage, { deityQuery }: { deityQuery: string }): Promise<Message> {
+  async run(msg: CommandoMessage, { name }: { name: string }): Promise<Message> {
     try {
-      const deity = await DeityModel.getOrAddDeity(deityQuery);
+      const deity = await DeityModel.getOrAddDeity(name);
       if (!deity) return msg.say('Deity not found.');
       return msg.embed(DeityMapper.toMessageEmbed(deity));
     } catch (error) {

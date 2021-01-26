@@ -11,20 +11,26 @@ export class RollCommand extends Command {
       group: 'nwn',
       memberName: 'roll',
       description: 'Resolves a given d20-style dice roll.',
+      details: 'The command supports somewhat advanced syntax and a few functions, as seen in examples below.',
       args: [
         {
-          key: 'input',
+          key: 'diceroll',
           type: 'string',
           prompt: 'Specify the roll you want to make.',
           parse: stripCommandNotation,
         },
       ],
+      examples: [
+        '-roll 20d6 avg',
+        '-roll d20 * ((5 * 4d4) + 1)',
+        '-roll 56d2 min max',
+      ],
     });
   }
 
-  run(msg: CommandoMessage, { input }: { input: string }): Promise<Message> {
+  run(msg: CommandoMessage, { diceroll }: { diceroll: string }): Promise<Message> {
     try {
-      const { notation, options } = this.parseInput(input);
+      const { notation, options } = this.parseInput(diceroll);
       return options
         ? this.formatRollResult(msg, roll(notation, this.parseOptions(options)))
         : msg.say(`:game_die: Result: ${roll(notation)}`);

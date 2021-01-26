@@ -3,8 +3,7 @@ import { CommandoClient, CommandoClientOptions } from 'discord.js-commando';
 import { getAllCommands } from '../commands';
 import { StatusPoller } from '../data/models';
 import { BasePoller } from '../data/common';
-import { handleClientError, handleClientReady, handleGuildCreate, handleGuildDelete } from './events';
-import { handleMessageDelete } from './events/messageDelete.event';
+import { handleClientError, handleClientReady, handleGuildCreate, handleGuildDelete, handleMessageDelete } from './events';
 
 export class OghmabotClient extends CommandoClient {
   pollers: Collection<string, BasePoller<unknown>> = new Collection();

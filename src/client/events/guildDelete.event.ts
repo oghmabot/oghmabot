@@ -5,7 +5,7 @@ import { getOghmabotEmbed } from '../../utils';
 const leftGuildToEmbed = (guild: Guild, purgedRows?: number): MessageEmbed => {
   const embed = getOghmabotEmbed();
   embed.setTitle(guild.name);
-  embed.setDescription(purgedRows ? `Left server, purged ${purgedRows} rows from database.` : 'Left server.');
+  embed.setDescription(purgedRows ? `Left server, purged ${purgedRows} database rows.` : 'Left server.');
   return embed;
 };
 

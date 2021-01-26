@@ -4,6 +4,7 @@ import { getAllCommands } from '../commands';
 import { StatusPoller } from '../data/models';
 import { BasePoller } from '../data/common';
 import { handleClientError, handleClientReady, handleGuildCreate, handleGuildDelete } from './events';
+import { handleMessageDelete } from './events/messageDelete.event';
 
 export class OghmabotClient extends CommandoClient {
   pollers: Collection<string, BasePoller<unknown>> = new Collection();
@@ -36,6 +37,7 @@ export class OghmabotClient extends CommandoClient {
     this.on('error', handleClientError);
     this.on('guildCreate', handleGuildCreate);
     this.on('guildDelete', handleGuildDelete);
+    this.on('messageDelete', handleMessageDelete);
     this.on('ready', async () => await handleClientReady(this));
   }
 }

@@ -1,8 +1,9 @@
 import { Collection } from 'discord.js';
 import { CommandoClient, CommandoClientOptions } from 'discord.js-commando';
-import { getAllCommands } from './commands';
-import { StatusPoller } from './data/models';
-import { BasePoller } from './data/common';
+import { getAllCommands } from '../commands';
+import { StatusPoller } from '../data/models';
+import { BasePoller } from '../data/common';
+import { handleClientError, handleClientReady, handleGuildCreate } from './events';
 
 export class OghmabotClient extends CommandoClient {
   pollers: Collection<string, BasePoller<unknown>> = new Collection();
@@ -11,6 +12,7 @@ export class OghmabotClient extends CommandoClient {
     super(options);
     this.setDefaultPollers();
     this.setRegistryDefaults();
+    this.setEventListeners();
   }
 
   setDefaultPollers(): void {
@@ -28,5 +30,11 @@ export class OghmabotClient extends CommandoClient {
       .registerDefaultGroups()
       .registerDefaultCommands({ prefix: false, unknownCommand: false })
       .registerCommands(getAllCommands());
+  }
+
+  setEventListeners(): void {
+    this.on('error', handleClientError);
+    this.on('guildCreate', handleGuildCreate);
+    this.on('ready', async () => await handleClientReady(this));
   }
 }

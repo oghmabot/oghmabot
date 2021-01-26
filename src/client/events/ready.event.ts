@@ -1,18 +1,17 @@
 import { Collection, Guild, MessageEmbed, TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
 import { connect } from '../../data';
-import { getOghmabotEmbed } from '../../utils';
+import { OghmabotEmbed } from '../oghmabot.embed';
 
 const loggedInServersToString = (servers: Collection<string, Guild>): string =>
   `Logged in to servers: ${servers.map(g => g.name).join(', ')}`;
 
-const loggedInServersToEmbed = (servers: Collection<string, Guild>): MessageEmbed => {
-  const embed = getOghmabotEmbed();
-  embed.setColor(0x00ff00);
-  embed.setTitle('Oghmabot Online');
-  embed.setDescription(loggedInServersToString(servers));
-  return embed;
-};
+const loggedInServersToEmbed = (servers: Collection<string, Guild>): MessageEmbed =>
+  new OghmabotEmbed({
+    color: 0x00ff00,
+    title: 'Oghmabot Online',
+    description: loggedInServersToString(servers),
+  });
 
 export const handleClientReady = async (client: CommandoClient): Promise<void> => {
   const { BOT_STATUS_CHANNEL, DATABASE_URL, IGNORE_GUILDS } = process.env;

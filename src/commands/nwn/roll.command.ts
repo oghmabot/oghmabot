@@ -1,7 +1,8 @@
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { roll, RollOptions, RollResult } from '@half-elf/rogue';
-import { getOghmabotEmbed, stripCommandNotation } from '../../utils';
+import { stripCommandNotation } from '../../utils';
 import { Message } from 'discord.js';
+import { OghmabotEmbed } from '../../client';
 
 export class RollCommand extends Command {
   constructor(client: CommandoClient) {
@@ -36,7 +37,7 @@ export class RollCommand extends Command {
 
   formatRollResult(msg: CommandoMessage, roll: RollResult): Promise<CommandoMessage> {
     const { input, total, max, min, avg } = roll;
-    const embed = getOghmabotEmbed();
+    const embed = new OghmabotEmbed();
     embed.setTitle(`:game_die: Result: **${total}**`);
     embed.setDescription(`Rolled ${input}`);
     if (max) embed.addField('Maximum', max, true);

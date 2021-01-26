@@ -1,13 +1,12 @@
 import { Guild, MessageEmbed, TextChannel } from 'discord.js';
 import { purgeRefsToChannel } from '../../data/models';
-import { getOghmabotEmbed } from '../../utils';
+import { OghmabotEmbed } from '../oghmabot.embed';
 
-const leftGuildToEmbed = (guild: Guild, purgedRows?: number): MessageEmbed => {
-  const embed = getOghmabotEmbed();
-  embed.setTitle(guild.name);
-  embed.setDescription(purgedRows ? `Left server, purged ${purgedRows} database rows.` : 'Left server.');
-  return embed;
-};
+const leftGuildToEmbed = (guild: Guild, purgedRows?: number): MessageEmbed =>
+  new OghmabotEmbed({
+    title: guild.name,
+    description: purgedRows ? `Left server, purged ${purgedRows} database rows.` : 'Left server.',
+  });
 
 const purgeDbRefs = async (guild: Guild): Promise<number> => {
   let count = 0;

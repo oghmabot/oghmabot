@@ -1,19 +1,11 @@
 import { MessageEmbed } from 'discord.js';
 import { convertMillisecondsToTimestamp, calculateTimeBetween, nowUnixTime } from './time';
 import { Server, Status, StatusColors } from '../data/models';
-
-export const getOghmabotEmbed = (timestamp: boolean = true, icon: boolean = true): MessageEmbed => {
-  const { OGHMABOT_ICON_URL } = process.env;
-  const embed = new MessageEmbed();
-  if (timestamp) embed.setTimestamp();
-  if (icon && OGHMABOT_ICON_URL) embed.setFooter('Oghmabot', OGHMABOT_ICON_URL);
-  return embed;
-};
+import { OghmabotEmbed } from '../client';
 
 export const serverStatusToEmbed = (server: Server, status: Status): MessageEmbed => {
+  const embed = new OghmabotEmbed();
   const state = status.online ? status.passworded ? 'Stabilizing' : 'Online' : 'Offline';
-  const embed = getOghmabotEmbed();
-  embed.setTimestamp();
   embed.setTitle(server.name);
   embed.setColor(StatusColors[state.toLowerCase()]);
   embed.setDescription(status.online
@@ -26,8 +18,8 @@ export const serverStatusToEmbed = (server: Server, status: Status): MessageEmbe
 };
 
 export const serverStatusToStatusUpdateEmbed = (server: Server, status: Status): MessageEmbed => {
+  const embed = new OghmabotEmbed();
   const state = status.online ? status.passworded ? 'restarting' : 'online' : 'offline';
-  const embed = getOghmabotEmbed();
   embed.setTitle(`${server.name} is now ${state}.`);
   embed.setColor(StatusColors[state]);
   if (server.img) embed.setThumbnail(server.img);

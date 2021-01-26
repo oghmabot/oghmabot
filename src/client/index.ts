@@ -1,1 +1,2 @@
-export * from './client';
+export * from './oghmabot.client';
+export * from './oghmabot.embed';

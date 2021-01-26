@@ -1,8 +1,9 @@
 import { Deity } from '../models/deity.model';
 import { FandomApiArticle, FandomSubdomain } from '../proxies';
 import { EmbedFieldData, MessageEmbed } from 'discord.js';
-import { getOghmabotEmbed, getUntilLastWithin } from '../../utils';
+import { getUntilLastWithin } from '../../utils';
 import { getAlignmentAbbreviation, getAlignmentName } from '../models';
+import { OghmabotEmbed } from '../../client';
 
 export class DeityMapper {
   static fromFandomApiArticle(article: FandomApiArticle, subdomain: FandomSubdomain): Deity | undefined {
@@ -32,7 +33,7 @@ export class DeityMapper {
 
   static toMessageEmbed = (deity: Deity): MessageEmbed => {
     const { name, titles, arelithWikiUrl, fandomFRThumbnail, fandomFRCormyrThumbnail, fandomTitles, thumbnail, pronunciation } = deity;
-    const embed = getOghmabotEmbed();
+    const embed = new OghmabotEmbed();
 
     embed.setTitle(pronunciation ? `${name} (${pronunciation})` : name);
     if (fandomTitles) {

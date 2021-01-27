@@ -5,11 +5,12 @@ import { fetchAllDeities } from './proxies';
 export const connect = async (url: string | undefined = process.env.DATABASE_URL): Promise<Sequelize> => {
   if (!url) throw new Error('Database URL is not defined.');
 
-  const sql = new Sequelize(url, {
+  const sequelize = new Sequelize(url, {
     dialectOptions: { ssl: { rejectUnauthorized: false }},
+    logging: false,
   });
-  initializeAllModels(sql);
-  return sql;
+  initializeAllModels(sequelize);
+  return sequelize;
 };
 
 export const initialize = async (force: boolean = false, ...dbs: string[]): Promise<void> => {

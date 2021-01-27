@@ -72,10 +72,11 @@ export class StatusPoller extends BasePoller<Status> {
     } catch (err) {
       if (err instanceof BeamdogApiError) {
         if (err.code === 400) {
-          console.error('[StatusPoller] Attempted an invalid request against the Beamdog API.');
+          console.error('[StatusPoller] Attempted an invalid request against the Beamdog API.', err);
         }
 
         if (err.code === 404) {
+          console.log('[StatusPoller] Received 404 from Beamdog API; assuming requested server is offline.');
           const { name, lastSeen, serverId } = this.cache.get(server.id) || {};
           return {
             name: name || server.name,
@@ -88,6 +89,8 @@ export class StatusPoller extends BasePoller<Status> {
           };
         }
       }
+
+      console.error('[StatusPoller] Unexpected error.', err);
     }
   }
 

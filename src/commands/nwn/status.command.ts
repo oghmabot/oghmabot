@@ -13,10 +13,11 @@ export class StatusCommand extends Command {
       group: 'nwn',
       memberName: 'status',
       description: 'Replies with the current status of given server(s).',
+      details: 'The command will respond with the last known status of known NWN servers. If no inline argument is provided with the command, all known servers are returned.',
       args: [
         {
           key: 'servers',
-          prompt: 'N/A',
+          prompt: 'Specify which NWN server(s) to output the current status of (default is all).',
           type: 'string',
           default: '',
         },
@@ -25,6 +26,11 @@ export class StatusCommand extends Command {
         duration: 10,
         usages: 2,
       },
+      examples: [
+        '-status',
+        '-status surface',
+        '-status ud cp',
+      ],
     });
 
     this.poller = client.pollers.get('status') as StatusPoller;

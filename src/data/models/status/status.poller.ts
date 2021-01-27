@@ -38,7 +38,7 @@ export class StatusPoller extends BasePoller<Status> {
     const subscriptions = await SubscriptionModel.getSubscriptionsForServer(server.id);
     for (const sub of subscriptions) {
       const { channelId, autoDeleteMessages, lastMessageId } = sub;
-      const channel = this.client.channels.cache.find(c => c.id === channelId) as TextChannel | undefined;
+      const channel = await this.client.channels.fetch(channelId) as TextChannel | undefined;
 
       if (channel) {
         if (autoDeleteMessages && lastMessageId) {

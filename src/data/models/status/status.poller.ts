@@ -1,6 +1,6 @@
 import { TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
-import { Server, ServerModel, Status, StatusDescriptor, StatusModel, SubscriptionModel } from '..';
+import { Server, ServerModel, Status, StatusModel, SubscriptionModel } from '..';
 import { BeamdogApiError, BeamdogApiProxy } from '../../proxies';
 import { serverStatusToStatusUpdateEmbed } from '../../../utils';
 import { BasePoller } from '../../common';
@@ -63,7 +63,7 @@ export class StatusPoller extends BasePoller<Status> {
     const pState = StatusModel.resolveStatusAsDescriptor(prevStatus);
     const nState = StatusModel.resolveStatusAsDescriptor(newStatus);
 
-    return pState < nState || (pState === StatusDescriptor.Online && nState !== StatusDescriptor.Online);
+    return pState < nState;
   }
 
   protected resolveNewStatus = async (server: Server): Promise<Status | undefined> => {

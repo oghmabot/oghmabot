@@ -1,10 +1,12 @@
 import { Command } from 'discord.js-commando';
-import { arelithCommands } from './arelith';
-import { nwnCommands } from './nwn';
+import { loreCommands } from './lore';
+import { mechanicsCommands } from './mechanics';
 import { ownerCommands } from './owner';
+import { serverCommands } from './server';
 
 export const getAllCommands = (): (typeof Command)[] => [
-  ...arelithCommands(),
-  ...nwnCommands(),
+  ...loreCommands(),
+  ...mechanicsCommands(),
   ...ownerCommands(),
+  ...serverCommands(),
 ];

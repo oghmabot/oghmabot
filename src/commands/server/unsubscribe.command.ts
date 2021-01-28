@@ -6,9 +6,9 @@ export class UnsubscribeCommand extends Command {
   constructor(client: CommandoClient) {
     super(client, {
       name: 'unsubscribe',
-      group: 'nwn',
+      group: 'server',
       memberName: 'unsubscribe',
-      description: 'Unsubscribe to server status updates in current channel.',
+      description: 'Unsubscribe to server status updates in the current channel.',
       userPermissions: ['MANAGE_CHANNELS'],
       args: [
         {

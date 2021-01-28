@@ -8,7 +8,7 @@ export class RollCommand extends Command {
   constructor(client: CommandoClient) {
     super(client, {
       name: 'roll',
-      group: 'nwn',
+      group: 'mechanics',
       memberName: 'roll',
       description: 'Resolves a given d20-style dice roll.',
       details: 'The command supports somewhat advanced syntax and a few functions, as seen in examples below.',

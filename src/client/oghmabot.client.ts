@@ -21,13 +21,15 @@ export class OghmabotClient extends CommandoClient {
 
   setRegistryDefaults(): void {
     this.registry
-      .registerGroups([
-        ['owner', 'Owner'],
-        ['arelith', 'Arelith'],
-        ['nwn', 'Neverwinter Nights'],
-      ])
       .registerDefaultTypes()
-      .registerDefaultGroups()
+      .registerGroups([
+        ['server', 'Server Information'],
+        ['lore', 'Lore'],
+        ['mechanics', 'Mechanics'],
+        ['commands', 'Command Administration'],
+        ['util', 'Help'],
+        ['owner', 'Owner'],
+      ])
       .registerDefaultCommands({ prefix: false, unknownCommand: false })
       .registerCommands(getAllCommands());
   }

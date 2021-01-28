@@ -10,9 +10,9 @@ export class StatusCommand extends Command {
   constructor(client: OghmabotClient) {
     super(client, {
       name: 'status',
-      group: 'nwn',
+      group: 'server',
       memberName: 'status',
-      description: 'Replies with the current status of given server(s).',
+      description: 'Replies with the current status of given Arelith server(s).',
       details: 'The command will respond with the last known status of known NWN servers. If no inline argument is provided with the command, all known servers are returned.',
       args: [
         {

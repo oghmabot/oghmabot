@@ -8,7 +8,7 @@ export class DeityCommand extends Command {
   constructor(client: CommandoClient) {
     super(client, {
       name: 'deity',
-      group: 'arelith',
+      group: 'lore',
       memberName: 'deity',
       description: 'Replies with the details of a deity in the Arelith pantheon.',
       details: 'The command will return one deity based on the given input, assuming it is listed on Arelith\'s Deity Table. Results show aggregated information from the Arelith Wiki, The Forgotten Realms Wiki, and The Forgotten Realms Cormyr Wiki.',

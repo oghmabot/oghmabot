@@ -1,5 +1,5 @@
 import { Guild, MessageEmbed, TextChannel } from 'discord.js';
-import { OghmabotEmbed } from '../oghmabot.embed';
+import { OghmabotEmbed } from '../embeds';
 
 const guildString = (guild: Guild): string => `${guild.name} (${guild.memberCount} members)`;
 

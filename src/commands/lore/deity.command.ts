@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
-import { DeityMapper } from '../../data/mappers';
+import { DeityEmbed } from '../../client';
 import { DeityModel } from '../../data/models';
 import { stripCommandNotation } from '../../utils';
 
@@ -33,12 +33,11 @@ export class DeityCommand extends Command {
   async run(msg: CommandoMessage, { name }: { name: string }): Promise<Message> {
     try {
       const deity = await DeityModel.getOrAddDeity(name);
-      if (!deity) return msg.say('Deity not found.');
-      return msg.embed(DeityMapper.toMessageEmbed(deity));
+      if (deity) return msg.embed(new DeityEmbed(deity));
     } catch (error) {
       console.error('[DeityCommand] Unexpected error.', error);
     }
 
-    return msg.reply('Invalid input.');
+    return msg.say('Deity not found.');
   }
 }

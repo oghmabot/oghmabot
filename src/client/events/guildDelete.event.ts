@@ -1,6 +1,6 @@
 import { Guild, MessageEmbed, TextChannel } from 'discord.js';
 import { purgeRefsToChannel } from '../../data/models';
-import { OghmabotEmbed } from '../oghmabot.embed';
+import { OghmabotEmbed } from '../embeds';
 
 const leftGuildToEmbed = (guild: Guild, purgedRows?: number): MessageEmbed =>
   new OghmabotEmbed({

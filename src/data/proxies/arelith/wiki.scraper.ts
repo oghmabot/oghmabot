@@ -1,16 +1,16 @@
 import HTMLElementData from 'beautiful-dom/dist/htmlelement';
 import { findBestStringMatch } from '../../../utils/parsing';
-import { Alignment, getAlignment, Deity, CharacterBuild } from '../../models';
+import { Alignment, getAlignment, Deity, Build } from '../../models';
 import { BaseScraper } from '../../common';
 
 export class ArelithWikiScraper extends BaseScraper {
-  static async fetchAllCharacterBuilds(): Promise<CharacterBuild[]> {
+  static async fetchAllCharacterBuilds(): Promise<Build[]> {
     const { ARELITH_WIKI_URL } = process.env;
     const dom = await this.fetchAsBeautifulDom(`${ARELITH_WIKI_URL}/Character_Builds`);
     return Promise.all(dom.querySelectorAll('table')[1]?.querySelectorAll('tbody tr').map(this.mapCharacterBuildsTableRowToCharacterBuild));
   }
 
-  static async mapCharacterBuildsTableRowToCharacterBuild(row: HTMLElementData): Promise<CharacterBuild> {
+  static async mapCharacterBuildsTableRowToCharacterBuild(row: HTMLElementData): Promise<Build> {
     const url = row.querySelector('a')?.getAttribute('href');
     const [name, race, class1, class2, class3, author, description, vetted] = row.querySelectorAll('td').map(td => td.textContent.trim());
     return {

@@ -1,11 +1,11 @@
 import { MessageEmbed, MessageEmbedOptions } from 'discord.js';
-import { CharacterBuild } from '../../data/models';
+import { Build } from '../../data/models';
 import { OghmabotEmbed } from '../oghmabot.embed';
 
 export class BuildEmbed extends OghmabotEmbed {
   private builds;
 
-  constructor(builds: CharacterBuild[], data?: MessageEmbed | MessageEmbedOptions) {
+  constructor(builds: Build[], data?: MessageEmbed | MessageEmbedOptions) {
     super(data);
     this.builds = builds;
     this.listBuilds();

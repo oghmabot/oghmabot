@@ -1,9 +1,11 @@
 import { Sequelize } from 'sequelize';
 import { DeityModel, initializeAllModels, ServerModel, SubscriptionModel } from './models';
-import { fetchAllDeities } from './proxies';
+import { ArelithWikiScraper, fetchAllDeities } from './proxies';
 
 export const connect = async (url: string | undefined = process.env.DATABASE_URL): Promise<Sequelize> => {
   if (!url) throw new Error('Database URL is not defined.');
+
+  console.log(await ArelithWikiScraper.fetchAllCharacterBuilds());
 
   const sequelize = new Sequelize(url, {
     dialectOptions: { ssl: { rejectUnauthorized: false }},

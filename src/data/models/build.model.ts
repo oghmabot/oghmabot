@@ -3,7 +3,7 @@ import { ArelithWikiScraper } from '../proxies';
 export interface Build {
   name: string;
   url?: string;
-  race: string;
+  race?: string;
   classes: string[];
   author?: string;
   description?: string;

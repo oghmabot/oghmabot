@@ -1,7 +1,7 @@
 import { Collection, Guild, MessageEmbed, TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
 import { connect } from '../../data';
-import { OghmabotEmbed } from '../oghmabot.embed';
+import { OghmabotEmbed } from '../embeds';
 
 const loggedInServersToString = (servers: Collection<string, Guild>): string =>
   `Logged in to servers: ${servers.map(g => g.name).join(', ')}`;

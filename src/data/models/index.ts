@@ -18,6 +18,7 @@ export const purgeRefsToMessage = async (messageId: string): Promise<number> => 
 };
 
 export * from './alignment';
+export * from './build.model';
 export * from './deity.model';
 export * from './server.model';
 export * from './status';

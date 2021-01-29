@@ -1,12 +1,33 @@
 import HTMLElementData from 'beautiful-dom/dist/htmlelement';
 import { findBestStringMatch } from '../../../utils/parsing';
-import { Alignment, getAlignment, Deity } from '../../models';
+import { Alignment, getAlignment, Deity, Build } from '../../models';
 import { BaseScraper } from '../../common';
 
-const WikiUrl = 'http://wiki.arelith.com';
-const DeityTableUrl = 'http://wiki.arelith.com/Deity_Table';
-
 export class ArelithWikiScraper extends BaseScraper {
+  static async fetchAllCharacterBuilds(): Promise<Build[]> {
+    const { ARELITH_WIKI_URL } = process.env;
+    const dom = await this.fetchAsBeautifulDom(`${ARELITH_WIKI_URL}/Character_Builds`);
+    return Promise.all(dom.querySelectorAll('table')[1]?.querySelectorAll('tbody tr').map(this.mapCharacterBuildsTableRowToCharacterBuild));
+  }
+
+  static async mapCharacterBuildsTableRowToCharacterBuild(row: HTMLElementData): Promise<Build> {
+    const url = row.querySelector('a')?.getAttribute('href');
+    const [name, race, class1, class2, class3, author, description, vetted] = row.querySelectorAll('td').map(td => td?.textContent.trim());
+    return {
+      name,
+      url: url ?? undefined,
+      race,
+      classes: [class1, class2, class3].filter(Boolean),
+      author,
+      description,
+      vetted: vetted?.toLowerCase().includes('yes'),
+    };
+  }
+
+  /**
+   * This method is used to scrape a specific deity.
+   * @param deityQuery string that can resolve to a deity name
+   */
   static async fetchDeity(deityQuery: string): Promise<Deity | undefined> {
     const deityListings = await this.getDeityTableRows();
     const tableRow = findBestStringMatch(deityListings, deityQuery, r => r.querySelector('a')?.textContent);
@@ -22,11 +43,13 @@ export class ArelithWikiScraper extends BaseScraper {
   }
 
   private static async getDeityTableRows(): Promise<HTMLElementData[]> {
-    const dom = await this.fetchAsBeautifulDom(DeityTableUrl);
+    const { ARELITH_WIKI_URL } = process.env;
+    const dom = await this.fetchAsBeautifulDom(`${ARELITH_WIKI_URL}/Deity_Table`);
     return dom.querySelectorAll('table')[1]?.querySelectorAll('tbody tr').filter(r => !r.querySelectorAll('td')[5]?.textContent.trim().toLowerCase().includes('heresies'));
   }
 
   private static async mapDeityTableRowToDeity(row: HTMLElementData): Promise<Deity> {
+    const { ARELITH_WIKI_URL } = process.env;
     const url = row.querySelector('a')?.getAttribute('href');
     const [
       name,
@@ -38,7 +61,7 @@ export class ArelithWikiScraper extends BaseScraper {
     ] = row.querySelectorAll('td');
 
     const deity = {
-      arelithWikiUrl: url ? `${WikiUrl}${url}` : undefined,
+      arelithWikiUrl: url ? `${ARELITH_WIKI_URL}${url}` : undefined,
       name: name?.textContent.trim(),
       alignment: getAlignment(alignment?.textContent.trim()),
       clergyAlignments: arelithClergyAlignments?.textContent.trim().split(' ').map(a => getAlignment(a.trim())).filter(Boolean) as Alignment[] | undefined,
@@ -80,10 +103,11 @@ export class ArelithWikiScraper extends BaseScraper {
 
   private static async handleAlternativeWorship(deityQuery: string): Promise<Deity | undefined> {
     if (findBestStringMatch(['abeir-toril', 'toril', 'nature', 'beasts'], deityQuery)) {
+      const { ARELITH_WIKI_URL } = process.env;
       const deity = {
         name: 'Abeir-Toril',
         alignment: Alignment.NA,
-        arelithWikiUrl: `${WikiUrl}/Toril`,
+        arelithWikiUrl: `${ARELITH_WIKI_URL}/Toril`,
         arelithAspects: ['Nature', 'Magic'],
         thumbnail: 'https://vignette.wikia.nocookie.net/forgottenrealms/images/7/71/Toril-globe-small.jpg',
       };

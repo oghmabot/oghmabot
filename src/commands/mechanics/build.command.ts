@@ -3,6 +3,7 @@ import { ArelithWikiScraper } from '../../data/proxies';
 import { Message } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { findBestStringMatch, stripCommandNotation } from '../../utils';
+import { BuildEmbed } from '../../client/embeds/build.embed';
 
 export class BuildCommand extends Command {
   constructor(client: CommandoClient) {
@@ -22,7 +23,7 @@ export class BuildCommand extends Command {
         },
       ],
       examples: [
-        '-build fighter',
+        '-build ranger',
         '-build kenji',
         '-build firbolg druid',
       ],
@@ -31,9 +32,9 @@ export class BuildCommand extends Command {
 
   async run(msg: CommandoMessage, { query }: { query: string }): Promise<Message> {
     try {
-      const builds = await ArelithWikiScraper.fetchAllCharacterBuilds();
-      const foundBuilds = builds.filter(b => this.buildIsMatch(b, query.trim())).sort((buildA, buildB) => this.buildIsMatch(buildB, query.trim()) - this.buildIsMatch(buildA, query.trim()));
-      return msg.reply(foundBuilds.slice(0, 5).map(b => b.name).join('\n'));
+      const builds = await this.fetchBuilds(query);
+      const foundBuilds = this.sortBuildsByQueryMatch(builds, query);
+      return msg.reply(new BuildEmbed(foundBuilds.slice(0, 5)));
     } catch (error) {
       console.error('[BuildCommand] Unexpected error.', error);
     }
@@ -41,11 +42,22 @@ export class BuildCommand extends Command {
     return msg.reply('No relevant builds were found.');
   }
 
+  private sortBuildsByQueryMatch(builds: CharacterBuild[], query: string): CharacterBuild[] {
+    return builds.sort((a, b) => this.buildIsMatch(b, query.trim()) - this.buildIsMatch(a, query.trim()));
+  }
+
   private buildIsMatch(build: CharacterBuild, query: string): number {
     const { name, race, classes, author, description } = build;
     const stringsToMatch = [name, race, ...classes, author, description].filter(Boolean) as string[];
     return query.split(' ').reduce((matches, q) => {
-      return !!findBestStringMatch(stringsToMatch, q) ? matches + 1 : matches;
+      return findBestStringMatch(stringsToMatch, q) ? matches + 1 : matches;
     }, 0);
+  }
+
+  private async fetchBuilds(query?: string): Promise<CharacterBuild[]> {
+    const builds = await ArelithWikiScraper.fetchAllCharacterBuilds();
+    return query
+      ? builds.filter(b => this.buildIsMatch(b, query.trim()))
+      : builds;
   }
 }

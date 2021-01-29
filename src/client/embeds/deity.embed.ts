@@ -37,7 +37,8 @@ export class DeityEmbed extends OghmabotEmbed {
     const fields: EmbedFieldData[] = [];
 
     if (alignment) {
-      fields.push({ name: 'Alignment', value: getAlignmentName(alignment), inline: !!(powerLevel || arelithClergyAlignments) });
+      const value = getAlignmentName(alignment);
+      fields.push({ name: 'Alignment', value, inline: !!(powerLevel || arelithClergyAlignments) });
     }
 
     if (powerLevel) {
@@ -45,14 +46,17 @@ export class DeityEmbed extends OghmabotEmbed {
     }
 
     if (arelithClergyAlignments) {
+      const value = arelithClergyAlignments.sort().map(getAlignmentAbbreviation).join(', ');
       fields.push({
         name: 'Clergy Alignments',
-        value: arelithClergyAlignments.sort().map(getAlignmentAbbreviation).join(', '),
-        inline: !!alignment && !powerLevel });
+        value,
+        inline: !!alignment && !powerLevel,
+      });
     }
 
-    if (arelithAspects) {
-      fields.push({ name: 'Aspects', value: arelithAspects.join(', ') });
+    if (arelithAspects?.length) {
+      const value = arelithAspects.join(', ');
+      fields.push({ name: 'Aspects', value });
     }
 
     const infoField = this.getInfoFieldString();
@@ -61,9 +65,11 @@ export class DeityEmbed extends OghmabotEmbed {
     }
 
     if (dogma) {
-      fields.push({ name: 'Dogma', value: getUntilLastWithin(dogma, '.', 350) });
+      const value = getUntilLastWithin(dogma, '.', 350);
+      if (value) fields.push({ name: 'Dogma', value });
     } else if (fandomFRAbstract) {
-      fields.push({ name: 'The Forgotten Realms Wiki', value: getUntilLastWithin(fandomFRAbstract, '.', 200) });
+      const value = getUntilLastWithin(fandomFRAbstract, '.', 200);
+      if (value) fields.push({ name: 'The Forgotten Realms Wiki', value });
     }
 
     this.addFields(fields);

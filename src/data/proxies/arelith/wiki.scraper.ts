@@ -12,12 +12,12 @@ export class ArelithWikiScraper extends BaseScraper {
 
   static async mapCharacterBuildsTableRowToCharacterBuild(row: HTMLElementData): Promise<CharacterBuild> {
     const url = row.querySelector('a')?.getAttribute('href');
-    const [name, race, class1, class2, class3, author, description, vetted] = row.querySelectorAll('td').map(td => td.textContent);
+    const [name, race, class1, class2, class3, author, description, vetted] = row.querySelectorAll('td').map(td => td.textContent.trim());
     return {
       name,
       url: url ?? undefined,
       race,
-      classes: [class1, class2, class3],
+      classes: [class1, class2, class3].filter(Boolean),
       author,
       description,
       vetted: vetted?.toLowerCase().includes('yes'),

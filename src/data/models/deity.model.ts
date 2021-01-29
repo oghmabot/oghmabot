@@ -75,16 +75,16 @@ export class DeityModel extends Model<Deity> {
     });
   }
 
-  static addDeity = async (deity: Deity): Promise<DeityModel> => await DeityModel.create(deity);
+  static add = async (deity: Deity): Promise<DeityModel> => await DeityModel.create(deity);
 
-  static getOrAddDeity = async (deityQuery: string): Promise<Deity | undefined> => {
+  static async fetch(deityQuery: string): Promise<Deity | undefined> {
     const deities = await DeityModel.getDeities();
     const foundDeity = findBestStringMatch(deities, deityQuery, d => d.name);
     if (foundDeity) return foundDeity;
 
     const deity = await fetchDeity(deityQuery);
     if (deity) {
-      await DeityModel.addDeity(deity);
+      await DeityModel.add(deity);
       return deity;
     }
   }

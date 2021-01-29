@@ -57,9 +57,7 @@ export class FandomApiProxy {
 
   private static async resolveDeityIdFromName(deityName: string, subdomain: FandomSubdomain = FandomSubdomain.ForgottenRealms): Promise<number | undefined> {
     const deities = await this.fetchDeityList(subdomain);
-    return findBestStringMatch(
-      deities,
-      deityName,
-      deity => deity?.title)?.id;
+    const bestMatch = findBestStringMatch(deities, deityName, deity => deity?.title);
+    if (bestMatch && bestMatch.title.replace(deityName, '').length < deityName.length) return bestMatch.id;
   }
 }

@@ -24,7 +24,7 @@ export const initialize = async (force: boolean = false, ...dbs: string[]): Prom
       DeityModel.sync({ force });
 
       const deities = await fetchAllDeities();
-      deities.forEach(DeityModel.addDeity);
+      deities.forEach(DeityModel.add);
     }
 
     if (dbs.includes('servers')) {

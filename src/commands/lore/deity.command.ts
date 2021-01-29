@@ -32,7 +32,7 @@ export class DeityCommand extends Command {
 
   async run(msg: CommandoMessage, { name }: { name: string }): Promise<Message> {
     try {
-      const deity = await DeityModel.getOrAddDeity(name);
+      const deity = await DeityModel.fetch(name);
       if (deity) return msg.embed(new DeityEmbed(deity));
     } catch (error) {
       console.error('[DeityCommand] Unexpected error.', error);

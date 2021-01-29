@@ -39,13 +39,15 @@ export class ArelithWikiScraper extends BaseScraper {
 
   static async fetchAllDeities(): Promise<Deity[]> {
     const rows = await this.getDeityTableRows();
-    return Promise.all(rows.map(ArelithWikiScraper.mapDeityTableRowToDeity));
+    const filteredRows = rows.filter(r => !r.querySelectorAll('td')[5]?.textContent.trim().toLowerCase().includes('heresies'));
+    const deities = await Promise.all(filteredRows.map(ArelithWikiScraper.mapDeityTableRowToDeity));
+    return deities.filter(d => d.name);
   }
 
   private static async getDeityTableRows(): Promise<HTMLElementData[]> {
     const { ARELITH_WIKI_URL } = process.env;
     const dom = await this.fetchAsBeautifulDom(`${ARELITH_WIKI_URL}/Deity_Table`);
-    return dom.querySelectorAll('table')[1]?.querySelectorAll('tbody tr').filter(r => !r.querySelectorAll('td')[5]?.textContent.trim().toLowerCase().includes('heresies'));
+    return dom.querySelectorAll('table')[1]?.querySelectorAll('tbody tr');
   }
 
   private static async mapDeityTableRowToDeity(row: HTMLElementData): Promise<Deity> {

@@ -7,7 +7,6 @@ export const connect = async (url: string | undefined = process.env.DATABASE_URL
 
   const sequelize = new Sequelize(url, {
     dialectOptions: { ssl: { rejectUnauthorized: false }},
-    logging: false,
   });
   initializeAllModels(sequelize);
   return sequelize;

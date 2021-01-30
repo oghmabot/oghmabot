@@ -37,7 +37,7 @@ export class BuildCommand extends Command {
       console.error('[BuildCommand] Unexpected error.', error);
     }
 
-    return msg.reply('No relevant builds were found.');
+    return msg.reply('No builds were found.');
   }
 
   private sortBuildsByQueryMatch(builds: Build[], query: string): Build[] {

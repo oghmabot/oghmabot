@@ -43,14 +43,14 @@ export class StatusPoller extends BasePoller<Status> {
       if (channel) {
         if (autoDeleteMessages && lastMessageId) {
           try {
-            channel.messages.delete(lastMessageId);
+            await channel.messages.delete(lastMessageId);
           } catch (error) {
             console.warn('[StatusPoller] Failed to delete last message.', error);
           }
         }
 
         const newMsg = await channel.send('', messageEmbed);
-        SubscriptionModel.update({
+        await SubscriptionModel.update({
           lastMessageId: newMsg.id,
         }, {
           where: sub,

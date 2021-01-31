@@ -42,6 +42,15 @@ export class SubscriptionModel extends Model<Subscription> {
     });
   }
 
+  static async reset(sequelize: Sequelize, force: boolean = true): Promise<void> {
+    try {
+      SubscriptionModel.initialize(sequelize);
+      await SubscriptionModel.sync({ force });
+    } catch (error) {
+      console.error('[SubscriptionModel] Unexpected error while resetting.', error);
+    }
+  }
+
   static addSubscription = async (subscription: Subscription): Promise<SubscriptionModel> => await SubscriptionModel.create(subscription);
 
   static subscriptionExists = async (subscription: Subscription): Promise<boolean> => !!(await SubscriptionModel.findOne({

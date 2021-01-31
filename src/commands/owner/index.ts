@@ -1,8 +1,8 @@
 import { Command } from 'discord.js-commando';
-import { InitializeCommand } from './initialize.command';
+import { ResetCommand } from './reset.command';
 import { ServerCommand } from './server.command';
 
 export const ownerCommands = (): (typeof Command)[] => [
-  InitializeCommand,
+  ResetCommand,
   ServerCommand,
 ];

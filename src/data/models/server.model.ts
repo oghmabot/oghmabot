@@ -39,6 +39,15 @@ export class ServerModel extends Model<Server> {
     });
   }
 
+  static async reset(sequelize: Sequelize, force: boolean = true): Promise<void> {
+    try {
+      ServerModel.initialize(sequelize);
+      await ServerModel.sync({ force });
+    } catch (error) {
+      console.error('[ServerModel] Unexpected error while resetting.', error);
+    }
+  }
+
   static fromBeamdogApiResponseBody = (response: BeamdogApiResponseBody): Server => (
     {
       id: response.kx_pk,

@@ -22,13 +22,11 @@ export const initialize = async (force: boolean = false, ...dbs: string[]): Prom
     }
 
     if (dbs.includes('servers')) {
-      ServerModel.initialize(sql);
-      ServerModel.sync({ force });
+      await ServerModel.reset(sql, force);
     }
 
     if (dbs.includes('subscriptions')) {
-      SubscriptionModel.initialize(sql);
-      SubscriptionModel.sync({ force });
+      await SubscriptionModel.reset(sql, force);
     }
   }
 };

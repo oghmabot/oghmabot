@@ -1,8 +1,7 @@
-import { Deity } from '../models/deity.model';
 import { FandomApiArticle, FandomSubdomain } from '../proxies';
 import { EmbedFieldData, MessageEmbed } from 'discord.js';
 import { getUntilLastWithin } from '../../utils';
-import { getAlignmentAbbreviation, getAlignmentName } from '../models';
+import { Deity, getAlignmentAbbreviation, getAlignmentName } from '../models';
 import { OghmabotEmbed } from '../../client';
 
 export class DeityMapper {

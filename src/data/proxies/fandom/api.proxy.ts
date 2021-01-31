@@ -27,15 +27,9 @@ export interface FandomApiResponseBody {
 }
 
 export class FandomApiProxy {
-  static async fetchDeityDetails(id: number, subdomain: FandomSubdomain): Promise<FandomApiArticle | undefined>;
-  static async fetchDeityDetails(name: string, subdomain: FandomSubdomain): Promise<FandomApiArticle | undefined>;
-  static async fetchDeityDetails<M>(id: number, subdomain: FandomSubdomain, mapper: FandomMapper<M>): Promise<M | undefined>;
-  static async fetchDeityDetails<M>(name: string, subdomain: FandomSubdomain, mapper: FandomMapper<M>): Promise<M | undefined>;
-  static async fetchDeityDetails<M>(query: number | string, subdomain: FandomSubdomain = FandomSubdomain.ForgottenRealms, mapper?: FandomMapper<M>): Promise<FandomApiArticle | M | undefined> {
-    const id = typeof query === 'number'
-      ? query
-      : await this.resolveDeityIdFromName(query, subdomain);
-
+  static async fetchArticleDetails(id: number, subdomain: FandomSubdomain): Promise<FandomApiArticle | undefined>;
+  static async fetchArticleDetails<M>(id: number, subdomain: FandomSubdomain, mapper: FandomMapper<M>): Promise<M | undefined>;
+  static async fetchArticleDetails<M>(id: number, subdomain: FandomSubdomain = FandomSubdomain.ForgottenRealms, mapper?: FandomMapper<M>): Promise<FandomApiArticle | M | undefined> {
     if (id) {
       const url = `https://${subdomain}.fandom.com/api/v1/Articles/Details?ids=${id}&abstract=${ABSTRACT_SIZE}`;
       const response = await fetch(url);
@@ -55,9 +49,21 @@ export class FandomApiProxy {
     return json.items;
   }
 
-  private static async resolveDeityIdFromName(deityName: string, subdomain: FandomSubdomain = FandomSubdomain.ForgottenRealms): Promise<number | undefined> {
+  static async resolveDeityIdFromName(deityName: string, subdomain: FandomSubdomain = FandomSubdomain.ForgottenRealms): Promise<number | undefined> {
     const deities = await this.fetchDeityList(subdomain);
     const bestMatch = findBestStringMatch(deities, deityName, deity => deity?.title);
     if (bestMatch && bestMatch.title.replace(deityName, '').length < deityName.length) return bestMatch.id;
+  }
+
+  static async fetchHeresyList(subdomain: FandomSubdomain = FandomSubdomain.ForgottenRealms): Promise<FandomApiArticle[]> {
+    const response = await fetch(`https://${subdomain}.fandom.com/api/v1/Articles/List?category=heresies&limit=100`);
+    const json: FandomApiResponseBody = await response.json();
+    return json.items;
+  }
+
+  static async resolveHeresyIdFromName(heresyName: string, subdomain: FandomSubdomain = FandomSubdomain.ForgottenRealms): Promise<number | undefined> {
+    const heresies = await this.fetchHeresyList(subdomain);
+    const bestMatch = findBestStringMatch(heresies, heresyName, deity => deity?.title);
+    if (bestMatch && bestMatch.title.replace(heresyName, '').length < heresyName.length) return bestMatch.id;
   }
 }

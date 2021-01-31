@@ -1,7 +1,7 @@
 import { DataTypes, FindOptions, Model, Sequelize } from 'sequelize';
-import { findBestStringMatch } from '../../utils';
-import { fetchDeity } from '../proxies';
-import { Alignment } from './alignment';
+import { findBestStringMatch } from '../../../utils';
+import { fetchAllDeities, fetchDeity } from '../../proxies';
+import { Alignment } from '../alignment';
 
 export interface Deity {
   name: string;
@@ -29,6 +29,10 @@ export interface Deity {
   fandomTitles?: string[];
   thumbnail?: string;
   pronunciation?: string;
+}
+
+export interface Heresy extends Deity {
+  synergies: string[];
 }
 
 export class DeityModel extends Model<Deity> {
@@ -73,6 +77,19 @@ export class DeityModel extends Model<Deity> {
       modelName: 'deity',
       tableName: 'deities',
     });
+  }
+
+  static async reset(sequelize: Sequelize, force: boolean = true, insertData: boolean = true): Promise<void> {
+    try {
+      const deities = insertData ? await fetchAllDeities() : [];
+      if (insertData && !deities.length) throw new Error('No deities found.');
+
+      DeityModel.initialize(sequelize);
+      await DeityModel.sync({ force });
+      deities.forEach(DeityModel.add);
+    } catch (error) {
+      console.error('[DeityModel] Unexpected error while resetting.', error);
+    }
   }
 
   static add = async (deity: Deity): Promise<DeityModel> => await DeityModel.create(deity);

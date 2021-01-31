@@ -15,7 +15,7 @@ export class ResetCommand extends Command {
           key: 'db',
           prompt: 'Which database would you like to reset?',
           type: 'string',
-          oneOf: ['all', 'deities', 'servers', 'subscriptions'],
+          oneOf: ['all', 'builds', 'deities', 'servers', 'subscriptions'],
           parse: stripCommandNotation,
         },
         {

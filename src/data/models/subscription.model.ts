@@ -48,6 +48,7 @@ export class SubscriptionModel extends Model<Subscription> {
       await SubscriptionModel.sync({ force });
     } catch (error) {
       console.error('[SubscriptionModel] Unexpected error while resetting.', error);
+      throw error;
     }
   }
 

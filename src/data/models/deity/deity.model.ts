@@ -90,6 +90,7 @@ export class DeityModel extends Model<Deity> {
       deities.forEach(DeityModel.add);
     } catch (error) {
       console.error('[DeityModel] Unexpected error while resetting.', error);
+      throw error;
     }
   }
 

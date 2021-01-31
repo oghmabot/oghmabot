@@ -40,8 +40,7 @@ export class ArelithWikiScraper extends BaseScraper {
 
   static async fetchAllDeities(): Promise<Deity[]> {
     const rows = await this.getDeityTableRows();
-    const filteredRows = rows.filter(r => !r.querySelectorAll('td')[5]?.textContent.trim().toLowerCase().includes('heresies'));
-    const deities = await Promise.all(filteredRows.map(ArelithWikiScraper.mapDeityTableRowToDeity));
+    const deities = await Promise.all(rows.map(ArelithWikiScraper.mapDeityTableRowToDeity));
     return deities.filter(d => d.name);
   }
 

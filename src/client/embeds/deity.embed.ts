@@ -45,7 +45,7 @@ export class DeityEmbed extends OghmabotEmbed {
       fields.push({ name: 'Power Level', value: powerLevel, inline: !!alignment });
     }
 
-    if (arelithClergyAlignments) {
+    if (arelithClergyAlignments?.length) {
       const value = arelithClergyAlignments.sort().map(getAlignmentAbbreviation).join(', ');
       fields.push({
         name: 'Clergy Alignments',

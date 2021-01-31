@@ -33,7 +33,7 @@ export interface Deity {
 }
 
 export interface Heresy extends Deity {
-  synergies: string[];
+  synergies?: string[];
 }
 
 export class DeityModel extends Model<Deity> {

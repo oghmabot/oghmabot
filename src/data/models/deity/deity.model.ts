@@ -2,6 +2,7 @@ import { DataTypes, FindOptions, Model, Sequelize } from 'sequelize';
 import { findBestStringMatch } from '../../../utils';
 import { fetchAllDeities, fetchDeity } from '../../proxies';
 import { Alignment } from '../alignment';
+import { DeityCategory } from './category.model';
 
 export interface Deity {
   name: string;
@@ -15,7 +16,7 @@ export interface Deity {
   domains?: string[];
   dogma?: string;
   arelithAspects?: string[];
-  arelithCategory?: string;
+  arelithCategory?: DeityCategory;
   arelithClergyAlignments?: Alignment[];
   arelithWikiUrl?: string;
   fandomFRAbstract?: string;
@@ -53,7 +54,7 @@ export class DeityModel extends Model<Deity> {
       domains: DataTypes.ARRAY(DataTypes.STRING),
       dogma: DataTypes.TEXT,
       arelithAspects: DataTypes.ARRAY(DataTypes.STRING),
-      arelithCategory: DataTypes.STRING,
+      arelithCategory: DataTypes.INTEGER,
       arelithClergyAlignments: DataTypes.ARRAY(DataTypes.INTEGER),
       arelithWikiUrl: DataTypes.STRING,
       fandomFRAbstract: DataTypes.TEXT,

@@ -2,22 +2,22 @@ import { findBestStringMatch } from '../../../utils';
 
 export enum DeityCategory {
   Other = 0,
-  Drow,
   Demigods,
-  Draconic,
-  Fey,
-  Gnome,
-  Heresy,
   Intermediate,
   Lesser,
   Major,
-  Monstrous,
-  Dwarf,
-  Mulhorandi,
   Planar,
+  Mulhorandi,
+  Draconic,
+  Drow,
+  Dwarf,
   Elf,
+  Fey,
+  Gnome,
   Halfling,
+  Monstrous,
   YuanTi,
+  Heresy,
 }
 
 export const getDeityCategory = (str: string): DeityCategory => {

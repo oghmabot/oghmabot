@@ -2,6 +2,7 @@ import HTMLElementData from 'beautiful-dom/dist/htmlelement';
 import { findBestStringMatch } from '../../../utils/parsing';
 import { Alignment, getAlignment, Deity, Build } from '../../models';
 import { BaseScraper } from '../../common';
+import { getDeityCategory } from '../../models/deity/category.model';
 
 export class ArelithWikiScraper extends BaseScraper {
   static async fetchAllCharacterBuilds(): Promise<Build[]> {
@@ -61,6 +62,7 @@ export class ArelithWikiScraper extends BaseScraper {
       aspect2,
       arelithCategory,
     ] = row.querySelectorAll('td');
+    const categories = arelithCategory?.querySelectorAll('a') ?? ['Other'];
 
     const deity = {
       arelithWikiUrl: url ? `${ARELITH_WIKI_URL}${url}` : undefined,
@@ -69,7 +71,7 @@ export class ArelithWikiScraper extends BaseScraper {
       clergyAlignments: arelithClergyAlignments?.textContent.trim().split(' ').map(a => getAlignment(a.trim())).filter(Boolean) as Alignment[] | undefined,
       arelithAspects: [aspect1?.textContent.trim(), aspect2?.textContent.trim()].filter(Boolean),
       arelithClergyAlignments: arelithClergyAlignments?.textContent.trim().split(' ').map(a => getAlignment(a.trim())).filter(Boolean) as Alignment[] | undefined,
-      arelithCategory: arelithCategory?.textContent.trim(),
+      arelithCategory: categories.reduce((previous, cur) => getDeityCategory(cur.textContent) > previous ? getDeityCategory(cur.textContent) : previous, 0),
     };
 
     return await ArelithWikiScraper.fetchAndMapDeityPage(deity);

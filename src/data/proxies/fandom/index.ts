@@ -1,10 +1,17 @@
 import { FandomApiProxy, FandomSubdomain, FandomWikiScraper } from '..';
 import { DeityMapper } from '../../mappers';
-import { Deity } from '../../models';
+import { Deity, Heresy } from '../../models';
 
 export const fetchAllFandomDeityData = async (deity: Deity): Promise<Deity | undefined> => {
-  const frData = await FandomApiProxy.fetchDeityDetails(deity.name, FandomSubdomain.ForgottenRealms, DeityMapper);
-  const frcData = await FandomApiProxy.fetchDeityDetails(frData?.name ?? deity.name, FandomSubdomain.FRC, DeityMapper);
+  const frId = await FandomApiProxy.resolveDeityIdFromName(deity.name, FandomSubdomain.ForgottenRealms);
+  const frData = frId
+    ? await FandomApiProxy.fetchArticleDetails(frId, FandomSubdomain.ForgottenRealms, DeityMapper)
+    : undefined;
+
+  const frcId = await FandomApiProxy.resolveDeityIdFromName(frData?.name ?? deity.name, FandomSubdomain.FRC);
+  const frcData = frcId
+    ? await FandomApiProxy.fetchArticleDetails(frcId, FandomSubdomain.FRC, DeityMapper)
+    : undefined;
 
   if (frData || frcData) {
     const fandomApiData = { ...frData, ...frcData };
@@ -13,6 +20,27 @@ export const fetchAllFandomDeityData = async (deity: Deity): Promise<Deity | und
       ...fandomApiData,
       ...fandomWikiData,
     } as Deity;
+  }
+};
+
+export const fetchAllFandomHeresyData = async (heresy: Heresy): Promise<Heresy | undefined> => {
+  const frId = await FandomApiProxy.resolveDeityIdFromName(heresy.name, FandomSubdomain.ForgottenRealms);
+  const frData = frId
+    ? await FandomApiProxy.fetchArticleDetails(frId, FandomSubdomain.ForgottenRealms, DeityMapper)
+    : undefined;
+
+  const frcId = await FandomApiProxy.resolveDeityIdFromName(frData?.name ?? heresy.name, FandomSubdomain.FRC);
+  const frcData = frcId
+    ? await FandomApiProxy.fetchArticleDetails(frcId, FandomSubdomain.FRC, DeityMapper)
+    : undefined;
+
+  if (frData || frcData) {
+    const fandomApiData = { ...frData, ...frcData };
+    const fandomWikiData = await FandomWikiScraper.fetchAndMapDeityArticles(fandomApiData);
+    return {
+      ...fandomApiData,
+      ...fandomWikiData,
+    } as Heresy;
   }
 };
 

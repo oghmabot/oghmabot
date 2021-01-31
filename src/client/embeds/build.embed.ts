@@ -1,6 +1,6 @@
 import { MessageEmbed, MessageEmbedOptions } from 'discord.js';
 import { Build } from '../../data/models';
-import { OghmabotEmbed } from '../oghmabot.embed';
+import { OghmabotEmbed } from './oghmabot.embed';
 
 export class BuildEmbed extends OghmabotEmbed {
   private builds;

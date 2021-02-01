@@ -63,7 +63,7 @@ export class FandomApiProxy {
 
   static async resolveHeresyIdFromName(heresyName: string, subdomain: FandomSubdomain = FandomSubdomain.ForgottenRealms): Promise<number | undefined> {
     const heresies = await this.fetchHeresyList(subdomain);
-    const bestMatch = findBestStringMatch(heresies, heresyName, deity => deity?.title);
+    const bestMatch = findBestStringMatch(heresies, heresyName, heresy => heresy?.title);
     return bestMatch?.id;
   }
 }

@@ -24,7 +24,7 @@ export const fetchAllFandomDeityData = async (deity: Deity): Promise<Deity | und
 };
 
 export const fetchAllFandomHeresyData = async (heresy: Deity): Promise<Deity | undefined> => {
-  const frId = await FandomApiProxy.resolveHeresyIdFromName(heresy.name, FandomSubdomain.ForgottenRealms);
+  const frId = await FandomApiProxy.resolveHeresyIdFromName(heresy.name.replace(/heresy|[(].*[)]/gi, ''), FandomSubdomain.ForgottenRealms);
   const frData = frId
     ? await FandomApiProxy.fetchArticleDetails(frId, FandomSubdomain.ForgottenRealms, DeityMapper)
     : undefined;

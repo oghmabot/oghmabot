@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import { BuildModel } from './build.model';
+import { BuildModel } from './build';
 import { DeityModel } from './deity';
 import { ServerModel } from './server.model';
 import { SubscriptionModel } from './subscription.model';
@@ -20,7 +20,7 @@ export const purgeRefsToMessage = async (messageId: string): Promise<number> => 
 };
 
 export * from './alignment';
-export * from './build.model';
+export * from './build';
 export * from './deity';
 export * from './server.model';
 export * from './status';

@@ -33,12 +33,12 @@ export class DeityEmbed extends OghmabotEmbed {
   }
 
   private setFields() {
-    const { alignment, arelithClergyAlignments, powerLevel, arelithAspects, dogma, fandomFRAbstract } = this.deity;
+    const { alignment, arelithClergyAlignments, powerLevel, arelithAspects, dogma, fandomFRAbstract, synergies } = this.deity;
     const fields: EmbedFieldData[] = [];
 
     if (alignment) {
       const value = getAlignmentName(alignment);
-      fields.push({ name: 'Alignment', value, inline: !!(powerLevel || arelithClergyAlignments) });
+      if (value) fields.push({ name: 'Alignment', value, inline: !!(powerLevel || arelithClergyAlignments) });
     }
 
     if (powerLevel) {
@@ -56,13 +56,16 @@ export class DeityEmbed extends OghmabotEmbed {
 
     if (arelithAspects?.length) {
       const value = arelithAspects.join(', ');
-      fields.push({ name: 'Aspects', value });
+      if (value) fields.push({ name: 'Aspects', value });
+    }
+
+    if (synergies?.length) {
+      const value = synergies.join(', ');
+      if (value) fields.push({ name: 'Synergies', value });
     }
 
     const infoField = this.getInfoFieldString();
-    if (infoField) {
-      fields.push({ name: ':book:', value: infoField });
-    }
+    if (infoField) fields.push({ name: ':book:', value: infoField });
 
     if (dogma) {
       const value = getUntilLastWithin(dogma, '.', 350);

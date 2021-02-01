@@ -2,7 +2,8 @@ import HTMLElementData from 'beautiful-dom/dist/htmlelement';
 import { findBestStringMatch } from '../../../utils/parsing';
 import { Alignment, getAlignment, Deity, Build } from '../../models';
 import { BaseScraper } from '../../common';
-import { getDeityCategory } from '../../models/deity/category.model';
+import { DeityCategory, getDeityCategory } from '../../models/deity/category.model';
+import BeautifulDom from 'beautiful-dom';
 
 export class ArelithWikiScraper extends BaseScraper {
   static async fetchAllCharacterBuilds(): Promise<Build[]> {
@@ -91,7 +92,7 @@ export class ArelithWikiScraper extends BaseScraper {
       arelithClergyAlignments,
     ] = dom.querySelectorAll('tbody tr');
 
-    return {
+    const result = {
       ...deity,
       titles: dom.querySelector('dl dd i')?.textContent.split(',').map(t => t.trim()).filter(Boolean),
       powerLevel: powerLevel?.querySelectorAll('td')[1]?.textContent.trim(),
@@ -102,6 +103,20 @@ export class ArelithWikiScraper extends BaseScraper {
       domains: domains?.querySelectorAll('td')[1]?.textContent.replace(/ *\[[^\]]*]/g, '').split(',').map(d => d.trim()).filter(Boolean),
       arelithClergyAlignments: arelithClergyAlignments?.querySelectorAll('td')[1]?.textContent.split(',').map(a => getAlignment(a.trim())).filter(Boolean) as Alignment[] | undefined,
     };
+
+    return deity.arelithCategory === DeityCategory.Heresy
+      ? { ...result, ...this.findSynergies(dom) }
+      : result;
+  }
+
+  private static findSynergies(dom: BeautifulDom): Partial<Deity> | undefined {
+    const tables = dom.querySelectorAll('table');
+    if (tables[2]) {
+      const synergies = tables[1].querySelector('td')?.textContent.split(',').map(s => s.trim());
+      return {
+        synergies,
+      };
+    }
   }
 
   private static async handleAlternativeWorship(deityQuery: string): Promise<Deity | undefined> {

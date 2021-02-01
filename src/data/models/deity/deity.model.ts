@@ -30,9 +30,6 @@ export interface Deity {
   fandomTitles?: string[];
   thumbnail?: string;
   pronunciation?: string;
-}
-
-export interface Heresy extends Deity {
   synergies?: string[];
 }
 
@@ -73,6 +70,7 @@ export class DeityModel extends Model<Deity> {
       fandomTitles: DataTypes.ARRAY(DataTypes.STRING),
       thumbnail: DataTypes.STRING,
       pronunciation: DataTypes.STRING,
+      synergies: DataTypes.ARRAY(DataTypes.STRING),
     }, {
       sequelize,
       modelName: 'deity',

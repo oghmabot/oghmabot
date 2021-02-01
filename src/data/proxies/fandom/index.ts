@@ -1,6 +1,6 @@
 import { FandomApiProxy, FandomSubdomain, FandomWikiScraper } from '..';
 import { DeityMapper } from '../../mappers';
-import { Deity, Heresy } from '../../models';
+import { Deity } from '../../models';
 
 export const fetchAllFandomDeityData = async (deity: Deity): Promise<Deity | undefined> => {
   const frId = await FandomApiProxy.resolveDeityIdFromName(deity.name, FandomSubdomain.ForgottenRealms);
@@ -23,7 +23,7 @@ export const fetchAllFandomDeityData = async (deity: Deity): Promise<Deity | und
   }
 };
 
-export const fetchAllFandomHeresyData = async (heresy: Heresy): Promise<Heresy | undefined> => {
+export const fetchAllFandomHeresyData = async (heresy: Deity): Promise<Deity | undefined> => {
   const frId = await FandomApiProxy.resolveHeresyIdFromName(heresy.name, FandomSubdomain.ForgottenRealms);
   const frData = frId
     ? await FandomApiProxy.fetchArticleDetails(frId, FandomSubdomain.ForgottenRealms, DeityMapper)
@@ -35,7 +35,7 @@ export const fetchAllFandomHeresyData = async (heresy: Heresy): Promise<Heresy |
     return {
       ...fandomApiData,
       ...fandomWikiData,
-    } as Heresy;
+    } as Deity;
   }
 };
 

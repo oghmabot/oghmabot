@@ -1,8 +1,8 @@
-import { Deity, DeityCategory, Heresy } from '../models';
+import { Deity, DeityCategory } from '../models';
 import { ArelithWikiScraper } from './arelith';
 import { fetchAllFandomDeityData, fetchAllFandomHeresyData } from './fandom';
 
-export const fetchDeity = async (deityQuery: string): Promise<Deity | Heresy | undefined> => {
+export const fetchDeity = async (deityQuery: string): Promise<Deity | undefined> => {
   const deity = await ArelithWikiScraper.fetchDeity(deityQuery);
   if (deity) {
     const fandomData = deity.arelithCategory === DeityCategory.Heresy
@@ -12,7 +12,7 @@ export const fetchDeity = async (deityQuery: string): Promise<Deity | Heresy | u
   }
 };
 
-export const fetchAllDeities = async (): Promise<(Deity | Heresy)[]> => {
+export const fetchAllDeities = async (): Promise<Deity[]> => {
   const deities = await ArelithWikiScraper.fetchAllDeities();
   return Promise.all(deities.map(async deity => {
     const fandomData = deity.arelithCategory === DeityCategory.Heresy

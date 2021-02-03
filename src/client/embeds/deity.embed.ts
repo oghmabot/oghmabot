@@ -11,7 +11,7 @@ export class DeityEmbed extends OghmabotEmbed {
     this.deity = deity;
 
     const { name, titles, arelithWikiUrl, fandomFRThumbnail, fandomFRCormyrThumbnail, fandomTitles, thumbnail, pronunciations } = deity;
-    this.setTitle(pronunciations?.length ? `${name} (${pronunciations.join(', ')})` : name);
+    this.setTitle(pronunciations?.length ? `${name} (${pronunciations[0]})` : name);
     if (fandomTitles) {
       this.setDescription(`*${fandomTitles.join(', ')}*`);
     } else if (titles) {

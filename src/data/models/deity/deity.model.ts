@@ -29,7 +29,7 @@ export interface Deity {
   fandomFRCormyrThumbnail?: string;
   fandomTitles?: string[];
   thumbnail?: string;
-  pronunciation?: string;
+  pronunciations?: string[];
   synergies?: string[];
 }
 
@@ -69,7 +69,7 @@ export class DeityModel extends Model<Deity> {
       fandomFRCormyrThumbnail: DataTypes.STRING,
       fandomTitles: DataTypes.ARRAY(DataTypes.STRING),
       thumbnail: DataTypes.STRING,
-      pronunciation: DataTypes.STRING,
+      pronunciations: DataTypes.ARRAY(DataTypes.STRING),
       synergies: DataTypes.ARRAY(DataTypes.STRING),
     }, {
       sequelize,

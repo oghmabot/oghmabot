@@ -14,7 +14,7 @@ export const fetchAllFandomDeityData = async (deity: Deity): Promise<Deity | und
     : undefined;
 
   if (frData || frcData) {
-    const fandomApiData = { ...frData, ...frcData };
+    const fandomApiData = { ...frData, ...frcData, pronunciations: DeityMapper.mergePronunciations(frData?.pronunciations || [], frcData?.pronunciations || []), };
     const fandomWikiData = await FandomWikiScraper.fetchAndMapDeityArticles(fandomApiData);
     return {
       ...fandomApiData,

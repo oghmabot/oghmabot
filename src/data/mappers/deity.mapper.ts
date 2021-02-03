@@ -7,12 +7,15 @@ export class DeityMapper {
     const parsedThumbnail = thumbnail?.substring(0, thumbnail.indexOf('revision'));
 
     if (subdomain === FandomSubdomain.ForgottenRealms) {
+      const pronunciations = abstract?.match(/\s*?[(]pronounced:.*?[)]/)?.slice(0)[0].replace(/([0-9]|(or|pronounced):|([/].*?[/])|listen|sometimes|misspelled|[()])/ig, '').trim().split(' ');
+
       return {
         name: title,
-        fandomFRAbstract: abstract?.replace(/\s*?[(]pronounced:.*[)]/, ''),
+        fandomFRAbstract: abstract?.replace(/\s*?[(]pronounced:.*?[)]/, ''),
         fandomFRId: id,
         fandomFRUrl: url,
         fandomFRThumbnail: parsedThumbnail,
+        pronunciation: pronunciations ? pronunciations[0] : undefined,
       };
     }
 

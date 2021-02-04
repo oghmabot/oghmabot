@@ -10,12 +10,14 @@ dotenv.config();
 const {
   BOT_OWNER,
   BOT_PREFIX,
+  BOT_SUPPORT_INVITE,
   BOT_TOKEN,
 } = process.env;
 
 const client = new OghmabotClient({
   owner: BOT_OWNER,
   commandPrefix: BOT_PREFIX || '-',
+  invite: BOT_SUPPORT_INVITE,
 });
 
 /**

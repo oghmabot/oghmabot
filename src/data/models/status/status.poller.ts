@@ -1,4 +1,4 @@
-import { TextChannel } from 'discord.js';
+import { DiscordAPIError, TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
 import { Server, ServerModel, Status, StatusModel, SubscriptionModel } from '..';
 import { BeamdogApiError, BeamdogApiProxy } from '../../proxies';
@@ -49,12 +49,20 @@ export class StatusPoller extends BasePoller<Status> {
           }
         }
 
-        const newMsg = await channel.send('', messageEmbed);
-        await SubscriptionModel.update({
-          lastMessageId: newMsg.id,
-        }, {
-          where: sub,
-        });
+        try {
+          const newMsg = await channel.send('', messageEmbed);
+          await SubscriptionModel.update({
+            lastMessageId: newMsg.id,
+          }, {
+            where: sub,
+          });
+        } catch (error) {
+          if (error instanceof DiscordAPIError) {
+            console.warn(`[StatusPoller] Failed to notify subscriber, channelId ${channelId}.`, error);
+          } else {
+            console.error(`[StatusPoller] Unexpected error while notifying subscriber, channelId ${channelId}.`, error);
+          }
+        }
       }
     }
   }

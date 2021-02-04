@@ -1,6 +1,6 @@
 import { EmbedFieldData } from 'discord.js';
 import { Deity, getAlignmentAbbreviation, getAlignmentName } from '../../data/models';
-import { getUntilLastWithin } from '../../utils';
+import { getUntilLastWithin, stripParenthesis } from '../../utils';
 import { OghmabotEmbed } from './oghmabot.embed';
 
 export class DeityEmbed extends OghmabotEmbed {
@@ -11,7 +11,7 @@ export class DeityEmbed extends OghmabotEmbed {
     this.deity = deity;
 
     const { name, titles, arelithWikiUrl, fandomFRThumbnail, fandomFRCormyrThumbnail, fandomTitles, thumbnail, pronunciations } = deity;
-    this.setTitle(pronunciations?.length ? `${name} (${pronunciations[0]})` : name);
+    this.setTitle(pronunciations?.length ? `${stripParenthesis(name)} (${pronunciations[0]})` : stripParenthesis(name));
     if (fandomTitles) {
       this.setDescription(`*${fandomTitles.join(', ')}*`);
     } else if (titles) {

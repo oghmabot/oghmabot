@@ -1,5 +1,5 @@
 import { DataTypes, FindOptions, Model, Sequelize } from 'sequelize';
-import { findBestStringMatch } from '../../../utils';
+import { findBestStringMatch, stripParenthesis } from '../../../utils';
 import { fetchAllDeities, fetchDeity } from '../../proxies';
 import { Alignment } from '../alignment';
 import { DeityCategory } from './category.model';
@@ -96,7 +96,7 @@ export class DeityModel extends Model<Deity> {
 
   static async fetch(deityQuery: string): Promise<Deity | undefined> {
     const deities = await DeityModel.getDeities();
-    const foundDeity = findBestStringMatch(deities, deityQuery, d => d.name);
+    const foundDeity = findBestStringMatch(deities, deityQuery, d => stripParenthesis(d.name));
     if (foundDeity) return foundDeity;
 
     const deity = await fetchDeity(deityQuery);

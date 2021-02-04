@@ -22,4 +22,6 @@ export const getUntilLastWithin = (inp: string, until: string, within: number): 
 
 export const stripCommandNotation = (inp: string): string => inp.replace(new RegExp(`^[${BOT_PREFIX}][a-z]+`), '');
 
+export const stripParenthesis = (inp: string): string => inp.replace(/([(].*?[)])/gi, '');
+
 export const trimPunctuationAndWhitespace = (inp: string): string => inp.replace(/(^[,. ]+)|([,. ]+$)/g, '');

@@ -1,5 +1,5 @@
 import HTMLElementData from 'beautiful-dom/dist/htmlelement';
-import { findBestStringMatch } from '../../../utils/parsing';
+import { findBestStringMatch, stripParenthesis } from '../../../utils/parsing';
 import { Alignment, getAlignment, Deity, Build } from '../../models';
 import { BaseScraper } from '../../common';
 import { DeityCategory, getDeityCategory } from '../../models/deity/category.model';
@@ -32,7 +32,7 @@ export class ArelithWikiScraper extends BaseScraper {
    */
   static async fetchDeity(deityQuery: string): Promise<Deity | undefined> {
     const deityListings = await this.getDeityTableRows();
-    const tableRow = findBestStringMatch(deityListings, deityQuery, r => r.querySelector('a')?.textContent);
+    const tableRow = findBestStringMatch(deityListings, deityQuery, r => stripParenthesis(r.querySelector('a')?.textContent || ''));
 
     if (tableRow) return await this.mapDeityTableRowToDeity(tableRow);
 
@@ -48,7 +48,7 @@ export class ArelithWikiScraper extends BaseScraper {
   private static async getDeityTableRows(): Promise<HTMLElementData[]> {
     const { ARELITH_WIKI_URL } = process.env;
     const dom = await this.fetchAsBeautifulDom(`${ARELITH_WIKI_URL}/Deity_Table`);
-    return dom.querySelectorAll('table')[1]?.querySelectorAll('tbody tr');
+    return dom.querySelectorAll('table')[1]?.querySelectorAll('tbody tr').filter(r => !r.querySelector('a')?.textContent.toLowerCase().includes('abyssal'));
   }
 
   private static async mapDeityTableRowToDeity(row: HTMLElementData): Promise<Deity> {

@@ -22,10 +22,28 @@ export class StatsCommand extends Command {
 
   run(msg: CommandoMessage, { input }: { input: string }): Promise<Message> {
     const classes = this.parseInput(input);
-    return msg.reply(classes);
+    console.log(classes);
+    return msg.reply(classes?.join(', ') ?? 'No match.');
   }
 
-  parseInput(input: string): string[] {
-    return input.split(' ');
+  parseInput(input: string): { class: string, levels: number }[] {
+    const re = /(([a-z]+).*?([0-9]+))/ig;
+    const matches = [];
+    let finished = false;
+    while (!finished) {
+      const match = re.exec(input);
+      if (match) {
+        matches.push(match);
+      } else {
+        finished = true;
+      }
+    }
+
+    return matches.map(m => (
+      {
+        class: m[2],
+        levels: parseInt(m[3]),
+      }
+    ));
   }
 }

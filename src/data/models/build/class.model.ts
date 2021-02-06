@@ -51,6 +51,53 @@ export enum Class {
   ZhentarimOperative,
 }
 
+export interface ClassLevelNotation {
+  class: Class;
+  level: number;
+}
+
+export interface Stats {
+  totalLevels: number;
+  bab: number;
+  fortitude: number;
+  reflex: number;
+  will: number;
+}
+
+export const getStats = (...classLevels: ClassLevelNotation[]): Stats => {
+  return classLevels.reduce((stats, cur) => {
+    if (cur.level !== 0) {
+      const { level } = cur;
+      const { totalLevels, bab, fortitude, reflex, will } = stats;
+      return {
+        totalLevels: totalLevels + level,
+        bab: bab + calculateBaseAttackBonus(level, getBaseAttackBonusProgression(cur.class)),
+        fortitude: fortitude + calculateSavingThrow(level, getFortitudeProgression(cur.class)),
+        reflex: reflex + calculateSavingThrow(level, getReflexProgression(cur.class)),
+        will: will + calculateSavingThrow(level, getWillProgression(cur.class)),
+      };
+    }
+
+    return stats;
+  }, {
+    totalLevels: 0,
+    bab: 0,
+    fortitude: 0,
+    reflex: 0,
+    will: 0,
+  });
+};
+
+export const calculateBaseAttackBonus = (levels: number, progression: BaseAttackBonusProgression): number =>
+  progression === BaseAttackBonusProgression.Full
+    ? levels
+    : progression === BaseAttackBonusProgression.Half ? Math.floor(levels * 0.5) : Math.floor(levels * 0.75);
+
+export const calculateSavingThrow = (levels: number, progression: SavingThrowProgression): number =>
+  progression === SavingThrowProgression.High
+    ? 2 + Math.floor(levels / 2)
+    : Math.floor(levels / 3);
+
 export const getClass = (str: string): Class | undefined => {
   if (!str) return;
   const nums = [...Array(Object.values(Class).length).keys()];
@@ -90,3 +137,59 @@ export const getClass = (str: string): Class | undefined => {
     default: return findBestStringMatch(nums, str, i => Class[i]);
   }
 };
+
+export const getProgressions = (c: Class): number[] => {
+  switch (c) {
+    case Class.ArcaneArcher: return [2, 1, 1, 0];
+    case Class.Assassin: return [1, 0, 1, 0];
+    case Class.Barbarian: return [2, 1, 0, 0];
+    case Class.Bard: return [1, 0, 1, 1];
+    case Class.Blackguard: return [2, 1, 0, 0];
+    case Class.Cavalier: return [2, 1, 0, 0];
+    case Class.ChampionOfTormDivineChampion: return [2, 1, 1, 0];
+    case Class.Cleric: return [1, 1, 0, 1];
+    case Class.Commoner: return [0, 1, 0, 0];
+    case Class.Druid: return [1, 1, 0, 1];
+    case Class.DwarvenDefenderEarthkinDefender: return [2, 1, 0, 1];
+    case Class.FavoredSoul: return [1, 1, 1, 1];
+    case Class.Fighter: return [2, 1, 0, 0];
+    case Class.HarperMage: return [1, 0, 1, 1];
+    case Class.HarperParagon: return [2, 0, 1, 1];
+    case Class.HarperPriest: return [1, 0, 1, 1];
+    case Class.HarperScout: return [1, 0, 1, 1];
+    case Class.Hexblade: return [2, 1, 0, 0];
+    case Class.InvisibleBlade: return [2, 0, 1, 0];
+    case Class.PurpleDragonKnight: return [2, 1, 0, 0];
+    case Class.Loremaster: return [1, 0, 1, 1];
+    case Class.MasterHarper: return [1, 0, 1, 1];
+    case Class.Monk: return [1, 1, 1, 1];
+    case Class.Paladin: return [2, 1, 0, 1];
+    case Class.PaleMaster: return [0, 1, 0, 1];
+    case Class.Ranger: return [2, 1, 0, 0];
+    case Class.RedDragonDisciple: return [1, 1, 0, 1];
+    case Class.Rogue: return [1, 0, 1, 0];
+    case Class.Shadowdancer: return [1, 0, 1, 0];
+    case Class.Shaman: return [1, 1, 0, 1];
+    case Class.Shifter: return [1, 1, 1, 0];
+    case Class.Sorcerer: return [0, 0, 0, 1];
+    case Class.Spellsword: return [1, 0, 0, 1];
+    case Class.Swashbuckler: return [2, 1, 1, 0];
+    case Class.Warlock: return [1, 0, 1, 1];
+    case Class.WeaponMaster: return [2, 0, 1, 0];
+    case Class.WildMage: return [0, 0, 0, 1];
+    case Class.Wizard: return [0, 0, 0, 1];
+    case Class.ZhentarimEnforcer: return [2, 0, 1, 1];
+    case Class.ZhentarimFearSpeaker: return [1, 0, 1, 1];
+    case Class.ZhentarimNaugadar: return [1, 0, 1, 1];
+    case Class.ZhentarimOperative: return [1, 0, 1, 1];
+    default: return [];
+  }
+};
+
+export const getBaseAttackBonusProgression = (c: Class): BaseAttackBonusProgression => getProgressions(c)[0];
+
+export const getFortitudeProgression = (c: Class): SavingThrowProgression => getProgressions(c)[1];
+
+export const getReflexProgression = (c: Class): SavingThrowProgression => getProgressions(c)[2];
+
+export const getWillProgression = (c: Class): SavingThrowProgression => getProgressions(c)[3];

@@ -1,5 +1,7 @@
 import { Message } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
+import { OghmabotEmbed } from '../../client';
+import { ClassLevelNotation, getClass, getStats } from '../../data/models';
 import { stripCommandNotation } from '../../utils';
 
 export class StatsCommand extends Command {
@@ -22,11 +24,16 @@ export class StatsCommand extends Command {
 
   run(msg: CommandoMessage, { input }: { input: string }): Promise<Message> {
     const classes = this.parseInput(input);
-    console.log(classes);
-    return msg.reply(classes?.join(', ') ?? 'No match.');
+    const stats = getStats(...classes);
+    const embed = new OghmabotEmbed();
+    embed.addField('BAB', stats.bab);
+    embed.addField('Fortitude', stats.fortitude);
+    embed.addField('Reflex', stats.reflex);
+    embed.addField('Will', stats.will);
+    return msg.reply(embed);
   }
 
-  parseInput(input: string): { class: string, levels: number }[] {
+  parseInput(input: string): ClassLevelNotation[] {
     const re = /(([a-z]+).*?([0-9]+))/ig;
     const matches = [];
     let finished = false;
@@ -39,11 +46,12 @@ export class StatsCommand extends Command {
       }
     }
 
-    return matches.map(m => (
-      {
-        class: m[2],
-        levels: parseInt(m[3]),
-      }
-    ));
+    return matches.flatMap(m => {
+      const c = getClass(m[2]);
+      const l = parseInt(m[3]);
+      return c && l
+        ? { class: c, level: l }
+        : [];
+    });
   }
 }

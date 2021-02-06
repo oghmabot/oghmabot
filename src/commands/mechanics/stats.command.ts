@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
-import { OghmabotEmbed } from '../../client';
+import { StatsEmbed } from '../../client';
 import { ClassLevelNotation, getClass, getStats } from '../../data/models';
 import { stripCommandNotation } from '../../utils';
 
@@ -23,14 +23,14 @@ export class StatsCommand extends Command {
   }
 
   run(msg: CommandoMessage, { input }: { input: string }): Promise<Message> {
-    const classes = this.parseInput(input);
-    const stats = getStats(...classes);
-    const embed = new OghmabotEmbed();
-    embed.addField('BAB', stats.bab);
-    embed.addField('Fortitude', stats.fortitude);
-    embed.addField('Reflex', stats.reflex);
-    embed.addField('Will', stats.will);
-    return msg.reply(embed);
+    try {
+      const stats = input.split(',').map(this.parseInput).map(c => getStats(...c));
+      const message = stats.find(s => s.totalLevels > 20) ? 'When given more than 20 levels, pre-epic class spread is assumed from input order.' : '';
+      return msg.reply(message, new StatsEmbed(stats));
+    } catch (error) {
+      console.error('[StatsCommand] Unexpected error.', error);
+      return msg.reply('Invalid input.');
+    }
   }
 
   parseInput(input: string): ClassLevelNotation[] {
@@ -46,12 +46,15 @@ export class StatsCommand extends Command {
       }
     }
 
-    return matches.flatMap(m => {
+    const classes = matches.flatMap(m => {
       const c = getClass(m[2]);
       const l = parseInt(m[3]);
       return c && l
         ? { class: c, level: l }
         : [];
     });
+
+    if (!classes.length) throw new Error('[StatsCommand] No classes found in input.');
+    return classes;
   }
 }

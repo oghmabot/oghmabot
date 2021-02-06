@@ -65,10 +65,24 @@ export interface Stats {
 }
 
 export const getStats = (...classLevels: ClassLevelNotation[]): Stats => {
-  return classLevels.reduce((stats, cur) => {
+  const preEpicStats = classLevels.reduce((stats, cur) => {
     if (cur.level !== 0) {
       const { level } = cur;
       const { totalLevels, bab, fortitude, reflex, will } = stats;
+      const newTotal = totalLevels + level;
+
+      if (newTotal > 20) {
+        const epic = newTotal - 20;
+        const preEpic = level - epic;
+        return {
+          totalLevels: newTotal,
+          bab: bab + calculateBaseAttackBonus(preEpic, getBaseAttackBonusProgression(cur.class)),
+          fortitude: fortitude + calculateSavingThrow(preEpic, getFortitudeProgression(cur.class)),
+          reflex: reflex + calculateSavingThrow(preEpic, getReflexProgression(cur.class)),
+          will: will + calculateSavingThrow(preEpic, getWillProgression(cur.class)),
+        };
+      }
+
       return {
         totalLevels: totalLevels + level,
         bab: bab + calculateBaseAttackBonus(level, getBaseAttackBonusProgression(cur.class)),
@@ -86,6 +100,19 @@ export const getStats = (...classLevels: ClassLevelNotation[]): Stats => {
     reflex: 0,
     will: 0,
   });
+
+  const { totalLevels, bab, fortitude, reflex, will } = preEpicStats;
+  if (totalLevels > 20) {
+    return {
+      totalLevels,
+      bab: bab + calculateEpicBaseAttackBonusIncrease(totalLevels - 20),
+      fortitude: fortitude + calculateEpicSavingThrowIncrease(totalLevels - 20),
+      reflex: reflex + calculateEpicSavingThrowIncrease(totalLevels - 20),
+      will: will + calculateEpicSavingThrowIncrease(totalLevels - 20),
+    };
+  }
+
+  return preEpicStats;
 };
 
 export const calculateBaseAttackBonus = (levels: number, progression: BaseAttackBonusProgression): number =>
@@ -97,6 +124,10 @@ export const calculateSavingThrow = (levels: number, progression: SavingThrowPro
   progression === SavingThrowProgression.High
     ? 2 + Math.floor(levels / 2)
     : Math.floor(levels / 3);
+
+export const calculateEpicBaseAttackBonusIncrease = (levels: number): number => Math.ceil(levels / 2);
+
+export const calculateEpicSavingThrowIncrease = (levels: number): number => Math.floor(levels / 2);
 
 export const getClass = (str: string): Class | undefined => {
   if (!str) return;

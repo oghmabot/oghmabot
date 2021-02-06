@@ -74,12 +74,18 @@ export const getStats = (...classLevels: ClassLevelNotation[]): Stats => {
       if (newTotal > 20) {
         const epic = newTotal - 20;
         const preEpic = level - epic;
+        if (preEpic > 0) {
+          return {
+            totalLevels: newTotal,
+            bab: bab + calculateBaseAttackBonus(preEpic, getBaseAttackBonusProgression(cur.class)),
+            fortitude: fortitude + calculateSavingThrow(preEpic, getFortitudeProgression(cur.class)),
+            reflex: reflex + calculateSavingThrow(preEpic, getReflexProgression(cur.class)),
+            will: will + calculateSavingThrow(preEpic, getWillProgression(cur.class)),
+          };
+        }
+
         return {
-          totalLevels: newTotal,
-          bab: bab + calculateBaseAttackBonus(preEpic, getBaseAttackBonusProgression(cur.class)),
-          fortitude: fortitude + calculateSavingThrow(preEpic, getFortitudeProgression(cur.class)),
-          reflex: reflex + calculateSavingThrow(preEpic, getReflexProgression(cur.class)),
-          will: will + calculateSavingThrow(preEpic, getWillProgression(cur.class)),
+          totalLevels: newTotal, bab, fortitude, reflex, will,
         };
       }
 
@@ -205,7 +211,7 @@ export const getProgressions = (c: Class): number[] => {
     case Class.Sorcerer: return [0, 0, 0, 1];
     case Class.Spellsword: return [1, 0, 0, 1];
     case Class.Swashbuckler: return [2, 1, 1, 0];
-    case Class.Warlock: return [1, 0, 1, 1];
+    case Class.Warlock: return getProgressions(Class.Bard);
     case Class.WeaponMaster: return [2, 0, 1, 0];
     case Class.WildMage: return [0, 0, 0, 1];
     case Class.Wizard: return [0, 0, 0, 1];
@@ -213,7 +219,7 @@ export const getProgressions = (c: Class): number[] => {
     case Class.ZhentarimFearSpeaker: return [1, 0, 1, 1];
     case Class.ZhentarimNaugadar: return [1, 0, 1, 1];
     case Class.ZhentarimOperative: return [1, 0, 1, 1];
-    default: return [];
+    default: return [0, 0, 0, 0];
   }
 };
 

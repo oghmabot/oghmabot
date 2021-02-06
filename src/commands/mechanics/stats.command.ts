@@ -28,9 +28,15 @@ export class StatsCommand extends Command {
       const message = stats.find(s => s.totalLevels > 20) ? 'When given more than 20 levels, pre-epic class spread is assumed from input order.' : '';
       return msg.reply(message, new StatsEmbed(stats));
     } catch (error) {
-      console.error('[StatsCommand] Unexpected error.', error);
-      return msg.reply('Invalid input.');
+      if (error instanceof SyntaxError) {
+        console.warn(error);
+        return msg.reply('Invalid input.');
+      } else {
+        console.error('[StatsCommand] Unexpected error.', error);
+      }
     }
+
+    return msg.reply('Failed to calculate stats.');
   }
 
   parseInput(input: string): ClassLevelNotation[] {
@@ -54,7 +60,7 @@ export class StatsCommand extends Command {
         : [];
     });
 
-    if (!classes.length) throw new Error('[StatsCommand] No classes found in input.');
+    if (!classes.length || classes.length !== matches.length) throw new SyntaxError('[StatsCommand] Invalid input.');
     return classes;
   }
 }

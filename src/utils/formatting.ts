@@ -9,7 +9,7 @@ export const serverStatusToEmbed = (server: Server, status: Status): MessageEmbe
   embed.setTitle(server.name);
   embed.setColor(StatusColors[state.toLowerCase()]);
   embed.setDescription(status.online
-    ? `**${state}** :hourglass: ${new Date(status.uptime).toISOString().substr(11, 8)} :busts_in_silhouette: ${status.players}`
+    ? `**${state}** :hourglass: ${convertMillisecondsToTimestamp(status.uptime)} :busts_in_silhouette: ${status.players}`
     : `**${state}** :hourglass: ${status.lastSeen && convertMillisecondsToTimestamp(calculateTimeBetween(status.lastSeen, nowUnixTime()))}`,
   );
   if (server.img) embed.setThumbnail(server.img);

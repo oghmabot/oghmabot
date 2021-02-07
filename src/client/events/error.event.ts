@@ -1,5 +1,4 @@
 import { TextChannel } from 'discord.js';
-import { OghmabotEmbed } from '../embeds';
 import { OghmabotClient } from '../oghmabot.client';
 
 export const handleClientError = async (client: OghmabotClient, error: Error): Promise<void> => {
@@ -9,14 +8,17 @@ export const handleClientError = async (client: OghmabotClient, error: Error): P
       const { channels } = client;
       const statusChannel = await channels.fetch(BOT_STATUS_CHANNEL) as TextChannel | undefined;
       if (statusChannel) {
-        statusChannel.send(new OghmabotEmbed({
-          title: error.name,
-          description: error.message,
-        }));
+        statusChannel.send(stackToCodeBlock(error));
       }
     }
   } catch (err) {
     console.warn('Failed to output uncaught error to Discord Status Channel.');
   }
   console.error('Unexpected error.', error);
+};
+
+const stackToCodeBlock = (error: Error): string => {
+  const { name, message, stack } = error;
+  return `${name}: ${message}`
+    + stack ? '\n```prolog\n' + stack + '\n```' : '';
 };

@@ -1,5 +1,5 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
-import { ArelithWikiScraper } from '../proxies';
+import { ArelithWikiScraper } from '../../proxies';
 
 export interface Build {
   name: string;

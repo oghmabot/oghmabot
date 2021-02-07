@@ -11,6 +11,7 @@ export class StatsCommand extends Command {
       group: 'mechanics',
       memberName: 'stats',
       description: 'Calculates base attack bonus and saving throws for a given class spread.',
+      details: 'The command accepts input as <class><level> repeated (see examples), and it is possible to input several builds at once by separating them with commas. Keep in mind that if a build surpasses a level total of 20, the bot has to assume the first 20 levels (pre-epic) from the order of the text input; for example, "rog 13 ftr 10 wm 7" results in a pre-epic spread of rogue 13/fighter 7.',
       args: [
         {
           key: 'input',
@@ -18,6 +19,11 @@ export class StatsCommand extends Command {
           prompt: 'Specify the class spread you want to calculate.',
           parse: stripCommandNotation,
         },
+      ],
+      examples: [
+        '-stats ranger 27 spec 3',
+        '-stats wiz 27 rang 3, wiz 19 rang 3 wiz 7 rang 1',
+        '-stats wiz 27 rang 3, wiz 19 rang 3 wiz 7 rang 1, wiz 18 rang 3 wiz 8 rang 1',
       ],
     });
   }

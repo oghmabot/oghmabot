@@ -35,7 +35,7 @@ export class OghmabotClient extends CommandoClient {
   }
 
   setEventListeners(): void {
-    this.on('error', handleClientError);
+    this.on('error', async error =>  await handleClientError(this, error));
     this.on('guildCreate', handleGuildCreate);
     this.on('guildDelete', handleGuildDelete);
     this.on('ready', async () => await handleClientReady(this));

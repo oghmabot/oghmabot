@@ -32,7 +32,7 @@ export class BuildCommand extends Command {
     try {
       const builds = await BuildModel.fetchAll(query);
       const foundBuilds = this.sortBuildsByQueryMatch(builds, query);
-      if (foundBuilds.length) return msg.reply(new BuildEmbed(foundBuilds.slice(0, 10)));
+      if (foundBuilds.length) return msg.author.send('To see all available builds, go to: http://wiki.nwnarelith.com/Character_Builds', new BuildEmbed(foundBuilds));
     } catch (error) {
       console.error('[BuildCommand] Unexpected error.', error);
     }

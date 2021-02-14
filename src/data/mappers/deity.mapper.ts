@@ -20,7 +20,7 @@ export class DeityMapper {
     }
 
     if (subdomain === FandomSubdomain.FRC) {
-      const pronunciations = abstract?.substring(abstract?.indexOf(title) + title.length + 1).match(/^[(](.+?)[)]/)?.slice(1)
+      const pronunciations = abstract?.substring(abstract?.indexOf(title) + title.length + 1).match(/^[(](.+?)[)]/)?.slice(1);
       return {
         name: title,
         fandomFRCormyrId: id,

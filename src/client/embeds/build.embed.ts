@@ -5,14 +5,14 @@ import { OghmabotEmbed } from './oghmabot.embed';
 export class BuildEmbed extends OghmabotEmbed {
   private builds;
 
-  constructor(builds: Build[], data?: MessageEmbed | MessageEmbedOptions) {
+  constructor(builds: Build[], show: number = 10, data?: MessageEmbed | MessageEmbedOptions) {
     super(data);
     this.builds = builds;
-    this.listBuilds();
+    this.listBuilds(show);
   }
 
-  listBuilds(): void {
-    const description = this.builds.map((build, i) => {
+  listBuilds(show: number): void {
+    const description = this.builds.slice(0, show).map((build, i) => {
       const { name, url, author } = build;
       return `${i + 1}. [${name}](${url}) | ${author}`;
     }).join('\n');

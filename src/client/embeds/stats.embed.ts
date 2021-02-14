@@ -12,7 +12,7 @@ export class StatsEmbed extends OghmabotEmbed {
   }
 
   private listStats() {
-    const description = this.stats.map((stats, i) => {
+    const description = this.stats.map(stats => {
       const { bab, fortitude, reflex, will } = stats;
       return `**BAB** ${bab}; **Fort** ${fortitude}; **Ref** ${reflex}; **Will** ${will}`;
     }).join('\n');

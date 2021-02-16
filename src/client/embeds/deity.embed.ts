@@ -33,7 +33,7 @@ export class DeityEmbed extends OghmabotEmbed {
   }
 
   private setFields() {
-    const { alignment, arelithClergyAlignments, powerLevel, arelithAspects, dogma, fandomFRAbstract, synergies } = this.deity;
+    const { alignment, arelithClergyAlignments, powerLevel, arelithAspects, dogma, fandomFRAbstract, fandomFRId, synergies } = this.deity;
     const fields: EmbedFieldData[] = [];
 
     if (alignment) {
@@ -71,8 +71,13 @@ export class DeityEmbed extends OghmabotEmbed {
       const value = getUntilLastWithin(dogma, '.', 350);
       if (value) fields.push({ name: 'Dogma', value });
     } else if (fandomFRAbstract) {
-      const value = getUntilLastWithin(fandomFRAbstract, '.', 200);
-      if (value) fields.push({ name: 'The Forgotten Realms Wiki', value });
+      const { IGNORE_FANDOMFR_ABSTRACT } = process.env;
+      const ignore = fandomFRId && IGNORE_FANDOMFR_ABSTRACT?.includes(fandomFRId.toString());
+
+      if (!ignore) {
+        const value = getUntilLastWithin(fandomFRAbstract, '.', 200);
+        if (value) fields.push({ name: 'The Forgotten Realms Wiki', value });
+      }
     }
 
     this.addFields(fields);

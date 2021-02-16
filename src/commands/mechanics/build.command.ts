@@ -28,16 +28,21 @@ export class BuildCommand extends Command {
     });
   }
 
-  async run(msg: CommandoMessage, { query }: { query: string }): Promise<Message> {
+  async run(msg: CommandoMessage, { query }: { query: string }): Promise<Message | null> {
     try {
       const builds = await BuildModel.fetchAll(query);
       const foundBuilds = this.sortBuildsByQueryMatch(builds, query);
-      if (foundBuilds.length) return msg.author.send('To see all available builds, go to: http://wiki.nwnarelith.com/Character_Builds', new BuildEmbed(foundBuilds));
+      if (foundBuilds.length) {
+        const response = await msg.author.send('To see all available builds, go to: http://wiki.nwnarelith.com/Character_Builds', new BuildEmbed(foundBuilds));
+        if (response) msg.react('✅');
+        return response;
+      }
     } catch (error) {
       console.error('[BuildCommand] Unexpected error.', error);
     }
 
-    return msg.reply('No builds were found.');
+    msg.react('❌');
+    return null;
   }
 
   private sortBuildsByQueryMatch(builds: Build[], query: string): Build[] {

@@ -30,7 +30,7 @@ export class DeityCommand extends Command {
     });
   }
 
-  async run(msg: CommandoMessage, { name }: { name: string }): Promise<Message> {
+  async run(msg: CommandoMessage, { name }: { name: string }): Promise<Message | null> {
     try {
       const deity = await DeityModel.fetch(name);
       if (deity) return msg.embed(new DeityEmbed(deity));
@@ -41,7 +41,8 @@ export class DeityCommand extends Command {
       console.error('[DeityCommand] Unexpected error.', error);
     }
 
-    return msg.say('Deity not found.');
+    msg.react('❌');
+    return null;
   }
 
   async getDeitiesOfCategory(cat: DeityCategory): Promise<MessageEmbed> {

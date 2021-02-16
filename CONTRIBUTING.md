@@ -26,10 +26,8 @@ BEAMDOG_NWN_API=https://api.nwn.beamdog.net/v1/servers/
 For the required `BOT_TOKEN`, either set up your own bot in [Discord's Developer Portal](https://discord.com/developers/) or reach out to other contributors of this project.
 
 ## Guidelines & Recommendations
-
 - Some understanding of `discord.js` is recommended when making code contributions. See the [relevant docs](#relevant-documentation).
 - [Visual Studio Code](https://code.visualstudio.com/) is the recommended editor (largely due to native TypeScript support).
-- Project structure is quite object-oriented and new modules should follow the same general ideas.
 
 ### Project Structure
 - `src/client/` contains bot-related stuff, mostly custom extensions of `discord.js` classes.
@@ -38,6 +36,16 @@ For the required `BOT_TOKEN`, either set up your own bot in [Discord's Developer
   - `mappers/` handles mapping/shaping data from an external model to an internal one.
   - `models/` handles the logic of all internal data models, often interacting with db.
   - `proxies/` handles all logic against external resources.
+
+### Naming Conventions
+For the most part, conventions should be apparent from the current codebase. Eslint will also enforce some code style, and most editors will help you automatically fix mistakes.
+
+#### Files
+- Should use camelCase, `fileName.ts`. 
+- Should include their role before the file extension, `fileName.role.ts`. This is to ensure that similarly named files are still easily discernable, and allows for much easier context switching when working with them. Some examples are `deity.command.ts`, `deity.model.ts`, `deity.embed.ts`.
+#### Code
+- Functions and variables should use camelCase, `myFunction`.
+- Classes should use PascalCase, `MyClass`.
 
 ## Relevant Documentation
 

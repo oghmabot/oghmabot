@@ -2,7 +2,7 @@ import { Message } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { BuildEmbed } from '../../client/embeds/build.embed';
 import { Build, BuildModel } from '../../data/models';
-import { stripCommandNotation } from '../../utils';
+import { setSingleReaction, stripCommandNotation } from '../../utils';
 
 export class BuildCommand extends Command {
   constructor(client: CommandoClient) {
@@ -34,14 +34,14 @@ export class BuildCommand extends Command {
       const foundBuilds = this.sortBuildsByQueryMatch(builds, query);
       if (foundBuilds.length) {
         const response = await msg.author.send('To see all available builds, go to: http://wiki.nwnarelith.com/Character_Builds', new BuildEmbed(foundBuilds));
-        if (response) msg.react('✅');
+        if (response) setSingleReaction(msg, '✅');
         return response;
       }
     } catch (error) {
       console.error('[BuildCommand] Unexpected error.', error);
     }
 
-    msg.react('❌');
+    setSingleReaction(msg, '❌');
     return msg;
   }
 

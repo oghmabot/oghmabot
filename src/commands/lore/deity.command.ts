@@ -2,7 +2,7 @@ import { Message, MessageEmbed } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { DeityEmbed, OghmabotEmbed } from '../../client';
 import { DeityCategory, DeityModel, getDeityCategory, getDeityCategoryName } from '../../data/models';
-import { stripCommandNotation } from '../../utils';
+import { setSingleReaction, stripCommandNotation } from '../../utils';
 
 export class DeityCommand extends Command {
   constructor(client: CommandoClient) {
@@ -41,12 +41,12 @@ export class DeityCommand extends Command {
       console.error('[DeityCommand] Unexpected error.', error);
     }
 
-    msg.react('❌');
+    setSingleReaction(msg, '❌');
     return msg;
   }
 
   async getDeitiesOfCategory(cat: DeityCategory): Promise<MessageEmbed> {
-    const deities = await DeityModel.getDeities({ where: { arelithCategory: cat }});
+    const deities = await DeityModel.getDeities({ where: { arelithCategory: cat } });
     const embed = new OghmabotEmbed();
     embed.setTitle(getDeityCategoryName(cat));
     embed.setDescription(deities.map(d => d.name).join('\n'));

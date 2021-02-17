@@ -28,7 +28,7 @@ export class BuildCommand extends Command {
     });
   }
 
-  async run(msg: CommandoMessage, { query }: { query: string }): Promise<Message | null> {
+  async run(msg: CommandoMessage, { query }: { query: string }): Promise<Message> {
     try {
       const builds = await BuildModel.fetchAll(query);
       const foundBuilds = this.sortBuildsByQueryMatch(builds, query);
@@ -42,7 +42,7 @@ export class BuildCommand extends Command {
     }
 
     msg.react('❌');
-    return null;
+    return msg;
   }
 
   private sortBuildsByQueryMatch(builds: Build[], query: string): Build[] {

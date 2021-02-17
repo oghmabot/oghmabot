@@ -30,7 +30,7 @@ export class DeityCommand extends Command {
     });
   }
 
-  async run(msg: CommandoMessage, { name }: { name: string }): Promise<Message | null> {
+  async run(msg: CommandoMessage, { name }: { name: string }): Promise<Message> {
     try {
       const deity = await DeityModel.fetch(name);
       if (deity) return msg.embed(new DeityEmbed(deity));
@@ -42,7 +42,7 @@ export class DeityCommand extends Command {
     }
 
     msg.react('❌');
-    return null;
+    return msg;
   }
 
   async getDeitiesOfCategory(cat: DeityCategory): Promise<MessageEmbed> {

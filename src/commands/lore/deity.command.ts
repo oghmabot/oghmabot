@@ -1,7 +1,7 @@
 import { Message, MessageEmbed } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { DeityEmbed, OghmabotEmbed } from '../../client';
-import { DeityCategory, DeityModel, getDeityCategory, getDeityCategoryName } from '../../data/models';
+import { DeityCategory, DeityModel, getDeityCategory, getDeityCategoryName, MessageExpiryModel } from '../../data/models';
 import { setNegativeReaction, setPositiveReaction, stripCommandNotation } from '../../utils';
 
 export class DeityCommand extends Command {
@@ -35,13 +35,17 @@ export class DeityCommand extends Command {
       const deity = await DeityModel.fetch(name);
       if (deity) {
         setPositiveReaction(msg);
-        return msg.embed(new DeityEmbed(deity));
+        const embedMsg = await msg.embed(new DeityEmbed(deity));
+        MessageExpiryModel.setExpiry(embedMsg, new Date(Date.now() + 600000));
+        return embedMsg;
       }
 
       const category = getDeityCategory(name);
       if (category) {
         setPositiveReaction(msg);
-        return msg.embed(await this.getDeitiesOfCategory(category));
+        const embedMsg = await msg.embed(await this.getDeitiesOfCategory(category));
+        MessageExpiryModel.setExpiry(embedMsg, new Date(Date.now() + 600000));
+        return embedMsg;
       }
     } catch (error) {
       console.error('[DeityCommand] Unexpected error.', error);

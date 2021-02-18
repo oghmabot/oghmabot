@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import { BuildModel, DeityModel, initializeAllModels, ServerModel, SubscriptionModel } from './models';
+import { BuildModel, DeityModel, initializeAllModels, MessageExpiryModel, ServerModel, SubscriptionModel } from './models';
 
 export const connect = async (url: string | undefined = process.env.DATABASE_URL): Promise<Sequelize> => {
   if (!url) throw new Error('Database URL is not defined.');
@@ -23,6 +23,10 @@ export const initialize = async (force: boolean = false, ...dbs: string[]): Prom
 
     if (dbs.includes('deities')) {
       await DeityModel.reset(sql, force);
+    }
+
+    if (dbs.includes('messageExpiries')) {
+      await MessageExpiryModel.reset(sql, force);
     }
 
     if (dbs.includes('servers')) {

@@ -1,7 +1,7 @@
 import { Collection } from 'discord.js';
 import { CommandoClient, CommandoClientOptions } from 'discord.js-commando';
 import { getAllCommands } from '../commands';
-import { StatusPoller } from '../data/models';
+import { MessageExpiryPoller, StatusPoller } from '../data/models';
 import { BasePoller } from '../data/common';
 import { handleClientError, handleClientReady, handleGuildCreate, handleGuildDelete, handleMessageEvent } from './events';
 
@@ -16,6 +16,7 @@ export class OghmabotClient extends CommandoClient {
   }
 
   setDefaultPollers(): void {
+    this.pollers.set('messageExpiry', new MessageExpiryPoller(this));
     this.pollers.set('status', new StatusPoller(this));
   }
 

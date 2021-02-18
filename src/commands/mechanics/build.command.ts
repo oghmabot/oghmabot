@@ -2,7 +2,7 @@ import { Message } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { BuildEmbed } from '../../client/embeds/build.embed';
 import { Build, BuildModel } from '../../data/models';
-import { setSingleReaction, stripCommandNotation } from '../../utils';
+import { setPositiveReaction, setSingleReaction, stripCommandNotation } from '../../utils';
 
 export class BuildCommand extends Command {
   constructor(client: CommandoClient) {
@@ -28,21 +28,35 @@ export class BuildCommand extends Command {
     });
   }
 
-  async run(msg: CommandoMessage, { query }: { query: string }): Promise<Message> {
+  async run(msg: CommandoMessage, { query }: { query: string }): Promise<Message | null> {
     try {
-      const builds = await BuildModel.fetchAll(query);
-      const foundBuilds = this.sortBuildsByQueryMatch(builds, query);
-      if (foundBuilds.length) {
-        const response = await msg.author.send('To see all available builds, go to: http://wiki.nwnarelith.com/Character_Builds', new BuildEmbed(foundBuilds));
-        if (response) setSingleReaction(msg, '✅');
-        return response;
-      }
+      const builds = this.sortBuildsByQueryMatch(await BuildModel.fetchAll(query), query);
+      return msg.guild ? this.handleAsPublic(msg, builds) : this.handleAsDM(msg, builds);
     } catch (error) {
       console.error('[BuildCommand] Unexpected error.', error);
     }
 
+    return null;
+  }
+
+  handleAsPublic(msg: CommandoMessage, builds: Build[]): Promise<Message> | null {
+    if (builds.length) {
+      setPositiveReaction(msg);
+      return msg.author.send('To see all available builds, go to: http://wiki.nwnarelith.com/Character_Builds', new BuildEmbed(builds));
+    }
+
     setSingleReaction(msg, '❌');
-    return msg;
+    return null;
+  }
+
+  handleAsDM(msg: CommandoMessage, builds: Build[]): Promise<Message> | null {
+    if (builds.length) {
+      setPositiveReaction(msg);
+      return msg.say('To see all available builds, go to: http://wiki.nwnarelith.com/Character_Builds', new BuildEmbed(builds));
+    }
+
+    setSingleReaction(msg, '❌');
+    return null;
   }
 
   private sortBuildsByQueryMatch(builds: Build[], query: string): Build[] {

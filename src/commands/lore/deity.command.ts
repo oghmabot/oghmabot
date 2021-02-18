@@ -2,7 +2,7 @@ import { Message, MessageEmbed } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { DeityEmbed, OghmabotEmbed } from '../../client';
 import { DeityCategory, DeityModel, getDeityCategory, getDeityCategoryName } from '../../data/models';
-import { setSingleReaction, stripCommandNotation } from '../../utils';
+import { setNegativeReaction, setPositiveReaction, stripCommandNotation } from '../../utils';
 
 export class DeityCommand extends Command {
   constructor(client: CommandoClient) {
@@ -30,19 +30,25 @@ export class DeityCommand extends Command {
     });
   }
 
-  async run(msg: CommandoMessage, { name }: { name: string }): Promise<Message> {
+  async run(msg: CommandoMessage, { name }: { name: string }): Promise<Message | null> {
     try {
       const deity = await DeityModel.fetch(name);
-      if (deity) return msg.embed(new DeityEmbed(deity));
+      if (deity) {
+        setPositiveReaction(msg);
+        return msg.embed(new DeityEmbed(deity));
+      }
 
       const category = getDeityCategory(name);
-      if (category) return msg.embed(await this.getDeitiesOfCategory(category));
+      if (category) {
+        setPositiveReaction(msg);
+        return msg.embed(await this.getDeitiesOfCategory(category));
+      }
     } catch (error) {
       console.error('[DeityCommand] Unexpected error.', error);
     }
 
-    setSingleReaction(msg, '❌');
-    return msg;
+    setNegativeReaction(msg);
+    return null;
   }
 
   async getDeitiesOfCategory(cat: DeityCategory): Promise<MessageEmbed> {

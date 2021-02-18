@@ -16,7 +16,7 @@ export abstract class BasePoller<T> {
     this.client.setInterval(this.pollAndUpdate, this.interval);
   }
 
-  protected abstract pollAndUpdate(): Promise<void>;
+  public abstract fetch(key: string): Promise<T | undefined>;
 
-  public abstract getOrFetch(key: string): Promise<T | undefined>;
+  protected abstract pollAndUpdate(): Promise<void>;
 }

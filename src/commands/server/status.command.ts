@@ -44,7 +44,7 @@ export class StatusCommand extends Command {
       if (!requestedServers?.length) msg.say('Server not found.');
 
       requestedServers.forEach(async server => {
-        const status = await this.poller.getOrFetch(server.id);
+        const status = await this.poller.fetch(server.id);
         if (status) await msg.embed(this.createStatusEmbed(server, status));
       });
     } catch (error) {

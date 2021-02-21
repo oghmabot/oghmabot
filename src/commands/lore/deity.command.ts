@@ -1,6 +1,7 @@
 import { Message, MessageEmbed } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { DeityEmbed, OghmabotEmbed } from '../../client';
+import { SequelizeProvider } from '../../client/settings';
 import { DeityCategory, DeityModel, getDeityCategory, getDeityCategoryName, MessageExpiryModel } from '../../data/models';
 import { setNegativeReaction, setPositiveReaction, stripCommandNotation } from '../../utils';
 
@@ -32,19 +33,12 @@ export class DeityCommand extends Command {
 
   async run(msg: CommandoMessage, { name }: { name: string }): Promise<Message | null> {
     try {
-      const deity = await DeityModel.fetch(name);
-      if (deity) {
-        setPositiveReaction(msg);
-        const embedMsg = await msg.embed(new DeityEmbed(deity));
-        MessageExpiryModel.setExpiry(embedMsg, new Date(Date.now() + 600000));
-        return embedMsg;
-      }
-
-      const category = getDeityCategory(name);
-      if (category) {
-        setPositiveReaction(msg);
-        const embedMsg = await msg.embed(await this.getDeitiesOfCategory(category));
-        MessageExpiryModel.setExpiry(embedMsg, new Date(Date.now() + 600000));
+      const embed = await this.getResultEmbed(name);
+      if (embed) {
+        const expiry = this.getExpiry(msg);
+        const embedMsg = await msg.embed(embed);
+        await setPositiveReaction(msg);
+        if (expiry) MessageExpiryModel.setExpiry(embedMsg, new Date(Date.now() + expiry));
         return embedMsg;
       }
     } catch (error) {
@@ -55,11 +49,25 @@ export class DeityCommand extends Command {
     return null;
   }
 
-  async getDeitiesOfCategory(cat: DeityCategory): Promise<MessageEmbed> {
+  private async getResultEmbed(query: string): Promise<MessageEmbed | undefined> {
+    const deity = await DeityModel.fetch(query);
+    if (deity) return new DeityEmbed(deity);
+
+    const category = getDeityCategory(query);
+    if (category) return await this.getDeitiesOfCategory(category);
+  }
+
+  private async getDeitiesOfCategory(cat: DeityCategory): Promise<MessageEmbed> {
     const deities = await DeityModel.getDeities({ where: { arelithCategory: cat } });
     const embed = new OghmabotEmbed();
     embed.setTitle(getDeityCategoryName(cat));
     embed.setDescription(deities.map(d => d.name).join('\n'));
     return embed;
+  }
+
+  private getExpiry(msg: CommandoMessage): number | undefined {
+    const provider = this.client.provider as SequelizeProvider;
+    const expiry = provider.getForChannel(msg.channel, `expiry-${this.memberName}`) ?? provider.get(msg.guild, 'expiry-all');
+    return typeof expiry === 'number' ? expiry : undefined;
   }
 }

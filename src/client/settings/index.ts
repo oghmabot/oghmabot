@@ -1,1 +1,1 @@
-export * from './sequelize.provider';
+export * from './setting.provider';

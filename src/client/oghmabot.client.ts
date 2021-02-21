@@ -4,6 +4,7 @@ import { getAllCommands } from '../commands';
 import { MessageExpiryPoller, StatusPoller } from '../data/models';
 import { BasePoller } from '../data/common';
 import { handleClientError, handleClientReady, handleGuildCreate, handleGuildDelete, handleMessageEvent } from './events';
+import { SequelizeProvider } from './settings';
 
 export class OghmabotClient extends CommandoClient {
   pollers: Collection<string, BasePoller<unknown>> = new Collection();
@@ -13,6 +14,7 @@ export class OghmabotClient extends CommandoClient {
     this.setDefaultPollers();
     this.setRegistryDefaults();
     this.setEventListeners();
+    this.setProvider(new SequelizeProvider(this));
   }
 
   setDefaultPollers(): void {

@@ -1,5 +1,5 @@
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
-import { initialize } from '../../data';
+import { resetDatabases } from '../../data';
 import { stripCommandNotation } from '../../utils';
 
 export class ResetCommand extends Command {
@@ -31,11 +31,11 @@ export class ResetCommand extends Command {
   async run(msg: CommandoMessage, { db, force }: { db: string, force: boolean }): Promise<CommandoMessage> {
     try {
       if (db === 'all') {
-        await initialize(force);
+        await resetDatabases(force);
         return msg.say('Databases reset.');
       }
 
-      await initialize(force, db);
+      await resetDatabases(force, db);
       return msg.say('Database reset.');
     } catch (error) {
       console.error(error);

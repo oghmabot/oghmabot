@@ -1,6 +1,6 @@
-import { DataTypes, Model, Sequelize } from 'sequelize';
+import { DataTypes, FindOptions, Model, Sequelize } from 'sequelize';
 
-export type Settings = Record<string, string>;
+export type Settings = Record<string, boolean | number | string>;
 
 export interface Setting {
   guildId: string;
@@ -9,7 +9,7 @@ export interface Setting {
 }
 
 export class SettingModel extends Model<Setting> {
-  public static initialize(sequelize: Sequelize): SettingModel {
+  static initialize(sequelize: Sequelize): SettingModel {
     return this.init({
       guildId: {
         type: DataTypes.STRING,
@@ -25,5 +25,9 @@ export class SettingModel extends Model<Setting> {
       sequelize,
       modelName: 'setting',
     });
+  }
+
+  static async getAll(options?: FindOptions): Promise<Setting[]> {
+    return (await this.findAll(options))?.map(s => s.get());
   }
 }

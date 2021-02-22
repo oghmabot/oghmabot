@@ -67,7 +67,7 @@ export class DeityCommand extends Command {
 
   private getExpiry(msg: CommandoMessage): number | undefined {
     const provider = this.client.provider as SequelizeProvider;
-    const expiry = provider.getForChannel(msg.channel, `expiry-${this.memberName}`) ?? provider.get(msg.guild, 'expiry-all');
+    const expiry = provider.getForChannel(msg.channel, `expire-${this.name}`) ?? provider.get(msg.guild, 'expire-all');
     return typeof expiry === 'number' ? expiry : undefined;
   }
 }

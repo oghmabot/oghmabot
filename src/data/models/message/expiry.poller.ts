@@ -1,4 +1,4 @@
-import { TextChannel } from 'discord.js';
+import { DiscordAPIError, TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
 import { BasePoller } from '../../common';
 import { MessageExpiry, MessageExpiryModel } from './expiry.model';
@@ -15,12 +15,16 @@ export class MessageExpiryPoller extends BasePoller<MessageExpiry> {
     const expiries = await MessageExpiryModel.getAll();
     for (const expiry of expiries) {
       const { messageId, expires } = expiry;
-      const expired = new Date(Date.now()) <= expires;
+      const expired = new Date(Date.now()) >= expires;
 
-      if (expired) {
-        this.deleteExpiredMessage(expiry);
-      } else {
-        this.cache.set(messageId, expiry);
+      try {
+        if (expired) {
+          this.deleteExpiredMessage(expiry);
+        } else {
+          this.cache.set(messageId, expiry);
+        }
+      } catch (error) {
+        console.error('[MessageExpiryPoller] Unexpected error.', error);
       }
     }
   }
@@ -28,9 +32,19 @@ export class MessageExpiryPoller extends BasePoller<MessageExpiry> {
   private deleteExpiredMessage = async (expiry: MessageExpiry): Promise<void> => {
     console.log('[MessageExpiryPoller] Found expired message, deleting.');
     const { messageId, channelId } = expiry;
-    const channel = await this.client.channels.fetch(channelId) as TextChannel | undefined;
-    const message = await channel?.messages.fetch(messageId);
-    await message?.delete();
-    await MessageExpiryModel.destroy({ where: { messageId } });
+    try {
+      const channel = await this.client.channels.fetch(channelId) as TextChannel | undefined;
+      const message = await channel?.messages.fetch(messageId);
+      await message?.delete();
+      await MessageExpiryModel.destroy({ where: { messageId } });
+      this.cache.delete(messageId);
+    } catch (error) {
+      if (error instanceof DiscordAPIError && error.message === 'Unknown Message') {
+        await MessageExpiryModel.destroy({ where: { messageId } });
+        this.cache.delete(messageId);
+      } else {
+        throw error;
+      }
+    }
   }
 }

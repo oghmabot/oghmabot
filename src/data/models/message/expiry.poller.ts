@@ -4,7 +4,7 @@ import { BasePoller } from '../../common';
 import { MessageExpiry, MessageExpiryModel } from './expiry.model';
 
 export class MessageExpiryPoller extends BasePoller<MessageExpiry> {
-  constructor(client: CommandoClient, interval: number = 20000) {
+  constructor(client: CommandoClient, interval: number = 5000) {
     super(client, interval);
     this.activatePolling();
   }

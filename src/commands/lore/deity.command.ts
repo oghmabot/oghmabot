@@ -35,10 +35,9 @@ export class DeityCommand extends Command {
     try {
       const embed = await this.getResultEmbed(name);
       if (embed) {
-        const expiry = this.getExpiry(msg);
         const embedMsg = await msg.embed(embed);
         await setPositiveReaction(msg);
-        if (expiry) MessageExpiryModel.setExpiry(embedMsg, new Date(Date.now() + expiry));
+        await this.setToExpire(embedMsg);
         return embedMsg;
       }
     } catch (error) {
@@ -65,9 +64,9 @@ export class DeityCommand extends Command {
     return embed;
   }
 
-  private getExpiry(msg: CommandoMessage): number | undefined {
+  private async setToExpire(msg: CommandoMessage): Promise<void> {
     const provider = this.client.provider as SequelizeProvider;
     const expiry = provider.getForChannel(msg.channel, `expire-${this.name}`) ?? provider.get(msg.guild, 'expire-all');
-    return typeof expiry === 'number' ? expiry : undefined;
+    if (expiry && typeof expiry === 'number') await MessageExpiryModel.setExpiry(msg, new Date(Date.now() + expiry));
   }
 }

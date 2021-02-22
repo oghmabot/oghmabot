@@ -1,7 +1,8 @@
 import { Message } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { StatsEmbed } from '../../client';
-import { ClassLevelNotation, getClass, getStats } from '../../data/models';
+import { SequelizeProvider } from '../../client/settings';
+import { ClassLevelNotation, getClass, getStats, MessageExpiryModel } from '../../data/models';
 import { stripCommandNotation } from '../../utils';
 
 export class StatsCommand extends Command {
@@ -28,11 +29,13 @@ export class StatsCommand extends Command {
     });
   }
 
-  run(msg: CommandoMessage, { input }: { input: string }): Promise<Message> {
+  async run(msg: CommandoMessage, { input }: { input: string }): Promise<Message> {
     try {
       const stats = input.split(',').map(this.parseInput).map(c => getStats(...c));
       const message = stats.find(s => s.totalLevels > 20) ? 'When given more than 20 levels, pre-epic class spread is assumed from input order.' : '';
-      return msg.reply(message, new StatsEmbed(stats));
+      const responseMsg = await msg.reply(message, new StatsEmbed(stats));
+      await this.setToExpire(responseMsg as CommandoMessage);
+      return responseMsg;
     } catch (error) {
       if (error instanceof SyntaxError) {
         console.warn(error);
@@ -68,5 +71,11 @@ export class StatsCommand extends Command {
 
     if (!classes.length || classes.length !== matches.length) throw new SyntaxError('[StatsCommand] Invalid input.');
     return classes;
+  }
+
+  private async setToExpire(msg: CommandoMessage): Promise<void> {
+    const provider = this.client.provider as SequelizeProvider;
+    const expiry = provider.getForChannel(msg.channel, `expire-${this.name}`) ?? provider.get(msg.guild, 'expire-all');
+    if (expiry && typeof expiry === 'number') await MessageExpiryModel.setExpiry(msg, new Date(Date.now() + expiry));
   }
 }

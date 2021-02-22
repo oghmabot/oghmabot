@@ -1,9 +1,11 @@
 import { Message } from 'discord.js';
-import { Command, CommandGroup, CommandoMessage } from 'discord.js-commando';
+import { Command, CommandoMessage } from 'discord.js-commando';
 import { OghmabotClient } from '../../client';
 import { stripCommandNotation } from '../../utils';
 
 export class ExpireCommand extends Command {
+  private expirables = ['all', 'none', 'build', 'deity', 'roll', 'stats', 'status'];
+
   constructor(client: OghmabotClient) {
     super(client, {
       name: 'expire',
@@ -11,15 +13,17 @@ export class ExpireCommand extends Command {
       group: 'commands',
       memberName: 'expire',
       description: 'Sets bot responses to expire.',
-      details: 'The first argument must be the name of a command or command group. Only users with permission to manage messages may use this command.',
+      details: 'The first argument must be the name of a command. Only users with permission to manage messages may use this command.',
       userPermissions: ['MANAGE_MESSAGES'],
+      guildOnly: true,
       args: [
         {
-          key: 'cmdOrGrp',
-          label: 'command/group',
-          prompt: 'Which command or command group would you set to have expiring responses?',
-          type: 'group|command',
+          key: 'cmd',
+          label: 'command',
+          prompt: 'Which command would you set to have expiring responses?',
+          type: 'string',
           parse: stripCommandNotation,
+          validate: (inp: string) => this.expirables.includes(inp.toLowerCase()),
         },
         {
           key: 'min',
@@ -35,14 +39,20 @@ export class ExpireCommand extends Command {
     });
   }
 
-  async run(msg: CommandoMessage, { cmdOrGrp, min }: { cmdOrGrp: Command | CommandGroup, min: number }): Promise<Message> {
+  async run(msg: CommandoMessage, { cmd, min }: { cmd: string, min: number }): Promise<Message | null> {
+    cmd = cmd.toLowerCase();
     try {
-      await this.client.provider.set(msg.guild, `expire-${cmdOrGrp}`, min * 60000);
-      return msg.reply(`Set ${'`' + cmdOrGrp + '`'} responses to expire after ${min} minute${min != 1 ? 's' : ''}.`);
+      if (cmd === 'none') {
+        for (const expirable of this.expirables) await this.client.provider.remove(msg.guild, `expire-${expirable}`);
+        return msg.reply('Removed all expiry rules.');
+      }
+
+      await this.client.provider.set(msg.guild, `expire-${cmd}`, min * 60000);
+      return msg.reply(`Set ${'`' + cmd + '`'} responses to expire after ${min} minute${min != 1 ? 's' : ''}.`);
     } catch (error) {
       console.error('[ExpireCommand] Unexpected error.', error);
     }
-    console.log(cmdOrGrp);
-    return msg;
+
+    return null;
   }
 }

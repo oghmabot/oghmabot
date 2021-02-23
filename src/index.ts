@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { OghmabotClient } from './client';
+import { scheduleAllJobs } from './data/jobs';
 
 /**
  * Set environment variables from .env, if present
@@ -25,3 +26,9 @@ const client = new OghmabotClient({
  * @ignore
  */
 client.login(BOT_TOKEN);
+
+/**
+ * Schedule routine jobs
+ * @ignore
+ */
+scheduleAllJobs();

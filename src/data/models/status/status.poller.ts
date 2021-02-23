@@ -11,7 +11,9 @@ export class StatusPoller extends BasePoller<Status> {
     this.activatePolling();
   }
 
-  getOrFetch = async (serverId: string): Promise<Status | undefined> => this.cache.get(serverId) ?? await BeamdogApiProxy.fetchServer(serverId, StatusModel);
+  public async fetch(serverId: string): Promise<Status | undefined> {
+    return this.cache.get(serverId) ?? await BeamdogApiProxy.fetchServer(serverId, StatusModel);
+  }
 
   protected pollAndUpdate = async (): Promise<void> => {
     console.log('[StatusPoller] Polling Beamdog for server status changes...');

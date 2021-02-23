@@ -1,7 +1,8 @@
 import { Message } from 'discord.js';
 import { Command, CommandoMessage } from 'discord.js-commando';
 import { OghmabotClient } from '../../client';
-import { ServerModel, StatusPoller } from '../../data/models';
+import { SequelizeProvider } from '../../client/settings';
+import { MessageExpiryModel, ServerModel, StatusPoller } from '../../data/models';
 import { serverStatusToEmbed } from '../../utils';
 
 export class StatusCommand extends Command {
@@ -44,8 +45,11 @@ export class StatusCommand extends Command {
       if (!requestedServers?.length) msg.say('Server not found.');
 
       requestedServers.forEach(async server => {
-        const status = await this.poller.getOrFetch(server.id);
-        if (status) await msg.embed(this.createStatusEmbed(server, status));
+        const status = await this.poller.fetch(server.id);
+        if (status) {
+          const embedMsg = await msg.embed(this.createStatusEmbed(server, status));
+          await this.setToExpire(embedMsg);
+        }
       });
     } catch (error) {
       console.error('[StatusCommand] Unexpected error.', error);
@@ -55,4 +59,10 @@ export class StatusCommand extends Command {
   }
 
   createStatusEmbed = serverStatusToEmbed;
+
+  private async setToExpire(msg: CommandoMessage): Promise<void> {
+    const provider = this.client.provider as SequelizeProvider;
+    const expiry = provider.getForChannel(msg.channel, `expire-${this.name}`) ?? provider.get(msg.guild, 'expire-all');
+    if (expiry && typeof expiry === 'number') await MessageExpiryModel.setExpiry(msg, new Date(Date.now() + expiry));
+  }
 }

@@ -3,6 +3,8 @@ import { roll, RollOptions, RollResult } from '@half-elf/rogue';
 import { stripCommandNotation } from '../../utils';
 import { Message } from 'discord.js';
 import { OghmabotEmbed } from '../../client';
+import { SequelizeProvider } from '../../client/settings/setting.provider';
+import { MessageExpiryModel } from '../../data/models';
 
 export class RollCommand extends Command {
   constructor(client: CommandoClient) {
@@ -28,12 +30,14 @@ export class RollCommand extends Command {
     });
   }
 
-  run(msg: CommandoMessage, { diceroll }: { diceroll: string }): Promise<Message> {
+  async run(msg: CommandoMessage, { diceroll }: { diceroll: string }): Promise<Message> {
     try {
       const { notation, options } = this.parseInput(diceroll);
-      return options
-        ? this.formatRollResult(msg, roll(notation, this.parseOptions(options)))
-        : msg.say(`:game_die: Result: ${roll(notation)}`);
+      const responseMsg = options
+        ? await this.formatRollResult(msg, roll(notation, this.parseOptions(options)))
+        : await msg.say(`:game_die: Result: ${roll(notation)}`);
+      if (responseMsg) await this.setToExpire(responseMsg);
+      return responseMsg;
     } catch (error) {
       console.error('[RollCommand] Unexpected error.', error);
     }
@@ -82,5 +86,11 @@ export class RollCommand extends Command {
       if (option.includes('avg')) rollOptions.avg = true;
     }
     return rollOptions;
+  }
+
+  private async setToExpire(msg: CommandoMessage): Promise<void> {
+    const provider = this.client.provider as SequelizeProvider;
+    const expiry = provider.getForChannel(msg.channel, `expire-${this.name}`) ?? provider.get(msg.guild, 'expire-all');
+    if (expiry && typeof expiry === 'number') await MessageExpiryModel.setExpiry(msg, new Date(Date.now() + expiry));
   }
 }

@@ -1,7 +1,8 @@
 import { Message } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { BuildEmbed } from '../../client/embeds/build.embed';
-import { Build, BuildModel } from '../../data/models';
+import { SequelizeProvider } from '../../client/settings';
+import { Build, BuildModel, MessageExpiryModel } from '../../data/models';
 import { setPositiveReaction, setSingleReaction, stripCommandNotation } from '../../utils';
 
 export class BuildCommand extends Command {
@@ -31,7 +32,9 @@ export class BuildCommand extends Command {
   async run(msg: CommandoMessage, { query }: { query: string }): Promise<Message | null> {
     try {
       const builds = this.sortBuildsByQueryMatch(await BuildModel.fetchAll(query), query);
-      return msg.guild ? this.handleAsPublic(msg, builds) : this.handleAsDM(msg, builds);
+      const responseMsg = msg.guild ? await this.handleAsPublic(msg, builds) : await this.handleAsDM(msg, builds);
+      if (responseMsg) await this.setToExpire(responseMsg as CommandoMessage);
+      return responseMsg;
     } catch (error) {
       console.error('[BuildCommand] Unexpected error.', error);
     }
@@ -67,5 +70,11 @@ export class BuildCommand extends Command {
     const { name, race, classes, author, description } = build;
     const buildStr = [name, race, ...classes, author, description].filter(Boolean).join(' ').toLowerCase().trim();
     return query.toLowerCase().trim().split(' ').reduce((matches, q) => (buildStr.match(new RegExp(q, 'g'))?.length ?? 0) + matches, 0);
+  }
+
+  private async setToExpire(msg: CommandoMessage): Promise<void> {
+    const provider = this.client.provider as SequelizeProvider;
+    const expiry = provider.getForChannel(msg.channel, `expire-${this.name}`) ?? provider.get(msg.guild, 'expire-all');
+    if (expiry && typeof expiry === 'number') await MessageExpiryModel.setExpiry(msg, new Date(Date.now() + expiry));
   }
 }

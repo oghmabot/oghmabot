@@ -1,6 +1,6 @@
 import { Collection, Guild, MessageEmbed, TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
-import { connect } from '../../data';
+import { connect, initializeDatabases } from '../../data';
 import { OghmabotEmbed } from '../embeds';
 
 const loggedInServersToString = (servers: Collection<string, Guild>): string =>
@@ -18,7 +18,8 @@ export const handleClientReady = async (client: CommandoClient): Promise<void> =
   const { channels, guilds } = client;
   const guildsToList = guilds.cache.filter(g => !IGNORE_GUILDS?.includes(g.id));
 
-  await connect(DATABASE_URL);
+  const sequelize = await connect(DATABASE_URL);
+  await initializeDatabases(sequelize);
 
   if (BOT_STATUS_CHANNEL) {
     const channel = await channels.fetch(BOT_STATUS_CHANNEL) as TextChannel | undefined;

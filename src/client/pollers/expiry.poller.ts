@@ -1,7 +1,7 @@
 import { DiscordAPIError, TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
-import { BasePoller } from '../../common';
-import { MessageExpiry, MessageExpiryModel } from './expiry.model';
+import { BasePoller } from './base.poller';
+import { MessageExpiry, MessageExpiryModel } from '../../data/models/expiry.model';
 
 export class MessageExpiryPoller extends BasePoller<MessageExpiry> {
   constructor(client: CommandoClient, interval: number = 5000) {

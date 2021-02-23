@@ -1,8 +1,9 @@
 import { Message } from 'discord.js';
 import { Command, CommandoMessage } from 'discord.js-commando';
 import { OghmabotClient } from '../../client';
+import { StatusPoller } from '../../client/pollers';
 import { SequelizeProvider } from '../../client/settings';
-import { MessageExpiryModel, ServerModel, StatusPoller } from '../../data/models';
+import { MessageExpiryModel, ServerModel } from '../../data/models';
 import { serverStatusToEmbed } from '../../utils';
 
 export class StatusCommand extends Command {

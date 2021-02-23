@@ -1,8 +1,7 @@
 import { Collection } from 'discord.js';
 import { CommandoClient, CommandoClientOptions } from 'discord.js-commando';
 import { getAllCommands } from '../commands';
-import { MessageExpiryPoller, StatusPoller } from '../data/models';
-import { BasePoller } from '../data/common';
+import { BasePoller, MessageExpiryPoller, StatusPoller } from './pollers';
 import { handleClientError, handleClientReady, handleGuildCreate, handleGuildDelete, handleMessageEvent } from './events';
 import { SequelizeProvider } from './settings';
 

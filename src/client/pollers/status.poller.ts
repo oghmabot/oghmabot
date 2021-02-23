@@ -1,9 +1,9 @@
 import { DiscordAPIError, TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
-import { Server, ServerModel, Status, StatusModel, SubscriptionModel } from '..';
-import { BeamdogApiError, BeamdogApiProxy } from '../../proxies';
-import { serverStatusToStatusUpdateEmbed } from '../../../utils';
-import { BasePoller } from '../../common';
+import { Server, ServerModel, Status, StatusModel, SubscriptionModel } from '../../data/models';
+import { BeamdogApiError, BeamdogApiProxy } from '../../data/proxies';
+import { serverStatusToStatusUpdateEmbed } from '../../utils';
+import { BasePoller } from './base.poller';
 
 export class StatusPoller extends BasePoller<Status> {
   constructor(client: CommandoClient, interval: number = 10000) {

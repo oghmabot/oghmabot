@@ -47,7 +47,7 @@
     "beautiful-dom": "^1.0.8",
     "cheerio": "^1.0.0-rc.5",
     "discord.js": "^12.5.1",
-    "discord.js-commando": "github:discordjs/Commando",
+    "discord.js-commando": "^0.12.2",
     "node-fetch": "^2.6.1",
     "node-schedule": "^2.0.0",
     "pg": "^8.5.1",

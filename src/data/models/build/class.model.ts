@@ -200,7 +200,7 @@ export const getProgressions = (c: Class): number[] => {
     case Class.Loremaster: return [1, 0, 1, 1];
     case Class.MasterHarper: return [1, 0, 1, 1];
     case Class.Monk: return [1, 1, 1, 1];
-    case Class.Paladin: return [2, 1, 0, 1];
+    case Class.Paladin: return [2, 1, 0, 0];
     case Class.PaleMaster: return [0, 1, 0, 1];
     case Class.Ranger: return [2, 1, 0, 0];
     case Class.RedDragonDisciple: return [1, 1, 0, 1];

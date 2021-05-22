@@ -13,7 +13,7 @@ describe('class.model', () => {
       [['cleric', 'cl'], Class.Cleric],
       [['commoner'], Class.Commoner],
       [['druid', 'dr'], Class.Druid],
-      [['dwarven defender', 'defender', 'earthkin defender', 'earthkin'], Class.DwarvenDefenderEarthkinDefender],
+      [['dwarven defender', 'dd', 'defender', 'earthkin defender', 'earthkin', 'ed', 'ekd'], Class.DwarvenDefenderEarthkinDefender],
       [['favored soul', 'fs'], Class.FavoredSoul],
       [['fighter', 'f', 'ftr'], Class.Fighter],
       [['harper mage', 'hmage', 'hm'], Class.HarperMage],

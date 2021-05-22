@@ -148,6 +148,7 @@ export const getClass = (str: string): Class | undefined => {
     case 'dc': return Class.ChampionOfTormDivineChampion;
     case 'cl': return Class.Cleric;
     case 'dd':
+    case 'ekd':
     case 'ed': return Class.DwarvenDefenderEarthkinDefender;
     case 'fs': return Class.FavoredSoul;
     case 'f':

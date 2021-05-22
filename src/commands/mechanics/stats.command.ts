@@ -64,7 +64,7 @@ export class StatsCommand extends Command {
     const classes = matches.flatMap(m => {
       const c = getClass(m[2]);
       const l = parseInt(m[3]);
-      return c && l
+      return c !== undefined && l
         ? { class: c, level: l }
         : [];
     });

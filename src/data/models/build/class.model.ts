@@ -70,13 +70,15 @@ export const getStats = (...classLevels: ClassLevelNotation[]): Stats => {
     const { preEpicClasses, levels } = acc;
     const newTotal = levels + cur.level;
 
-    preEpicClasses[cur.class] = preEpicClasses[cur.class]
-      ? preEpicClasses[cur.class] + cur.level
-      : cur.level;
+    if (levels < 20) {
+      preEpicClasses[cur.class] = preEpicClasses[cur.class]
+        ? preEpicClasses[cur.class] + cur.level
+        : cur.level;
 
-    if (newTotal > 20) {
-      const epic = newTotal - 20;
-      preEpicClasses[cur.class] -= epic;
+      if (newTotal > 20) {
+        const epic = newTotal - 20;
+        preEpicClasses[cur.class] -= epic;
+      }
     }
 
     return {
@@ -88,10 +90,14 @@ export const getStats = (...classLevels: ClassLevelNotation[]): Stats => {
     levels: 0,
   });
 
-  if (Object.keys(preEpicClasses).length > 3) throw new FriendlyError(`Too many classes given (${Object.keys(preEpicClasses).length}). Maximum is 3.`);
+  const classCount = Object.keys(preEpicClasses).length;
+
+  if (classCount < 1) throw new FriendlyError(`Too few classes given ${classCount}. Minimum is 1.`);
+  if (classCount > 3) throw new FriendlyError(`Too many classes given (${classCount}). Maximum is 3.`);
+  if (levels < 1) throw new FriendlyError(`Too few levels given ${levels}. Minimum is 1.`);
   if (levels > 30) throw new FriendlyError(`Too many levels given (${levels}). Maximum is 30.`);
 
-  const epicLevels = levels - 20;
+  const epicLevels = levels > 20 ? levels - 20 : 0;
   const epicBab = calculateEpicBaseAttackBonusIncrease(epicLevels);
   const epicSaves = calculateEpicSavingThrowIncrease(epicLevels);
 

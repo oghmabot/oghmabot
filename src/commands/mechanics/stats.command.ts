@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage, FriendlyError } from 'discord.js-commando';
 import { StatsEmbed } from '../../client';
 import { SequelizeProvider } from '../../client/settings';
 import { ClassLevelNotation, getClass, getStats, MessageExpiryModel } from '../../data/models';
@@ -37,9 +37,9 @@ export class StatsCommand extends Command {
       await this.setToExpire(responseMsg as CommandoMessage);
       return responseMsg;
     } catch (error) {
-      if (error instanceof SyntaxError) {
+      if (error instanceof FriendlyError) {
         console.warn(error);
-        return msg.reply('Invalid input.');
+        return msg.reply(`Invalid input. ${error.message}`);
       } else {
         console.error('[StatsCommand] Unexpected error.', error);
       }
@@ -64,12 +64,11 @@ export class StatsCommand extends Command {
     const classes = matches.flatMap(m => {
       const c = getClass(m[2]);
       const l = parseInt(m[3]);
-      return c && l
+      return c !== undefined && l
         ? { class: c, level: l }
         : [];
     });
 
-    if (!classes.length || classes.length !== matches.length) throw new SyntaxError('[StatsCommand] Invalid input.');
     return classes;
   }
 

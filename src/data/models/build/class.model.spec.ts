@@ -1,4 +1,4 @@
-import { Class, getClass } from './class.model';
+import { Class, getClass, getStats } from './class.model';
 
 describe('class.model', () => {
   describe('getClass', () => {
@@ -13,7 +13,7 @@ describe('class.model', () => {
       [['cleric', 'cl'], Class.Cleric],
       [['commoner'], Class.Commoner],
       [['druid', 'dr'], Class.Druid],
-      [['dwarven defender', 'defender', 'earthkin defender', 'earthkin'], Class.DwarvenDefenderEarthkinDefender],
+      [['dwarven defender', 'dd', 'defender', 'earthkin defender', 'earthkin', 'ed', 'ekd'], Class.DwarvenDefenderEarthkinDefender],
       [['favored soul', 'fs'], Class.FavoredSoul],
       [['fighter', 'f', 'ftr'], Class.Fighter],
       [['harper mage', 'hmage', 'hm'], Class.HarperMage],
@@ -48,5 +48,60 @@ describe('class.model', () => {
       [['zhentarim naug-adar', 'naug-adar', 'naugadar', 'naug'], Class.ZhentarimNaugadar],
       [['zhentarim operative', 'operative'], Class.ZhentarimOperative],
     ])('should return the expected class', (str, expected) => str.forEach(s => expect(getClass(s)).toBe(expected)));
+  });
+
+  describe('getStats', () => {
+    it.each([
+      [
+        [
+          { class: Class.ArcaneArcher, level: 1 },
+          { class: Class.Assassin, level: 1},
+          { class: Class.Barbarian, level: 1 },
+          { class: Class.Bard, level: 1 },
+        ],
+      ],
+      [
+        [
+          { class: Class.ArcaneArcher, level: 31 },
+        ],
+      ],
+      [
+        [
+          { class: Class.ArcaneArcher, level: 27 },
+          { class: Class.Barbarian, level: 4 },
+        ],
+      ],
+    ])('should throw errors', (classLevels) => expect(() => getStats(...classLevels)).toThrow());
+
+    it.each([
+      [
+        [
+          { class: Class.Bard, level: 13 },
+          { class: Class.Blackguard, level: 4 },
+          { class: Class.Bard, level: 13 },
+        ],
+        {
+          totalLevels: 30,
+          bab: 21,
+          fortitude: 14,
+          reflex: 16,
+          will: 16,
+        },
+      ],
+      [
+        [
+          { class: Class.Bard, level: 16 },
+          { class: Class.Blackguard, level: 4 },
+          { class: Class.Bard, level: 10 },
+        ],
+        {
+          totalLevels: 30,
+          bab: 21,
+          fortitude: 14,
+          reflex: 16,
+          will: 16,
+        },
+      ],
+    ])('should return correct stats', (classLevels, expected) => expect(getStats(...classLevels)).toEqual(expected));
   });
 });

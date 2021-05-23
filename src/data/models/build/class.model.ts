@@ -1,3 +1,4 @@
+import { FriendlyError } from 'discord.js-commando';
 import { KeepAlphaNumericRegExp, findBestStringMatch } from '../../../utils';
 
 export enum BaseAttackBonusProgression { Half, Medium, Full }
@@ -65,60 +66,58 @@ export interface Stats {
 }
 
 export const getStats = (...classLevels: ClassLevelNotation[]): Stats => {
-  const preEpicStats = classLevels.reduce((stats, cur) => {
-    if (cur.level !== 0) {
-      const { level } = cur;
-      const { totalLevels, bab, fortitude, reflex, will } = stats;
-      const newTotal = totalLevels + level;
+  const { preEpicClasses, levels } = classLevels.reduce<{ preEpicClasses: Record<number, number>; levels: number; }>((acc, cur) => {
+    const { preEpicClasses, levels } = acc;
+    const newTotal = levels + cur.level;
+
+    if (levels < 20) {
+      preEpicClasses[cur.class] = preEpicClasses[cur.class]
+        ? preEpicClasses[cur.class] + cur.level
+        : cur.level;
 
       if (newTotal > 20) {
         const epic = newTotal - 20;
-        const preEpic = level - epic;
-        if (preEpic > 0) {
-          return {
-            totalLevels: newTotal,
-            bab: bab + calculateBaseAttackBonus(preEpic, getBaseAttackBonusProgression(cur.class)),
-            fortitude: fortitude + calculateSavingThrow(preEpic, getFortitudeProgression(cur.class)),
-            reflex: reflex + calculateSavingThrow(preEpic, getReflexProgression(cur.class)),
-            will: will + calculateSavingThrow(preEpic, getWillProgression(cur.class)),
-          };
-        }
-
-        return {
-          totalLevels: newTotal, bab, fortitude, reflex, will,
-        };
+        preEpicClasses[cur.class] -= epic;
       }
-
-      return {
-        totalLevels: totalLevels + level,
-        bab: bab + calculateBaseAttackBonus(level, getBaseAttackBonusProgression(cur.class)),
-        fortitude: fortitude + calculateSavingThrow(level, getFortitudeProgression(cur.class)),
-        reflex: reflex + calculateSavingThrow(level, getReflexProgression(cur.class)),
-        will: will + calculateSavingThrow(level, getWillProgression(cur.class)),
-      };
     }
 
-    return stats;
+    return {
+      preEpicClasses,
+      levels: newTotal,
+    };
   }, {
-    totalLevels: 0,
-    bab: 0,
-    fortitude: 0,
-    reflex: 0,
-    will: 0,
+    preEpicClasses: {},
+    levels: 0,
   });
 
-  const { totalLevels, bab, fortitude, reflex, will } = preEpicStats;
-  if (totalLevels > 20) {
-    return {
-      totalLevels,
-      bab: bab + calculateEpicBaseAttackBonusIncrease(totalLevels - 20),
-      fortitude: fortitude + calculateEpicSavingThrowIncrease(totalLevels - 20),
-      reflex: reflex + calculateEpicSavingThrowIncrease(totalLevels - 20),
-      will: will + calculateEpicSavingThrowIncrease(totalLevels - 20),
-    };
+  const classCount = Object.keys(preEpicClasses).length;
+
+  if (classCount < 1) throw new FriendlyError(`Too few classes given ${classCount}. Minimum is 1.`);
+  if (classCount > 3) throw new FriendlyError(`Too many classes given (${classCount}). Maximum is 3.`);
+  if (levels < 1) throw new FriendlyError(`Too few levels given ${levels}. Minimum is 1.`);
+  if (levels > 30) throw new FriendlyError(`Too many levels given (${levels}). Maximum is 30.`);
+
+  const epicLevels = levels > 20 ? levels - 20 : 0;
+  const epicBab = calculateEpicBaseAttackBonusIncrease(epicLevels);
+  const epicSaves = calculateEpicSavingThrowIncrease(epicLevels);
+
+  const stats = {
+    totalLevels: levels,
+    bab: epicBab,
+    fortitude: epicSaves,
+    reflex: epicSaves,
+    will: epicSaves,
+  };
+
+  for (const cl in preEpicClasses) {
+    const classLevels = preEpicClasses[cl];
+    stats.bab += calculateBaseAttackBonus(classLevels, getBaseAttackBonusProgression(parseInt(cl)));
+    stats.fortitude += calculateSavingThrow(classLevels, getFortitudeProgression(parseInt(cl)));
+    stats.reflex += calculateSavingThrow(classLevels, getReflexProgression(parseInt(cl)));
+    stats.will += calculateSavingThrow(classLevels, getReflexProgression(parseInt(cl)));
   }
 
-  return preEpicStats;
+  return stats;
 };
 
 export const calculateBaseAttackBonus = (levels: number, progression: BaseAttackBonusProgression): number =>
@@ -148,6 +147,7 @@ export const getClass = (str: string): Class | undefined => {
     case 'dc': return Class.ChampionOfTormDivineChampion;
     case 'cl': return Class.Cleric;
     case 'dd':
+    case 'ekd':
     case 'ed': return Class.DwarvenDefenderEarthkinDefender;
     case 'fs': return Class.FavoredSoul;
     case 'f':

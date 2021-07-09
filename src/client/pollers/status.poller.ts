@@ -40,7 +40,8 @@ export class StatusPoller extends BasePoller<Status> {
     const subscriptions = await SubscriptionModel.getSubscriptionsForServer(server.id);
     for (const sub of subscriptions) {
       const { channelId, autoDeleteMessages, lastMessageId } = sub;
-      const channel = await this.client.channels.fetch(channelId) as TextChannel | undefined;
+
+      const channel = await this.findChannel(channelId);
 
       if (channel) {
         if (autoDeleteMessages && lastMessageId) {
@@ -66,6 +67,19 @@ export class StatusPoller extends BasePoller<Status> {
           }
         }
       }
+    }
+  }
+
+  private findChannel = async (channelId: string): Promise<TextChannel | undefined> => {
+    try {
+      return await this.client.channels.fetch(channelId) as TextChannel;
+    } catch (error) {
+      console.warn(`[StatusPoller] Failed to locate subscribed channel, channelId ${channelId}. Deleting subscription.`, error);
+      await SubscriptionModel.destroy({
+        where: {
+          channelId,
+        },
+      });
     }
   }
 

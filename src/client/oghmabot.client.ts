@@ -1,8 +1,16 @@
 import { Collection } from 'discord.js';
 import { CommandoClient, CommandoClientOptions } from 'discord.js-commando';
 import { getAllCommands } from '../commands';
+import {
+  handleClientError,
+  handleClientReady,
+  handleGuildCreate,
+  handleGuildDelete,
+  handleMessageEvent,
+  handleProcessError,
+  handleProcessRejection,
+} from './events';
 import { BasePoller, MessageExpiryPoller, StatusPoller } from './pollers';
-import { handleClientError, handleClientReady, handleGuildCreate, handleGuildDelete, handleMessageEvent } from './events';
 import { SequelizeProvider } from './settings';
 
 export class OghmabotClient extends CommandoClient {
@@ -12,7 +20,8 @@ export class OghmabotClient extends CommandoClient {
     super(options);
     this.setDefaultPollers();
     this.setRegistryDefaults();
-    this.setEventListeners();
+    this.setClientEventListeners();
+    this.setProcessEventListeners();
     this.setProvider(new SequelizeProvider(this));
   }
 
@@ -36,11 +45,16 @@ export class OghmabotClient extends CommandoClient {
       .registerCommands(getAllCommands());
   }
 
-  setEventListeners(): void {
-    this.on('error', async error =>  await handleClientError(this, error));
+  setClientEventListeners(): void {
+    this.on('error', error =>  handleClientError(this, error));
     this.on('guildCreate', handleGuildCreate);
     this.on('guildDelete', handleGuildDelete);
     this.on('message', handleMessageEvent);
-    this.on('ready', async () => await handleClientReady(this));
+    this.on('ready', () => handleClientReady(this));
+  }
+
+  setProcessEventListeners(): void {
+    process.on('uncaughtException', error => handleProcessError(this, error));
+    process.on('unhandledRejection', reason => handleProcessRejection(this, reason));
   }
 }

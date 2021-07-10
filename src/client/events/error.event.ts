@@ -1,24 +1,32 @@
-import { TextChannel } from 'discord.js';
+import { getBotStatusChannel } from '../../utils/channels';
 import { OghmabotClient } from '../oghmabot.client';
 
 export const handleClientError = async (client: OghmabotClient, error: Error): Promise<void> => {
-  try {
-    const { BOT_STATUS_CHANNEL } = process.env;
-    if (BOT_STATUS_CHANNEL) {
-      const { channels } = client;
-      const statusChannel = await channels.fetch(BOT_STATUS_CHANNEL) as TextChannel | undefined;
-      if (statusChannel) {
-        statusChannel.send(stackToCodeBlock(error));
-      }
-    }
-  } catch (err) {
-    console.warn('Failed to output uncaught error to Discord Status Channel.');
-  }
-  console.error('Unexpected error.', error);
+  const statusChannel = await getBotStatusChannel(client);
+  statusChannel.send(stackToCodeBlock(error));
+};
+
+export const handleProcessError = handleClientError;
+
+export const handleProcessRejection = async (client: OghmabotClient, reason: Record<string, unknown> | null | undefined): Promise<void> => {
+  console.error('UnhandledPromiseRejectionWarning:', reason);
+  const statusChannel = await getBotStatusChannel(client);
+  statusChannel.send(rejectionToCodeBlock(reason));
 };
 
 const stackToCodeBlock = (error: Error): string => {
   const { name, message, stack } = error;
   return `${name}: ${message}`
     + stack ? '\n```prolog\n' + stack + '\n```' : '';
+};
+
+const rejectionToCodeBlock = (reason: Record<string, unknown> | null | undefined): string => {
+  if (reason) {
+    const keys = Object.keys(reason);
+
+    return `⚠️${reason}` +
+      '```\n' + keys.map(k => `${k}: ${reason[k]}`).join('\n') + '\n```';
+  }
+
+  return '';
 };

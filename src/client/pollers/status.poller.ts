@@ -74,12 +74,20 @@ export class StatusPoller extends BasePoller<Status> {
     try {
       return await this.client.channels.fetch(channelId) as TextChannel;
     } catch (error) {
-      console.warn(`[StatusPoller] Failed to locate subscribed channel, channelId ${channelId}. Deleting subscription.`, error);
-      await SubscriptionModel.destroy({
-        where: {
-          channelId,
-        },
-      });
+      if (error instanceof DiscordAPIError) {
+        if (error.code === 10003) {
+          console.warn(`[StatusPoller] Unknown subscribed channel, channelId ${channelId}. Deleting subscriptions that use this channel.`, error);
+          await SubscriptionModel.destroy({
+            where: {
+              channelId,
+            },
+          });
+
+          return;
+        }
+      }
+
+      console.error('[StatusPoller] Unexpected error.', error);
     }
   }
 
@@ -93,13 +101,13 @@ export class StatusPoller extends BasePoller<Status> {
   protected resolveNewStatus = async (server: Server): Promise<Status | undefined> => {
     try {
       return await BeamdogApiProxy.fetchServer(server.id, StatusModel);
-    } catch (err) {
-      if (err instanceof BeamdogApiError) {
-        if (err.code === 400) {
-          console.error('[StatusPoller] Attempted an invalid request against the Beamdog API.', err);
+    } catch (error) {
+      if (error instanceof BeamdogApiError) {
+        if (error.code === 400) {
+          console.error('[StatusPoller] Attempted an invalid request against the Beamdog API.', error);
         }
 
-        if (err.code === 404) {
+        if (error.code === 404) {
           console.log('[StatusPoller] Received 404 from Beamdog API; assuming requested server is offline.');
           const { name, lastSeen, serverId } = this.cache.get(server.id) || {};
           return {
@@ -114,7 +122,7 @@ export class StatusPoller extends BasePoller<Status> {
         }
       }
 
-      console.error('[StatusPoller] Unexpected error.', err);
+      console.error('[StatusPoller] Unexpected error.', error);
     }
   }
 

@@ -26,8 +26,12 @@ export class StatusPoller extends BasePoller<Status> {
 
         const status = this.cache.get(id);
         if (status && this.shouldNotify(status, newStatus)) {
-          console.log('[StatusPoller] Found new server status, posting to subscribers.');
-          await this.notifySubscribers(server, newStatus);
+          try {
+            console.log('[StatusPoller] Found new server status, posting to subscribers.');
+            await this.notifySubscribers(server, newStatus);
+          } catch (error) {
+            console.error('[StatusPoller.pollAndUpdate] Unhandled error while notifying subscribers.', error);
+          }
         }
 
         this.cache.set(id, newStatus);

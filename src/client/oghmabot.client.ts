@@ -13,6 +13,15 @@ import {
 import { BasePoller, MessageExpiryPoller, StatusPoller } from './pollers';
 import { SequelizeProvider } from './settings';
 
+export class OghmabotError extends Error {
+  client: OghmabotClient;
+
+  constructor(message: string, client: OghmabotClient) {
+    super(message);
+    this.client = client;
+  }
+}
+
 export class OghmabotClient extends CommandoClient {
   pollers: Collection<string, BasePoller<unknown>> = new Collection();
 

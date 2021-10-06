@@ -1,4 +1,4 @@
-import { DiscordAPIError, TextChannel } from 'discord.js';
+import { DiscordAPIError, HTTPError, TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
 import { Server, ServerModel, Status, StatusModel, SubscriptionModel } from '../../data/models';
 import { BeamdogApiError, BeamdogApiProxy } from '../../data/proxies';
@@ -62,6 +62,13 @@ export class StatusPoller extends BasePoller<Status> {
         } catch (error) {
           if (error instanceof DiscordAPIError) {
             console.warn(`[StatusPoller] Failed to notify subscriber, channelId ${channelId}.`, error);
+          } else if (error instanceof HTTPError) {
+            console.warn(`[StatusPoller] Failed to notify subscriber, channelId ${channelId}. Deleting lastMessageId as we were unable to update it.`, error);
+            await SubscriptionModel.update({
+              lastMessageId: undefined,
+            }, {
+              where: sub,
+            });
           } else {
             console.error(`[StatusPoller] Unexpected error while notifying subscriber, channelId ${channelId}.`, error);
           }

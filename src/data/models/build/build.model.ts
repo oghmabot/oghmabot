@@ -12,8 +12,8 @@ export interface Build {
 }
 
 export class BuildModel extends Model<Build> {
-  static initialize(sequelize: Sequelize): BuildModel {
-    return this.init({
+  static initialize(sequelize: Sequelize): void {
+    this.init({
       name: {
         type: DataTypes.STRING,
         allowNull: false,

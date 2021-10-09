@@ -9,8 +9,8 @@ export interface Setting {
 }
 
 export class SettingModel extends Model<Setting> {
-  static initialize(sequelize: Sequelize): SettingModel {
-    return this.init({
+  static initialize(sequelize: Sequelize): void {
+    this.init({
       guildId: {
         type: DataTypes.STRING,
         primaryKey: true,

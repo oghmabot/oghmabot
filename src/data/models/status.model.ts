@@ -9,6 +9,7 @@ export interface Status {
   uptime: number;
   lastSeen?: number;
   serverId: string;
+  restartSignalled?: boolean;
 }
 
 export enum StatusDescriptor {
@@ -23,6 +24,7 @@ export const StatusColors: Record<string, number> = {
   offline: 0xff0000,
   restarting: 0xffcc00,
   stabilizing: 0xffcc00,
+  restartSignalled: 0xffaa00,
 };
 
 export class StatusModel {

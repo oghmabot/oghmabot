@@ -19,9 +19,18 @@ export const serverStatusToEmbed = (server: Server, status: Status): MessageEmbe
 
 export const serverStatusToStatusUpdateEmbed = (server: Server, status: Status): MessageEmbed => {
   const embed = new OghmabotEmbed();
-  const state = status.online ? status.passworded ? 'restarting' : 'online' : 'offline';
-  embed.setTitle(`${server.name} is now ${state}.`);
-  embed.setColor(StatusColors[state]);
+  const { name } = server;
+  const { online, passworded, restartSignalled } = status;
+
+  if (restartSignalled) {
+    embed.setTitle(`${name} - Restart Signalled`);
+    embed.setColor(StatusColors.restartSignalled);
+  } else {
+    const state = online ? passworded ? 'restarting' : 'online' : 'offline';
+    embed.setTitle(`${server.name} is now ${state}.`);
+    embed.setColor(StatusColors[state]);
+  }
+
   if (server.img) embed.setThumbnail(server.img);
   return embed;
 };

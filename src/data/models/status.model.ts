@@ -1,4 +1,4 @@
-import { BeamdogApiResponseBody } from '../proxies';
+import { BeamdogApiResponseBody } from '@oghmabot/beamdog-proxy';
 import { calculateTimeBetween } from '../../utils';
 
 export interface Status {

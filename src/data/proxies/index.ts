@@ -41,5 +41,4 @@ export const fetchAllDeities = async (): Promise<Deity[]> => {
 };
 
 export * from './arelith';
-export * from './beamdog';
 export * from './fandom';

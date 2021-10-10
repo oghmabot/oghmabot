@@ -35,7 +35,7 @@ export class FandomApiProxy {
       const response = await fetch(url);
       if (response.status !== 200) throw new Error(response.statusText);
 
-      const json: FandomApiResponseBody = await response.json();
+      const json = await response.json() as FandomApiResponseBody;
       const article: FandomApiArticle = { ...json.items[id], url: `${json.basepath}${json.items[id].url}` };
       return json.items[id]
         ? mapper ? mapper.fromFandomApiArticle(article, subdomain) : article
@@ -45,7 +45,7 @@ export class FandomApiProxy {
 
   static async fetchDeityList(subdomain: FandomSubdomain = FandomSubdomain.ForgottenRealms): Promise<FandomApiArticle[]> {
     const response = await fetch(`https://${subdomain}.fandom.com/api/v1/Articles/List?category=deities&limit=1000`);
-    const json: FandomApiResponseBody = await response.json();
+    const json = await response.json() as FandomApiResponseBody;
     return json.items;
   }
 
@@ -57,7 +57,7 @@ export class FandomApiProxy {
 
   static async fetchHeresyList(subdomain: FandomSubdomain = FandomSubdomain.ForgottenRealms): Promise<FandomApiArticle[]> {
     const response = await fetch(`https://${subdomain}.fandom.com/api/v1/Articles/List?category=heresies&limit=100`);
-    const json: FandomApiResponseBody = await response.json();
+    const json = await response.json() as FandomApiResponseBody;
     return json.items;
   }
 

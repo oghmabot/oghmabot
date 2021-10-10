@@ -1,7 +1,7 @@
+import { BeamdogApiError, fetchServer } from '@oghmabot/beamdog-proxy';
 import { DiscordAPIError, HTTPError, TextChannel } from 'discord.js';
 import { CommandoClient } from 'discord.js-commando';
 import { Server, ServerModel, Status, StatusModel, SubscriptionModel } from '../../data/models';
-import { BeamdogApiError, BeamdogApiProxy } from '../../data/proxies';
 import { serverStatusToStatusUpdateEmbed } from '../../utils';
 import { BasePoller } from './base.poller';
 
@@ -12,7 +12,7 @@ export class StatusPoller extends BasePoller<Status> {
   }
 
   public async fetch(serverId: string): Promise<Status | undefined> {
-    return this.cache.get(serverId) ?? await BeamdogApiProxy.fetchServer(serverId, StatusModel);
+    return this.cache.get(serverId) ?? await fetchServer(serverId, StatusModel);
   }
 
   public signalRestart = async (serverId: string): Promise<Status | undefined> => {
@@ -123,7 +123,7 @@ export class StatusPoller extends BasePoller<Status> {
 
   protected resolveNewStatus = async (server: Server): Promise<Status | undefined> => {
     try {
-      return await BeamdogApiProxy.fetchServer(server.id, StatusModel);
+      return await fetchServer(server.id, StatusModel);
     } catch (error) {
       if (error instanceof BeamdogApiError) {
         if (error.code === 400) {

@@ -1,5 +1,5 @@
+import { BeamdogApiResponseBody } from '@oghmabot/beamdog-proxy';
 import { DataTypes, FindOptions, Model, Sequelize } from 'sequelize';
-import { BeamdogApiResponseBody } from '../proxies';
 
 export interface Server {
   id: string;

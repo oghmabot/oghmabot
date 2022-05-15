@@ -6,22 +6,25 @@ export const startAppInsights = () => {
     APPLICATIONINSIGHTS_DEBUG_MODE,
   } = process.env;
 
-  const config = setup(APPLICATIONINSIGHTS_CONNECTION_STRING)
-    .setAutoCollectDependencies(true)
-    .setAutoCollectExceptions(true)
-    .setAutoCollectRequests(true)
-    .setAutoDependencyCorrelation(true);
+  if (APPLICATIONINSIGHTS_CONNECTION_STRING) {
+    const config = setup(APPLICATIONINSIGHTS_CONNECTION_STRING)
+      .setAutoCollectDependencies(true)
+      .setAutoCollectExceptions(true)
+      .setAutoCollectRequests(true)
+      .setAutoDependencyCorrelation(true);
 
-  if (APPLICATIONINSIGHTS_DEBUG_MODE) {
-    if (APPLICATIONINSIGHTS_DEBUG_MODE == 'debug') {
-      config.setInternalLogging(true, true);
+    if (APPLICATIONINSIGHTS_DEBUG_MODE) {
+      if (APPLICATIONINSIGHTS_DEBUG_MODE == 'debug') {
+        config.setInternalLogging(true, true);
+      }
+      if (APPLICATIONINSIGHTS_DEBUG_MODE == 'warn') {
+        config.setInternalLogging(false, true);
+      }
     }
-    if (APPLICATIONINSIGHTS_DEBUG_MODE == 'warn') {
-      config.setInternalLogging(false, true);
-    }
+
+    client.context.tags[client.context.keys.cloudRole] = 'Oghmabot';
+
+    start();
   }
 
-  client.context.tags[client.context.keys.cloudRole] = 'Oghmabot';
-
-  start();
 };

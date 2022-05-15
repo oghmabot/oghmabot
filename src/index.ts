@@ -36,7 +36,10 @@ client.login(BOT_TOKEN);
  * Start application insights collection
  */
 if (APPLICATIONINSIGHTS_CONNECTION_STRING) {
-  setupAppInsights(APPLICATIONINSIGHTS_CONNECTION_STRING).start();
+  setupAppInsights(APPLICATIONINSIGHTS_CONNECTION_STRING)
+    .setAutoCollectDependencies(true)
+    .setInternalLogging(true, true)
+    .start();
 }
 
 /**

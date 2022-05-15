@@ -22,6 +22,8 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
       - run: docker pull $COMMIT_TAG
+
+      # Deploy to Heroku
       - run: docker tag $COMMIT_TAG $HEROKU_TAG
       - uses: docker/login-action@v1
         with:

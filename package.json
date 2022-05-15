@@ -1,6 +1,6 @@
 {
   "name": "oghmabot",
-  "version": "0.8.8-4",
+  "version": "0.8.8-5",
   "description": "A utility bot for things related to the Arelith NWN PW.",
   "main": "dist/index.js",
   "scripts": {

@@ -44,5 +44,5 @@ export class StatusModel {
     }
 
     return StatusDescriptor.Offline;
-  }
+  };
 }

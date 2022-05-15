@@ -1,3 +1,4 @@
+import { setup as setupAppInsights } from 'applicationinsights';
 import dotenv from 'dotenv';
 import express from 'express';
 
@@ -11,6 +12,7 @@ import { scheduleAllJobs } from './data/jobs';
 dotenv.config();
 
 const {
+  APPLICATIONINSIGHTS_CONNECTION_STRING,
   BOT_OWNER,
   BOT_PREFIX,
   BOT_SUPPORT_INVITE,
@@ -29,6 +31,13 @@ const client = new OghmabotClient({
  * @ignore
  */
 client.login(BOT_TOKEN);
+
+/**
+ * Start application insights collection
+ */
+if (APPLICATIONINSIGHTS_CONNECTION_STRING) {
+  setupAppInsights(APPLICATIONINSIGHTS_CONNECTION_STRING).start();
+}
 
 /**
  * Schedule routine jobs

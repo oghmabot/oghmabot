@@ -37,7 +37,7 @@ export class StatusPoller extends BasePoller<Status> {
         this.cache.set(id, newStatus);
       }
     }
-  }
+  };
 
   private notifySubscribers = async (server: Server, status: Status): Promise<void> => {
     const messageEmbed = this.createStatusUpdateEmbed(server, status);
@@ -79,7 +79,7 @@ export class StatusPoller extends BasePoller<Status> {
         }
       }
     }
-  }
+  };
 
   private findChannel = async (channelId: string): Promise<TextChannel | undefined> => {
     try {
@@ -100,14 +100,14 @@ export class StatusPoller extends BasePoller<Status> {
 
       console.error('[StatusPoller] Unexpected error.', error);
     }
-  }
+  };
 
   protected shouldNotify = (prevStatus: Status, newStatus: Status): boolean => {
     const pState = StatusModel.resolveStatusAsDescriptor(prevStatus);
     const nState = StatusModel.resolveStatusAsDescriptor(newStatus);
 
     return pState < nState;
-  }
+  };
 
   protected resolveNewStatus = async (server: Server): Promise<Status | undefined> => {
     try {
@@ -135,7 +135,7 @@ export class StatusPoller extends BasePoller<Status> {
 
       console.error('[StatusPoller] Unexpected error.', error);
     }
-  }
+  };
 
   protected createStatusUpdateEmbed = serverStatusToStatusUpdateEmbed;
 }

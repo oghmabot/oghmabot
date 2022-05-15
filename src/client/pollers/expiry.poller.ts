@@ -27,7 +27,7 @@ export class MessageExpiryPoller extends BasePoller<MessageExpiry> {
         console.error('[MessageExpiryPoller] Unexpected error.', error);
       }
     }
-  }
+  };
 
   private deleteExpiredMessage = async (expiry: MessageExpiry): Promise<void> => {
     console.log('[MessageExpiryPoller] Found expired message, deleting.');
@@ -46,5 +46,5 @@ export class MessageExpiryPoller extends BasePoller<MessageExpiry> {
         throw error;
       }
     }
-  }
+  };
 }

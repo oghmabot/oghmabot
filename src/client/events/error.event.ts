@@ -8,10 +8,12 @@ export const handleClientError = async (client: OghmabotClient, error: Error): P
 
 export const handleProcessError = handleClientError;
 
-export const handleProcessRejection = async (client: OghmabotClient, reason: Record<string, unknown> | null | undefined): Promise<void> => {
-  console.error('UnhandledPromiseRejectionWarning:', reason);
-  const statusChannel = await getBotStatusChannel(client);
-  statusChannel.send(rejectionToCodeBlock(reason));
+export const handleProcessRejection = async (client: OghmabotClient, reason: unknown): Promise<void> => {
+  if (typeof reason == 'object') {
+    console.error('UnhandledPromiseRejectionWarning:', reason);
+    const statusChannel = await getBotStatusChannel(client);
+    statusChannel.send(rejectionToCodeBlock(reason as Record<string, unknown>));
+  }
 };
 
 const stackToCodeBlock = (error: Error): string => {
@@ -20,7 +22,7 @@ const stackToCodeBlock = (error: Error): string => {
     + stack ? '\n```prolog\n' + stack + '\n```' : '';
 };
 
-const rejectionToCodeBlock = (reason: Record<string, unknown> | null | undefined): string => {
+const rejectionToCodeBlock = (reason?: Record<string, unknown>): string => {
   if (reason) {
     const keys = Object.keys(reason);
 

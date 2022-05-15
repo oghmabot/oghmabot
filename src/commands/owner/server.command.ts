@@ -169,7 +169,7 @@ export class ServerCommand extends Command {
   }
 
   handleBeamdogApiError = (msg: CommandoMessage, error: BeamdogApiError): Promise<Message> =>
-    msg.say(error.code === 400 ? 'Invalid identifier' : 'Server is unavailable or does not exist.')
+    msg.say(error.code === 400 ? 'Invalid identifier' : 'Server is unavailable or does not exist.');
 
   formatServerAddedReply = (server: Server): string => (
     'Server added.'

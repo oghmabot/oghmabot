@@ -112,5 +112,5 @@ export class DeityModel extends Model<Deity> {
       ...options,
     });
     return deities.map(d => d.get());
-  }
+  };
 }

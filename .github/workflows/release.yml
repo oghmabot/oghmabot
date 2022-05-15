@@ -35,4 +35,4 @@ jobs:
           username: _
           password: ${{ secrets.HEROKU_AUTH }}
       - run: docker push $DEPLOY_TAG
-      - run: docker run --rm -e HEROKU_API_KEY=${{ secrets.HEROKU_AUTH }} wingrunr21/alpine-heroku-cli container:release worker --app=${{ github.event.repository.name }}-test
+      - run: docker run --rm -e HEROKU_API_KEY=${{ secrets.HEROKU_AUTH }} wingrunr21/alpine-heroku-cli container:release worker --app=${{ github.event.repository.name }}

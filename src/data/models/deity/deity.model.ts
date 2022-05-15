@@ -34,8 +34,8 @@ export interface Deity {
 }
 
 export class DeityModel extends Model<Deity> {
-  static initialize(sequelize: Sequelize): DeityModel {
-    return this.init({
+  static initialize(sequelize: Sequelize): void {
+    this.init({
       name: {
         type: DataTypes.STRING,
         allowNull: false,

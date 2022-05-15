@@ -12,8 +12,8 @@ export interface Server {
 }
 
 export class ServerModel extends Model<Server> {
-  static initialize(sequelize: Sequelize): ServerModel {
-    return this.init({
+  static initialize(sequelize: Sequelize): void {
+    this.init({
       id: {
         type: DataTypes.STRING,
         primaryKey: true,

@@ -16,8 +16,8 @@ export interface Subscription {
 }
 
 export class SubscriptionModel extends Model<Subscription> {
-  static initialize(sequelize: Sequelize): SubscriptionModel {
-    return this.init({
+  static initialize(sequelize: Sequelize): void {
+    this.init({
       type: {
         type: DataTypes.INTEGER,
         primaryKey: true,

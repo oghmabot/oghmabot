@@ -9,8 +9,8 @@ export interface MessageExpiry {
 }
 
 export class MessageExpiryModel extends Model<MessageExpiry> {
-  static initialize(sequelize: Sequelize): MessageExpiryModel {
-    return this.init({
+  static initialize(sequelize: Sequelize): void {
+    this.init({
       messageId: {
         type: DataTypes.STRING,
         primaryKey: true,

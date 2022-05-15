@@ -1,6 +1,6 @@
 {
   "name": "oghmabot",
-  "version": "0.8.8-0",
+  "version": "0.8.8-8",
   "description": "A utility bot for things related to the Arelith NWN PW.",
   "main": "dist/index.js",
   "scripts": {
@@ -27,8 +27,8 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@types/express": "^4.17.13",
     "@types/cheerio": "^0.22.31",
+    "@types/express": "^4.17.13",
     "@types/jest": "^27.5.1",
     "@types/node": "^17.0.33",
     "@types/node-fetch": "^2.6.1",

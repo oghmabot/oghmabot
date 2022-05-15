@@ -13,6 +13,7 @@ dotenv.config();
 
 const {
   APPLICATIONINSIGHTS_CONNECTION_STRING,
+  APPLICATIONINSIGHTS_DEBUG,
   BOT_OWNER,
   BOT_PREFIX,
   BOT_SUPPORT_INVITE,
@@ -36,10 +37,17 @@ client.login(BOT_TOKEN);
  * Start application insights collection
  */
 if (APPLICATIONINSIGHTS_CONNECTION_STRING) {
-  setupAppInsights(APPLICATIONINSIGHTS_CONNECTION_STRING)
+  const appInsights = setupAppInsights(APPLICATIONINSIGHTS_CONNECTION_STRING)
     .setAutoCollectDependencies(true)
-    .setInternalLogging(true, true)
-    .start();
+    .setAutoCollectExceptions(true)
+    .setAutoCollectRequests(true)
+    .setAutoDependencyCorrelation(true);
+
+  if (APPLICATIONINSIGHTS_DEBUG) {
+    appInsights.setInternalLogging(true, true);
+  }
+
+  appInsights.start();
 }
 
 /**

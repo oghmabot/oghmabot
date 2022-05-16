@@ -1,8 +1,11 @@
+import { defaultClient } from 'applicationinsights';
+
 import { getBotStatusChannel } from '../../utils/channels';
 import { OghmabotClient } from '../oghmabot.client';
 
 export const handleClientError = async (client: OghmabotClient, error: Error): Promise<void> => {
   const statusChannel = await getBotStatusChannel(client);
+  defaultClient.trackException({ exception: error });
   statusChannel.send(stackToCodeBlock(error));
 };
 

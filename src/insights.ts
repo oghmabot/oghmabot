@@ -1,4 +1,4 @@
-import { defaultClient as client, setup, start } from 'applicationinsights';
+import { defaultClient, setup, start } from 'applicationinsights';
 
 export const startAppInsights = () => {
   const {
@@ -22,7 +22,7 @@ export const startAppInsights = () => {
       }
     }
 
-    client.context.tags[client.context.keys.cloudRole] = 'Oghmabot';
+    defaultClient.context.tags[defaultClient.context.keys.cloudRole] = 'Oghmabot';
 
     start();
   }
